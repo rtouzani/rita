@@ -1,0 +1,1020 @@
+<!DOCTYPE HTML>
+<html>
+   <script src="http://www.w3schools.com/lib/w3data.js"></script>
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="description" content="rita Documentation" />
+      <meta name="keywords" content="rita, modelling, numerical simulation, scientific computing, ofeli" />
+      <title>rita documentation</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="" />
+      <meta name="keywords" content="" />
+      <meta name="author" content="" />
+      <link rel="icon" type="image/png" href="images/rita.jpg" />
+
+      <script>
+         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+         ga('create', 'UA-59742926-2', 'auto');
+         ga('send', 'pageview');
+      </script>
+
+<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+      <link rel="shortcut icon" href="images/rita.ico">
+      <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700" rel="stylesheet">
+
+      <link rel="stylesheet" href="css/animate.css">
+      <link rel="stylesheet" href="css/icomoon.css">
+      <link rel="stylesheet" href="css/bootstrap.css">
+      <link rel="stylesheet" href="css/flexslider.css">
+      <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+      <link rel="stylesheet" href="css/owl.carousel.min.css">
+      <link rel="stylesheet" href="css/owl.theme.default.min.css">
+      <link rel="stylesheet" href="css/style.css">
+      <link rel="stylesheet" href="css/rt.css">
+
+<!-- Modernizr JS -->
+   <script src="js/modernizr-2.6.2.min.js"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+      <script src="js/respond.min.js"></script>
+      <![endif]-->
+   </head>
+
+   <body>
+      <div id="Rita-page">
+         <div class="container-wrap">
+            <a href="#" class="js-rita-nav-toggle rita-nav-toggle" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"><i></i></a>
+            <aside id="rita-aside" role="complementary" class="border js-fullheight">
+               <div class="text-center">
+                  <div class="author-img" style="background-image: url(images/rita.jpg);">
+                  </div>
+                  <h1 id="rita-logo"><a href="index.html">I R I S</a></h1>
+                  <span class="position"><a href="#">Interactive Modelling and Simulation</span>
+               </div>
+               <nav id="rita-main-menu" role="navigation" class="navbar">
+                  <div id="navbar" class="collapse">
+                     <ul>
+                        <li class="active"><a href="#" data-nav-section="home">Home</a></li>
+                        <li><a href="#" data-nav-section="start">Getting started</a></li>
+                        <li><a href="#" data-nav-section="modelling">Modelling</a></li>
+                        <li><a href="#" data-nav-section="modules">Modules</a></li>
+                        <li><a href="#" data-nav-section="global-commands">Global commands</a></li>
+                        <li><a href="#" data-nav-section="license">License</a></li>
+                        <li><a href="#" data-nav-section="download">Download and install</a></li>
+                     </ul>
+                  </div>
+               </nav>
+
+               <div class="rita-footer">
+                  <p><small>&copy; Copyright <script>document.write(new Date().getFullYear());</script> All rights reserved
+                   </span>
+                  </small></p>
+               </div>
+            </aside>
+
+            <div id="rita-main">
+<!--               <section id="rita-hero" class="js-fullheight" data-section="home">
+                  <div class="flexslider js-fullheight">
+                     <ul class="slides">
+                        <li style="background-image: url(images/img_bg_2.jpg);">
+                           <div class="container-fluid">
+                              <div class="row">
+                                 <div class="col-md-6 col-md-offset-3 col-md-pull-3 col-sm-12 col-xs-12 js-fullheight slider-text">
+                                    <div class="slider-text-inner js-fullheight">
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </li>
+                     </ul>
+                  </div>
+               </section>-->
+
+               <!-- ************************************************************************************************************ -->
+   
+               <section class="rita-start" data-section="start">
+                  <div class="rita-narrow-content">
+                     <div class="row">
+                        <div class="col-md-12">
+                           <div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+                              <div class="col-md-12">
+                                 <div class="start-desc">
+                                    <span class="heading-meta">Introduction</span>
+                                    <h2 class="rita-heading">Getting started</h2>
+                                    <p><span class=logo>Rita</span> is a command line application to solve
+                                    principally modelling problems involving partial differential equations by the
+                                    <span class=logo><a href="http://ofeli.org">OFELI</a></span> library.
+                                        It can also be used to solve various basic problems in numerical analysis
+                                        (Solution of ordinary differential equations, solution of algebraic equation, 
+                                        data fitting, numerical integration, ...)<br>
+                                    <span class=logo>Rita</span> can be either run interactively or using a script file.
+                                    This latter option can be chosen simply either by executing<br>
+                                    &#160;&#160;&#160;&#160;&#160;&#160;<span class=var>rita script-file</span><br>
+                                    or once in the Rita execution by typing<br>
+                                    &#160;&#160;&#160;&#160;&#160;&#160;<span class=var>load script-file</span><br>
+                                    The file <span class=var>script-file</span> must contain all commands to be executed,
+                                    one on each line. It can contain comment lines (lines starting with a
+                                    <span class=var>#</span>)</p>
+				                    <p>When running <span class=logo>Rita</span> a command line enables 
+<!--
+<p>Principal modules in Rita are:</p>
+mesh      Define domain and generate its meshing
+data      Define problem data (boundary conditions, initial condition, ...).
+model     Define the model to study: PDE and associated numerical methods
+solve     Run the constructed model problem with all chosen options
+license   Print License Agreement of the software
+
+Global commands are commands that are available in all modules. These are:
+set       Modify configuration parameters for the present and future sessions
+help or ? Display a help corresponding to current module
+!         To execute a shell command, this one must be typed preceded by this mark
+end or &lt;  Go back to higher level: Enables quitting a module. Some commands in modules however
+          do this automatically.
+exit      exit the program.-->
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </section>
+
+               <!-- ************************************************************************************************************ -->
+
+               <section class="rita-text" data-section="modelling">
+                  <div class="rita-narrow-content">
+                     <div class="row">
+                        <div class="col-md-12">
+                           <div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+                              <div class="col-md-12">
+                                 <div class="start-desc">
+                                    <h2 class="rita-heading">Modelling</h2>
+                                    <p>Mathematical modelling is the procedure that gives to a defined process
+                                    (physical, mechanical, biological, ...) a mathematical formulation.
+                                    More precisely, we are concerned here with the case where the mathematical problem
+                                    consists in a (system of) partial differential equation(s).<br>
+                                    Rita is a tool to help solving such a system in a hopefully user-friendly way.<br>
+                                    Rita is not itself a numerical software to solve partial differential equations.
+                                    This one is an interactive interface that uses the
+                                    <a href="http://ofeli.org">OFELI</a> library for solving the defined problem.
+                                    </p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </section>
+
+               <!-- ************************************************************************************************************ -->
+   
+               <section class="rita-modules" data-section="modules">
+                  <div class="rita-narrow-content">
+                     <div class="row">
+                        <div class="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
+                           <h2 class="rita-heading">Modules in Rita</h2>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="col-md-4 text-center animate-box">
+                     <div class="modules color-1">
+                        <span class="icon">
+                           <a href="#mesh"><i class="icon-data"></i></a>
+                        </span>
+                     <div class="desc">
+                        <h3><a href="#mesh">mesh</a></h3>
+                           <p>Define and/or generate mesh of domain</p>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-md-4 text-center animate-box">
+                     <div class="modules color-4">
+                        <span class="icon">
+                           <a href="#data"><i class="icon-data"></i></a>
+                        </span>
+                        <div class="desc">
+                           <h3><a href="#data">data</a></h3>
+                           <p>Define problem data: Boundary conditions, Initial condition, ...</p>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-md-4 text-center animate-box">
+                     <div class="modules color-2">
+                        <span class="icon">
+                           <a href="#model"><i class="icon-data"></i></a>
+                        </span>
+                        <div class="desc">
+                           <h3><a href="#model">model</a></h3>
+                           <p>Define model equations and analysis type</p>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-md-4 text-center animate-box">
+                     <div class="modules color-3">
+                        <span class="icon">
+                           <a href="#solve"><i class="icon-data"></i></a>
+                        </span>
+                        <div class="desc">
+                           <h3><a href="#solve">solve</a></h3>
+                           <p>Once model defined, solve defined problem</p>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-md-4 text-center animate-box">
+                     <div class="modules color-5">
+                        <span class="icon">
+                           <a href="#set"><i class="icon-data"></i></a>
+                        </span>
+                        <div class="desc">
+                           <h3><a href="#set">post</a></h3>
+                           <p>Post process<br>&nbsp;</p>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-md-4 text-center animate-box">
+                     <div class="modules color-6">
+                        <span class="icon">
+                           <a href="#set"><i class="icon-data"></i></a>
+                        </span>
+                        <div class="desc">
+                           <h3><a href="#set">set</a></h3>
+                           <p>Modify various default environment parameters</p>
+                        </div>
+                     </div>
+                  </div>
+               </section>
+
+               <!-- ************************************************************************************************************ -->
+               <section class="RT-modules-desc">
+                  <div class="col-md-12">
+                     <div class="modules-desc">
+
+                        <a name="mesh"></a>
+                        <h3>Module 'mesh'</h3>
+                        <p>A crucial step in the solution procedure of a given problem is the creation of a mesh.
+                        This one is the discretization of the physical domain where the process to study takes place.
+                        This means partitioning the domain (1-D, 2-D or 3-D) into specific subdomains. More commonly,
+                        intervals in 1-D, triangles or quadrilaterals in 2-D, and
+                        tetrahedra, hexahedra or pentahedra in 3-D.<br>
+                        RITA does not contain a powerful mesh generator. We use a simple 2-D generator issued from the 
+                        <span class=KW><a href="http://ofeli.org">OFELI</a></span> library.
+                        For 3-D meshes we recommend the use of open source mesh
+                        generators like <span class=KW><a href="http://"gmsh.info">Gmsh</a></span> or
+                        <span class=KW><a href="http://http://wias-berlin.de/software/tetgen/1.5/doc/manual/index.html">Tetgen</a></span>.</p>
+
+                        <p>Once the module <span class=KW>mesh</font></span> is activated, a series of keywords
+                        are accessible:</p>
+
+                        <table id="kw">
+                           <tr>
+                              <td>
+                                 <span class=emtext>dim &lt;n&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Set space dimension: <span class=var>n</span> must be
+                                 <span class=var>1</span>, <span class=var>2</span> or <span class=var>3</span>.
+                                 By default, this value is set to <span class=var>2</span>. Note that the
+                                 choice of some keywords below leads automatically to a prescribed dimension</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var><a href="#mesh-1d">1d</a></span>
+                              </td>
+                              <td>
+                                 <span class=text>Generate a 1-D mesh</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var><a href="#mesh-rectangle">rectangle</a></span>
+                              </td>
+                              <td>
+                                 <span class=text>Generate triangulation of a rectangular domain</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var><a href="#mesh-cube">cube</a></span>
+                              </td>
+                              <td>
+                                 <span class=text>Generate mesh of a cube</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var><a href="#mesh-vertex">vertex</a></span>
+                              </td>
+                              <td>
+                                 <span class=text>Define a vertex in the polygonal domain</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var><a href="#mesh-line">line</a></span>
+                              </td>
+                              <td>
+                                 <span class=text>Define a (straight) line in the polygonal domain</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var><a href="#mesh-circle">circle</a></span>
+                              </td>
+                              <td>
+                                 <span class=text>Define a circle (a portion or the entire one) in the polygonal domain</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var><a href="#mesh-subdomain">subdomain</a></span>
+                              </td>
+                              <td>
+                                 <span class=text>Define a subdomain</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var><a href="#mesh-generate">generate</a></span>
+                              </td>
+                              <td>
+                                 <span class=text>Generate mesh</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>plot</span>
+                              </td>
+                              <td>
+                                 <span class=text>Plot mesh. In current version, we use <a href="http://gmsh.info">Gmsh</a> to display mesh</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>clear</span>
+                              </td>
+                              <td>
+                                 <span class=text>Clear generated data for mesh. This enables reinitializing the
+                                 mesh generation process</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var><a href="#mesh-read">read</a></span>
+                              </td>
+                              <td>
+                                 <span class=text>Read mesh or domain data from given file</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var><a href="#mesh-save">save</a></span>
+                              </td>
+                              <td>
+                                 <span class=text>Save mesh in file under different formats</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>end</span>
+                              </td>
+                              <td>
+                                 <span class=text>Go back to module menu</span>
+                              </td>
+                           </tr>
+                        </table>
+
+                        <a name="mesh-1d"></a>
+                        <h4>Keyword: <b>1d</b></h4>
+                        <p>This command activates a submodule where the following keywords are available:</p>
+                        <table id="sub-kw">
+                           <tr>
+                              <td>
+                                 <span class=emtext>interval &lt;xmin&gt; &lt;xmax&gt; </span>
+                              </td>
+                              <td>
+                                 <span class=text>Set the interval that defines the domain (Default
+                                 interval: <span class=var>(0,1)</span>)</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>ne &lt;n&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Define the number of elements to generate (Default value: <span class=var>10</span>)</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>codes &lt;cmin&gt; &lt;cmax&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Define codes (integers) to assign to extreme vertices:
+                                 (left then right)
+                                 A nonzero code means that no value will be prescribed on this node (Default codes
+                                 <span class=var>0 0</span>)</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>nbdof &lt;n&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Define number of degrees of freedom to associate to each node
+                                 (Default value: <span class=var>1</span>)</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>save [file]</span>
+                              </td>
+                              <td>
+                                 <span class=text>Generate mesh and save it in file. If the file name is not
+                                 provided, mesh is saved in file <span class=var>rita-1d.m</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>end</span>
+                              </td>
+                              <td>
+                                 <span class=text>Return to <span class=var>mesh</span> menu. Note that if the user tries
+                                 to go back to main menu, without using this keyword, the application will display a
+                                 warning that no mesh is saved, but one can always go back to keyword
+                                 <span class=var>1d</span> and save generated mesh: Nothing is lost</span></span>
+                              </td>
+                           </tr>
+                        </table>
+                        
+                        <a name="mesh-rectangle"></a>
+                        <h4>Keyword: <b>rectangle</b></h4>
+                        <p>This command activates a submodule where the following keywords are available:</p>
+                        <table id="sub-kw">
+                           <tr>
+                              <td>
+                                 <span class=emtext>x &lt;xmin&gt; &lt;xmax&gt; </span>
+                              </td>
+                              <td>
+                                 <span class=text>Set min and max values of x:
+                                 the rectangle is given by <span class=var>(xmin,xmax)*(ymin,ymax)</span></span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>y &lt;ymin&gt; &lt;ymax&gt; </span>
+                              </td>
+                              <td>
+                                 <span class=text>Set min and max values of y:
+                                 the rectangle is given by <span class=var>(xmin,xmax)*(ymin,ymax)</span></span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>ne &lt;nx&gt; &lt;ny&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Define subdivision on the x- and y-axes</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>codes &lt;c1&gt; &lt;c2&gt; &lt;c3&gt; &lt;c4&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Define codes (integers) to assign to nodes on the lines
+                                 <span class var>y=ymin</span>, <span class var>x=xmax</span>,
+                                 <span class var>y=ymax</span>, <span class var>x=xmin</span> respectively.
+                                 A nonzero code means that no value will be prescribed on this node (Default codes
+                                 <span class=var>0 0 0 0</span>)</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>nbdof &lt;n&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Define number of degrees of freedom to associate to each node
+                                 (Default value: <span class=var>1</span>)</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>save [file]</span>
+                              </td>
+                              <td>
+                                 <span class=text>Generate mesh and save it in file. If the file name is not
+                                 provided, mesh is saved in file <span class=var>rita-rect.m</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>end</span>
+                              </td>
+                              <td>
+                                 <span class=text>Return to <span class=var>mesh</span> menu. Note that if the user tries
+                                 to go back to main menu, without using this keyword, the application will display a
+                                 warning that no mesh is saved, but one can always go back to keyword
+                                 <span class=var>rectangle</span> and save generated mesh: Nothing is lost</span></span>
+                              </td>
+                           </tr>
+                        </table>
+                        
+                        <a name="mesh-cube"></a>
+                        <h4>Keyword: <b>cube</b></h4>
+                        <p>This command runs a submodule where the following keywords are available:</p>
+                        <table id="sub-kw">
+                           <tr>
+                              <td>
+                                 <span class=emtext>x &lt;xmin&gt; &lt;xmax&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Set min and max values of x:
+                                 the cube is given by <span class=var>(xmin,xmax)*(ymin,ymax)*(zmin,zmax)</span></span>
+                             </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>y &lt;ymin&gt; &lt;ymax&gt; </span>
+                              </td>
+                              <td>
+                                 <span class=text>Set min and max values of y:
+                                 the cube is given by <span class=var>(xmin,xmax)*(ymin,ymax)*(zmin,zmax)</span></span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>z &lt;zmin&gt; &lt;zmax&gt; </span>
+                              </td>
+                              <td>
+                                 <span class=text>Set min and max values of z:
+                                 the cube is given by <span class=var>(xmin,xmax)*(ymin,ymax)*(zmin,zmax)</span></span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>ne &lt;nx&gt; &lt;ny&gt; &lt;nz&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Define subdivision on the x-, y- and z-axes</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>codes &lt;c1&gt; &lt;c2&gt; &lt;c3&gt; &lt;c4&gt; &lt;c5&gt; &lt;c6&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Define codes (integers) to assign to nodes on the lines
+                                 <span class var>x=xmin</span>, <span class var>x=xmax</span>,
+                                 <span class var>y=ymin</span>, <span class var>y=ymax</span>,
+                                 <span class var>z=zmin</span>, <span class var>z=zmax</span> respectively.
+                                 A nonzero code means that no value will be prescribed on this node (Default codes
+                                 <span class=var>0 0 0 0 0 0</span>)</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>nbdof &lt;n&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Define number of degrees of freedom to associate to each node
+                                 (Default value: <span class=var>1</span>)</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>save [file]</span>
+                              </td>
+                              <td>
+                                 <span class=text>Generate mesh and save it in file. If the file name is not
+                                 provided, mesh is saved in file <span class=var>rita-cube.m</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>end</span>
+                              </td>
+                              <td>
+                                 <span class=text>Return to <span class=var>mesh</span> menu. Note that if the user tries
+                                 to go back to main menu, without using this keyword, the application will display a
+                                 warning that no mesh is saved, but one can always go back to keyword
+                                 <span class=var>cube</span> and save generated mesh: Nothing is lost</span></span>
+                              </td>
+                           </tr>
+                        </table>
+
+                        <a name="mesh-vertex"></a>
+                        <h4>Keyword: <b>vertex</b></h4>
+                        <p>This command runs a submodule to define vertex data. The following keywords are available:</p>
+                        <table id="sub-kw">
+                           <tr>
+                              <td>
+                                 <span class=emtext>coord &lt;x&gt; &lt;y&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Set <span class=var>x</span> and <span class=var>y</span> coordinates</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>code &lt;c&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Set code for node: Necessary to enforce a boundary condition</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>size &lt;h&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Set size of edges around vertex</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>save</span>
+                              </td>
+                              <td>
+                                 <span class=text>Save vertex</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>end</span>
+                              </td>
+                              <td>
+                                 <span class=text>Return to <span class=var>mesh</span> menu. Note that if the user tries
+                                 to go back to main menu, without saving vertex, the application will display a
+                                 warning that no vertex is saved, but one can always go back to keyword
+                                 <span class=var>vertex</span> and save it: Nothing is lost</span></span>
+                              </td>
+                           </tr>
+                        </table>
+
+                        <a name="mesh-line"></a>
+                        <h4>Keyword: <b>line</b></h4>
+                        <p>This command runs a submodule to define line data. A line is a straight segments whose ends
+                        are defined vertices. The following keywords are available:</p>
+                        <table id="sub-kw">
+                           <tr>
+                              <td>
+                                 <span class=emtext>vertices &lt;v1&gt; &lt;v2&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Define labels of vertices of the line. The line is oriented
+                                 from <span class=var>v1</span> to <span class=var>v2</span></span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>code &lt;c&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Set code to assign to generated nodes or sides: If
+                                 <span class=var>c</span> is positive, its value will be assigned to all generated
+                                 nodes on line, if it is negative, the value <span class=var>-c</span>
+                                 will be assigned to all generated sides</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>save</span>
+                              </td>
+                              <td>
+                                 <span class=text>Save line</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>end</span>
+                              </td>
+                              <td>
+                                 <span class=text>Return to <span class=var>mesh</span> menu. Note that if the user tries
+                                 to go back to main menu, without saving line, the application will display a
+                                 warning that no line is saved, but one can always go back to keyword
+                                 <span class=var>line</span> and save it: Nothing is lost</span></span>
+                              </td>
+                           </tr>
+                        </table>
+
+                        <a name="mesh-circle"></a>
+                        <h4>Keyword: <b>circle</b></h4>
+                        <p>This command runs a submodule to define circle data. A line is a straight segments whose ends
+                        are defined vertices. The following keywords are available:</p>
+                        <table id="sub-kw">
+                           <tr>
+                              <td>
+                                 <span class=emtext>vertices &lt;v1&gt; &lt;v2&gt;  &lt;v3&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Define labels of three vertices. The circular arc goes from
+                                 vertex <span class=var>v1</span> to <span class=var>v2</span>. Its center is
+                                 located at vertex <span class=var>v3</span>.
+                                 If <span class=var>v1=v2</span>, the arc is the entire circle
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>code &lt;c&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Set code to assign to generated nodes or sides: If
+                                 <span class=var>c</span> is positive, its value will be assigned to all generated
+                                 nodes on circular arc, if it is negative, the value <span class=var>-c</span>
+                                 will be assigned to all generated sides</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>save</span>
+                              </td>
+                              <td>
+                                 <span class=text>Save line</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>end</span>
+                              </td>
+                              <td>
+                                 <span class=text>Return to <span class=var>mesh</span> menu. Note that if the user tries
+                                 to go back to main menu, without saving circle, the application will display a
+                                 warning that no circle is saved, but one can always go back to keyword
+                                 <span class=var>circle</span> and save it: Nothing is lost</span></span>
+                              </td>
+                           </tr>
+                        </table>
+
+                        <a name="mesh-subdomain"></a>
+                        <h4>Keyword: <b>subdomain</b></h4>
+                        <p>This command runs a submodule to define subdomain data. A subdomain is a region of the
+                        domain that can be identified by a line. The following keywords are available:</p>
+                        <table id="sub-kw">
+                           <tr>
+                              <td>
+                                 <span class=emtext>line &lt;l&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Set line number <span class=var>l</span> a lying in subdomain
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>orientation &lt;s&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Set orientation of subdomain. Must be equal to
+                                 <span class=var>-1</span> or <span class=var>1</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>code &lt;c&gt;</span>
+                              </td>
+                              <td>
+                                 <span class=text>Set code to assign to generated elements in subdomain
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>save</span>
+                              </td>
+                              <td>
+                                 <span class=text>Save subdomain</span>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>end</span>
+                              </td>
+                              <td>
+                                 <span class=text>Return to <span class=var>mesh</span> menu. Note that if the user tries
+                                 to go back to main menu, without saving defined subdomain, the application will display a
+                                 warning that no subdomain is saved, but one can always go back to keyword
+                                 <span class=var>subdomain</span> and save generated subdomain</span>
+                              </td>
+                           </tr>
+                        </table>
+
+                        <a name="mesh-read"></a>
+                        <h4>Keyword: <b>read</b></h4>
+                        <p>This command runs a submodule to read mesh
+                        data from a given file. The following keywords are available:</p>
+                        <table id="sub-kw">
+                           <tr>
+                              <td>
+                                 <span class=emtext>domain &lt;file&gt;</span>
+                              </td>
+                              <td>
+                                <span class=text>Read domain data from Domain file <span class=var>file</span>.
+                                Domain file format is defined in the <span class=logo>OFELI</span> library
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>mesh &lt;file&gt;</span>
+                              </td>
+                              <td>
+                                <span class=text>Read mesh data from Mesh file <span class=var>file</span>.
+                                Mesh file format is defined in the <span class=logo>OFELI</span> library
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>gmsh &lt;file&gt;</span>
+                              </td>
+                              <td>
+                                <span class=text>Read mesh data from Gmsh file <span class=var>file</span>.
+                                Gmsh mesh file format is defined in the
+                                <span class=logo><a href="http://gmsh.info">Gmsh</a></span> library
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>end</span>
+                              </td>
+                              <td>
+                                 <span class=text>Return to <span class=var>mesh</span> menu</span>
+                              </td>
+                           </tr>
+                        </table>
+
+                        <a name="mesh-save"></a>
+                        <h4>Keyword: <b>save</b></h4>
+                        <p>This command runs a submodule to save mesh
+                        data in a given file under various formats. The following keywords are available:</p>
+                        <table id="sub-kw">
+                           <tr>
+                              <td>
+                                 <span class=emtext>domain &lt;file&gt;</span>
+                              </td>
+                              <td>
+                                <span class=text>Save domain data in file <span class=var>file</span>.
+                                Domain file format is defined in the <span class=logo>OFELI</span> library
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>mesh &lt;file&gt;</span>
+                              </td>
+                              <td>
+                                <span class=text>Save mesh data in Mesh file <span class=var>file</span>.
+                                Mesh file format is defined in the <span class=logo>OFELI</span> library
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>gmsh &lt;file&gt;</span>
+                              </td>
+                              <td>
+                                <span class=text>Save mesh data in Gmsh file <span class=var>file</span>.
+                                Gmsh mesh file format is defined in the
+                                <span class=logo><a href="http://gmsh.info">Gmsh</a></span> library
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>vtk &lt;file&gt;</span>
+                              </td>
+                              <td>
+                                <span class=text>Save mesh data in vtk file <span class=var>file</span>.
+                                vtk file format is defined in the link
+                                <span class=logo><a href="http://www.vtk.org">vtk</a></span>. It can be useful
+                                to display mesh and results using the software <a href="href=www.paraview.org">Paraview</a>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>gnuplot &lt;file&gt;</span>
+                              </td>
+                              <td>
+                                <span class=text>Save mesh data in gnuplot file <span class=var>file</span>.
+                                gnuplot file format is useful to display mesh using <a href="http://www.gnuplot.info">Gnuplot</a>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>matlab &lt;file&gt;</span>
+                              </td>
+                              <td>
+                                <span class=text>Save mesh data in Matlab&reg; file <span class=var>file</span>.
+                                Matlab&reg; file format is useful to display mesh using <a href="http://www.mathworks.com">Matlab</a>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                 <span class=emtext>tecplot &lt;file&gt;</span>
+                              </td>
+                              <td>
+                                <span class=text>Save mesh data in Tecplot&reg; file <span class=var>file</span>.
+                                Tecplot&reg; file format is useful to display mesh using <a href="http://www.tecplot.com">Tecplot</a>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td>
+                                <span class=var>end</span>
+                              </td>
+                              <td>
+                                 <span class=text>Return to <span class=var>mesh</span> menu</span>
+                              </td>
+                           </tr>
+                        </table>
+
+                        <a name="data"></a>
+                        <h3>Module 'data'</h3>
+
+                        <a name="model"></a>
+                        <h3>Module 'model'</h3>
+
+                        <a name="solve"></a>
+                        <h3>Module 'solve'</h3>
+
+                        <a name="post"></a>
+                        <h3>Module 'post'</h3>
+
+                        <a name="set"></a>
+                        <h3>Module 'set'</h3>
+                     </div>
+                  </div>
+               </section>
+
+               <!-- ************************************************************************************************************ -->
+               <section class="rita-text" data-section="license">
+                  <div class="rita-narrow-content">
+                     <div class="row">
+                        <div class="col-md-12">
+                           <div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+                              <div class="col-md-12">
+                                 <div class="start-desc">
+                                    <h2 class="rita-heading">RITA License</h2>
+                                    <p>RITA is freely available under the GPL (Gnu Public License).<br>
+                                       Copyright &copy; 2021 Rachid Touzani</p>
+                                    <p><span class=TEXT>RITA is free software: you can redistribute it and/or modify
+                                       it under the terms of the GNU General Public License as published by
+                                       the Free Software Foundation, either version 3 of the License, or
+                                       (at your option) any later version.<br>
+                                       RITA is distributed in the hope that it will be useful
+                                       but WITHOUT ANY WARRANTY; without even the implied warranty of
+                                       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.<br> See the
+                                       GNU General Public License for more details.</span></p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </section>
+
+               <!-- ************************************************************************************************************ -->
+               <section class="rita-text" data-section="download">
+                  <div class="rita-narrow-content">
+                     <div class="row">
+                        <div class="col-md-12">
+                           <div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+                              <div class="col-md-12">
+                                 <div class="start-desc">
+                                    <h2 class="rita-heading">Downloading and Installation</h2>
+                                    <p>RITA can be downloaded from the 
+                            <a href="https://github.com/rtouzani/Rita">GitHub</a> repository</p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </section>
+
+               <!-- ************************************************************************************************************ -->
+
+            </div><!-- end:rita-main -->
+         </div><!-- end:container-wrap -->
+      </div><!-- end:rita-page -->
+
+      <!-- jQuery -->
+      <script src="js/jquery.min.js"></script>
+      <!-- jQuery Easing -->
+      <script src="js/jquery.easing.1.3.js"></script>
+      <!-- Bootstrap -->
+      <script src="js/bootstrap.min.js"></script>
+      <!-- Waypoints -->
+      <script src="js/jquery.waypoints.min.js"></script>
+      <!-- Flexslider -->
+      <script src="js/jquery.flexslider-min.js"></script>
+      <!-- Owl carousel -->
+      <script src="js/owl.carousel.min.js"></script>
+      <!-- Counters -->
+      <script src="js/jquery.countTo.js"></script>
+
+      <!-- MAIN JS -->
+      <script src="js/main.js"></script>
+
+   </body>
+</html>

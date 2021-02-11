@@ -1,0 +1,16 @@
+# rita Script file to solve an ordinary differential equation
+# We numerically solve the ode:
+#     y'(t) = y(t)+exp(t),  y(0) = 0
+# whose solution is given by y(t) = t*exp(t)
+# We use for this the Heun scheme
+# Solution is compared to the analytical one
+#
+ode var=y def=y+exp(t) scheme=heun init=0. time-step=0.05
+solve
+  save frequency=2 format=gnuplot file=example1.dat
+  run
+#
+# We define the analytical solution of the ode to compute error
+  analytic definition=t*exp(t)
+  error
+exit

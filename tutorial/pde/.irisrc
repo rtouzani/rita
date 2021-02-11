@@ -1,0 +1,7 @@
+# Iris configuration file
+# 2021-02-02  21:16:22
+#
+verbosity 1
+save-results 1
+history-file iris.his
+log-file iris.log

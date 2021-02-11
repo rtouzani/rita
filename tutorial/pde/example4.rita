@@ -1,0 +1,24 @@
+# rita Script file to solve a 2-D elasticity problem
+# Space discretization: Q1 finite elements
+#
+# Generate mesh of a rectangle
+# We generate a uniform 40x20 mesh using native tools
+mesh
+  read mesh=ex4.m
+  end
+#
+# Define model: PDE and discretization method
+stationary
+pde linear-elasticity
+  field u
+  bc code=1 value=0.
+  sf code=1 value=-1000.
+  space feQ1
+  end
+
+# Solve problem and save solution in file
+solve
+  save  file=example4.pos
+  run
+  display
+exit

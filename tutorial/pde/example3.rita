@@ -1,0 +1,61 @@
+# rita Script file to solve the 2-D heat equation
+# Time discretization: Implicit Euler method
+# Space discretization: P1 finite elements
+#
+# Generate mesh of a domain with circular hole
+mesh
+  point  label=1  coord=-1.,-1. size=0.2
+  point  label=2  coord=1.,-1. size=0.2
+  point  label=3  coord=1.,1.   size=0.2
+  point  label=4  coord=-1.,1.  size=0.2
+  point  label=5  coord=-0.2,0. size=0.05
+  point  label=6  coord=0.2,0.  size=0.01
+  point  label=7  coord=0.,0.   size=0.01
+  curve  label=1  line=1,2
+  curve  label=2  line=2,3
+  curve  label=3  line=3,4
+  curve  label=4  line=4,1
+  curve  label=5  circle=5,6,7
+  curve  label=6  circle=6,5,7
+  contour  label=1  curves=1,2,3,4
+  contour  label=2  curves=5,6
+  surface  label=1  contours=1,2
+  code  value=1  points=1,2,3,4
+  code  value=2  points=5,6
+  code  value=1  curves=1,2,3,4
+  code  value=2  curves=5,6
+  code  value=10 surfaces=1
+  save  geo
+  generate
+  save  mesh=example3.m
+  end
+#
+# Set transient (time-dependent) analysis and give related parameters
+transient  final-time=1.  time-step=0.01  scheme=backward-euler
+#
+# Define PDE and discretization method
+# We want to solve the heat equation, using u as unknown we impose
+# appropriate Dirichlet boundary conditions: 0 on the external boundary and
+# 1 on the inner one (the circle)
+# We use the P1 finite element method for space discretization
+# Solution of the linear system is made by using the Conjugate Gradient method
+# coupled to the DILU preconditioner
+pde heat
+  field u
+  bc code=1 value=0.
+  bc code=2 value=1.
+  in value=0.
+  space feP1
+  ls cg dilu
+  end
+#
+# We output a summary of the problem to solve
+summary
+
+# Solve problem, output solution and save it in file
+# Note that we define saving parameters before running. This is necessary for transient problems
+# to make it possible to save while computing
+solve
+  save field=u file=example3.pos format=gmsh freq=2
+  run
+exit

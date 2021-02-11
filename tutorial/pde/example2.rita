@@ -1,0 +1,32 @@
+# rita Script file to solve a 2-D heat equation
+# Space discretization: P1 finite elements
+#
+# Generate mesh of a rectangle (0,3)x(0,1)
+# We generate a uniform 40x20 mesh using native tools
+# All boundary nodes have code 1
+mesh
+  rectangle min=0.,0. max=3.,1. codes=1  ne=40,20  save=example2.m
+  end
+#
+# We set stationary analysis (This is the default, so the following line is unnecessary)
+stationary
+#
+# We now declare the pde to solve: The Laplace equation,
+# The unknown is u
+# We next impose Dirichlet boundary conditions and a source term
+# Space discretization uses the P1 finite element method
+pde laplace
+  field u
+  bc code=1 value=sin(pi*x)*exp(y)
+  source value=(pi*pi-1)*sin(pi*x)*exp(y)
+  space feP1
+  end
+#
+# Solve problem, output solution and save it in file
+solve
+  save  file=example2.pos
+  run
+# Set analytical solution to compute error
+  analytic  definition=sin(pi*x)*exp(y)
+  error
+exit

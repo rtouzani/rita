@@ -1,0 +1,118 @@
+/*==============================================================================
+
+                                 r  i  t  a
+
+            An environment for Modelling and Numerical Simulation
+
+  ==============================================================================
+
+    Copyright (C) 2021 Rachid Touzani
+
+    This file is part of rita.
+
+    rita is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    rita is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+  ==============================================================================
+
+                        Definition of class 'mesh'
+
+  ==============================================================================*/
+
+#ifndef __RITA_MESH_H
+#define __RITA_MESH_H
+
+#include <fstream>
+#include <map>
+#include "mesh/Mesh.h"
+#include "mesh/Domain.h"
+#include "configure.h"
+
+using std::map;
+
+namespace RITA {
+
+class rita;
+class data;
+
+class mesh
+{
+
+ public:
+
+    mesh(rita *r, cmd* command, configure* config);
+    ~mesh();
+    int run();
+    void setVerbose(int verb) { _verb = verb; }
+    int ret() const { return _ret; }
+    void set(cmd* command) { _cmd = command; }
+    void set(OFELI::Mesh* ms) { _theMesh = ms; }
+    OFELI::Mesh* get() const { return _theMesh; }
+    void set(std::ofstream* ofl, std::ofstream* ofh) { _ofl = ofl; _ofh = ofh; }
+    OFELI::Mesh* getMesh() const { return _theMesh; }
+    void set(configure* config) { _configure = config; }
+
+ private:
+
+   struct Point { int n; double x, y, z, h; };
+   struct Entity { int nb; int type; vector<int> l; };
+   struct Subdomain { int ln, orientation, code; };
+
+   rita *_rita;
+   data *_data;
+   bool _saved, _generated, _geo;
+   int _verb, _dim, _nb_dof, _ret, _key, _generator;
+   OFELI::Mesh *_theMesh;
+   OFELI::Domain *_theDomain;
+   string _mesh_file;
+   typedef void (mesh::* MeshData_Ptr)();
+   static MeshData_Ptr MESH_DATA[20];
+   std::vector<string> _kw;
+   std::ofstream *_ofh, *_ofl;
+   int _nb_Ccontour, _nb_Scontour, _nb_Vcontour;
+   int _nb_sub_domain, _nb_point, _nb_curve, _nb_surface, _nb_volume;
+   Point _point;
+   Entity _curv;
+   Subdomain _sd;
+   map<int,Point> _points;
+   map<int,Entity> _curve, _surface, _volume;
+   map<int,Entity> _Ccontour, _Scontour, _Vcontour;
+   map<int,Entity> _Pcode, _Ccode, _Scode, _Vcode;
+   vector<Subdomain> _subdomains;
+   configure *_configure;
+   cmd *_cmd;
+
+   void List();
+   void getHelp();
+   void setConfigure();
+   void set1D();
+   void setRectangle();
+   void setCube();
+   void setPoint();
+   void setCurve();
+   void setSurface();
+   void setVolume();
+   void setLineContour();
+   void setContour();
+   void setSubDomain();
+   void setCode();
+   void saveDomain(const string& file);
+   void Generate();
+   void setNbDOF();
+   void Plot();
+   void Clear();
+   void Read();
+   void Save();
+   void saveGeo(const string& file);
+};
+
+} /* namespace RITA */
+
+#endif

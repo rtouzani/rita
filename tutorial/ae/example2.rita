@@ -1,0 +1,13 @@
+# rita Script file to solve the same equation as the previous example
+#
+# The difference here is that we first declare the function defining the
+# equation in the 'data' module
+#
+data
+  function name=f var=z def=z^2-2
+  end
+algebraic function=f init=1. nls=newton
+solve
+  run
+  display
+exit
