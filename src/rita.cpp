@@ -40,7 +40,6 @@
 #include "approximation.h"
 #include "help.h"
 #include "configure.h"
-#include "mesh/Mesh.h"
 
 using std::cout;
 using std::exception;
@@ -59,10 +58,10 @@ int main(int argc, char *argv[])
 {
    std::time_t t = std::time(0);
    std::tm* now = std::localtime(&t);
-   cout << "\n     R I T A     1.0.1\n";
+   cout << "\n     R I T A     1.0\n";
    cout << "     Last update " << (now->tm_year+1900) << '-' << (now->tm_mon+1)
         << '-' <<  now->tm_mday << "\n";
-   cout << "     Copyright (C) 2020 - 2021, Rachid Touzani\n\n";
+   cout << "     Copyright (C) 2021, Rachid Touzani\n\n";
    cout << "Type \"help\" or \"license\" for more information.\n" << endl;
    int ret = 0;
 
@@ -78,7 +77,7 @@ int main(int argc, char *argv[])
             return 0;
          }
          else if (string(argv[1])=="-v" || string(argv[1])=="--version") {
-            cout << "rita, Release 1.0.0" << endl;
+            cout << "rita, Release 1.0" << endl;
             return 0;
          }
          else if (argv[1][0]=='-') {
@@ -247,14 +246,14 @@ int rita::run()
 void rita::getLicense()
 {
    _cmd->setNbArg(0);
-   cout << "Copyright (C) 2020 - 2021, Rachid Touzani\n";
+   cout << "Copyright (C) 2021, Rachid Touzani\n";
    cout << "rita is free software: you can redistribute it and/or modify\n";
    cout << "it under the terms of the GNU General Public License as published by\n";
    cout << "the Free Software Foundation, either version 3 of the License, or\n";
    cout << "(at your option) any later version.\n\n";
    cout << "rita is distributed in the hope that it will be useful,\n";
    cout << "but WITHOUT ANY WARRANTY; without even the implied warranty of\n";
-   cout << "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n";
+   cout << "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n";
    cout << "GNU General Public License for more details." << endl;
 }
 

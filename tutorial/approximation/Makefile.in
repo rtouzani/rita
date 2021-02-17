@@ -510,7 +510,7 @@ uninstall-am: uninstall-dist_tutorialAPPROXDATA \
 
 
 clean-local:
-	-rm -f *.his *.log .ritarc.backup
+	-rm -f .rita.his .rita.log .rita.rc.backup
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -1739,6 +1739,8 @@ void mesh::setVolume()
    _ret = 0;
    _generator = 10;
    _nb_volume = 0;
+   cout << "Volume generation not implemented yet !" << endl;
+   *_ofl << "In rita>mesh>volume>: Volume generation not implemented yet." << endl;
 }
 
 

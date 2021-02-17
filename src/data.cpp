@@ -275,7 +275,6 @@ int data::run()
             cout << "field:      Define a field\n";
             cout << "tabulation: Define a tabulated function\n";
             cout << "function:   Define a function\n";
-            cout << "clear:      Clear prescribed data\n";
             cout << "summary:    Summary of prescribed data\n";
             cout << "end or <:   go back to higher level" << endl;
             break;
@@ -333,7 +332,7 @@ int data::run()
 
          default:
             cout << "Unknown Command: " << _cmd->token() << endl;
-            cout << "Available commands: grid, mesh, field, tabulation, function, clear, summary" << endl;
+            cout << "Available commands: grid, mesh, field, tabulation, function, summary" << endl;
             cout << "Global commands:    help, ?, set, <, end, quit, exit" << endl;
             *_ofl << "In rita>data>: Unknown Command " << _cmd->token() << endl;
             break;
@@ -345,17 +344,10 @@ int data::run()
 
 void data::getHelp()
 {
-   cout << "In module data you can introduce any general purpose data for a problem to solve.\n";
-   cout << "More specifically, you can define: initial conditions, Boundary conditions,\n";
-   cout << "Boundary (or surface) force conditions, source terms.\n";
-   cout << "For all these data, you can define corresponding vectors either:\n";
-   cout << "- By a constant value to assign to all vector entries\n";
-   cout << "- By an algebraic expression as a function of coordinates and time\n";
-   cout << "- By reading the vector from a given file." << endl << endl;
-   cout << "Available commands for this mode are:" << endl;
+   cout << "In command data, the following data can be defined:\n";
    cout << "field: Define a field (unknown)\n";
    cout << "function: Define a function\n";
-   cout << "clear: Clear all defined fields\n";
+   cout << "mesh: Clear all defined fields\n";
    cout << "summary: Display this summary\n\n";
    cout << "Global commands: \n";
    cout << "help or ?: Display this help\n";
@@ -382,8 +374,9 @@ int data::setGrid()
    vector<string> kw = {"name","min","max","ne"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
-   if (nb_args<0) {
+   if (nb_args<=0) {
       cout << "Error in command." << endl;
+      cout << "Available arguments: name, min, max, ne." << endl;
       *_ofl << "In rita>data>grid>: Error in command." << endl;
       return 1;
    }
@@ -490,7 +483,7 @@ int data::setField()
    vector<string> kw = {"name","size","mesh","grid","nbdof","type","uniform"};
    vector<string> types = {"size","nodes","elements","sides","edges"};
    map<string,dataSize> tt = {{"size",GIVEN_SIZE}, {"nodes",NODES}, {"elements",ELEMENTS},
-			      {"sides",SIDES}, {"edges",EDGES}};
+                              {"sides",SIDES}, {"edges",EDGES}};
    if (_rita->_theMesh!=nullptr)
       _theMesh = _rita->_theMesh;
    if (_default_field==1) {
@@ -499,8 +492,9 @@ int data::setField()
    }
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
-   if (nb_args<0) {
+   if (nb_args<=0) {
       cout << "Error in command." << endl;
+      cout << "Available arguments: name, size, mesh, grid, nbdof, type, uniform." << endl;
       *_ofl << "In rita>data>field>: Error in command." << endl;
       return 1;
    }
@@ -553,27 +547,29 @@ int data::setField()
 	    return 1;
       }
    }
-   int k = addField(name,tt[type],_size);
-   if (k==0) {
-      if (_verb>1) {
-         if (type=="size") 
-            cout << "New field: " << name << ", size: " << _size << endl;
-         else
-            cout << "New field: " << name << ", Nb. of DOF: " << _nb_dof << endl;
-         cout << "Total number of fields: " << _nb_fields << endl;
-      }
-      *_ofh << "  field  name=" << name;
-      if (_size)
-         *_ofh << " size=" << _size;
-      *_ofh << " type=" << type << "  nbdof=" << _nb_dof;
-      *_ofh << " min=" << umin << " max=" << umax;
-      nb_dof[_ifield] = _nb_dof;
+   if (nb_args>0) {
+      int k = addField(name,tt[type],_size);
+      if (k==0) {
+         if (_verb>1) {
+            if (type=="size") 
+               cout << "New field: " << name << ", size: " << _size << endl;
+            else
+               cout << "New field: " << name << ", Nb. of DOF: " << _nb_dof << endl;
+            cout << "Total number of fields: " << _nb_fields << endl;
+         }
+         *_ofh << "  field  name=" << name;
+         if (_size)
+            *_ofh << " size=" << _size;
+         *_ofh << " type=" << type << "  nbdof=" << _nb_dof;
+         *_ofh << " min=" << umin << " max=" << umax;
+         nb_dof[_ifield] = _nb_dof;
       /*      if (uniform==1) {
          cout << "Error: minimal and maximal values must be given for field." << endl;
          *_ofl << "In rita>data>field>: minimal and maximal values must be given for field." << endl;
 	 return 1;
 	 }*/
-      *_ofh << endl;
+         *_ofh << endl;
+      }
    }
    return 0;
 }

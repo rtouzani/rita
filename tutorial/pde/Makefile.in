@@ -514,7 +514,7 @@ uninstall-am: uninstall-dist_tutorialPDEDATA uninstall-tutorialPDEDATA
 
 
 clean-local:
-	-rm -f *.bamg *.dom rita.m *.geo *.pos *.vtk rita-1d.m example*.m *.msh *.sol *.log *.his .ritarc.backup
+	-rm -f *.bamg *.dom rita.m *.geo *.pos *.vtk rita-1d.m example*.m *.msh *.sol .rita.log .rita.his .rita.rc.backup
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

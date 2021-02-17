@@ -17,7 +17,7 @@
 
     rita is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
     GNU General Public License for more details.
 
   ==============================================================================
@@ -31,7 +31,7 @@
 namespace RITA {
 
 configure::configure(cmd *command)
-          : _verb(1), _save_results(1), _his_file("rita.his"), _log_file("rita.log"),
+          : _verb(1), _save_results(1), _his_file(".rita.his"), _log_file(".rita.log"),
             _cmd(command)
 {
    init();
@@ -46,7 +46,7 @@ configure::~configure()
 
 void configure::save()
 {
-   _ocf.open(".ritarc");
+   _ocf.open(".rita.rc");
    _ocf << "# rita configuration file" << endl;
    _ocf << "# " << currentDateTime() << "\n#\n";
    _ocf << "verbosity " << _verb << endl;
@@ -59,19 +59,17 @@ void configure::save()
 
 void configure::init()
 {
-   _icf.open(".ritarc");
+   _icf.open(".rita.rc");
    if (_icf.fail())
       _icf.close();
    else {
       read();
       _icf.close();
-      _ocf.open(".ritarc.backup");
+      _ocf.open(".rita.rc.backup");
       _ocf << "# rita configuration file" << endl;
       _ocf << "# " << currentDateTime() << "\n#\n";
       _ocf << "verbosity " << _verb << endl;
       _ocf << "save-results " << _save_results << endl;
-      _ocf << "history-file " << _his_file << endl;
-      _ocf << "log-file " << _log_file << endl;
       _ocf.close();
    }
    _ofl.open(_log_file);
@@ -86,157 +84,123 @@ void configure::init()
 int configure::read()
 {
    cmd com(_icf);
-   vector<string> kw;
-   kw.push_back("verbosity");
-   kw.push_back("save-results");
-   kw.push_back("history-file");
-   kw.push_back("log-file");
-   int key=0;
-   while (1) {
-      int ret = com.readline();
-      if (ret==-5)
-         return 0;
-      if (ret<0)
-         continue;
+   com.readline();
+   com.set(_kw);
+   int nb_args = com.getNbArgs();
+   if (nb_args < 0)
+      return 1;
 
-      switch (key=com.getKW(kw)) {
+   for (int i=0; i<nb_args; ++i) {
+      int n = com.getArg();
+      switch (n) {
 
          case 0:
-            if (com.setNbArg(1,"Missing verbosity parameter."))
-               return 0;
-            com.get(_verb);
+            _verb = com.int_token();
             break;
 
          case 1:
-            if (com.setNbArg(1,"Missing result saving parameter."))
-               return 0;
-            com.get(_save_results);
+            _save_results = com.int_token();
             break;
 
          case 2:
-            if (com.setNbArg(1,"Missing history file name."))
-               return 0;
-            com.get(_his_file);
+            _his_file = com.string_token();
             break;
 
          case 3:
-            if (com.setNbArg(1,"Missing log file name."))
-               return 0;
-            com.get(_log_file);
+            _log_file = com.string_token();
             break;
-
-         case -2:
-            break;
-
-         case -4:
-            return 1;
 
          default:
-            cout << "Unknown command in configuration file: " << com.token() << endl;
-            return 0;
-       }
+            cout << "Unknown Setting: " << com.token() << endl;
+            cout << "Available settings: verbosity, save-results, history, log" << endl;
+            _ofl << "In rita>set>: Unknown setting: " << com.token() << endl;
+            return 1;
+      }
    }
+   return 0;
 }
 
 
 int configure::run()
 {
-   int ret = 0;
-   string file, buffer;
+   bool verb_ok=false, hist_ok=false, log_ok=false, save_ok=false;
+   string hfile, lfile, buffer;
    ifstream is;
-   if (_cmd->setNbArg(2,"Give parameter to set.")) {
-      cout << "Available Settings:\n";
-      cout << "verbosity   : Give verbosity parameter\n";
-      cout << "save-results: Give results saving parameter\n";
-      cout << "history     : Give name of history file\n";
-      cout << "log         : Give name of log file" << endl;
-      return 0;
-   }
-   while (1) {
-      switch (_key=_cmd->getKW(_kw)) {
+   _cmd->set(_kw);
+   int nb_args = _cmd->getNbArgs();
+   if (nb_args < 0)
+      return 1;
+   for (int i=0; i<nb_args; ++i) {
+      int n = _cmd->getArg();
+      switch (n) {
 
          case 0:
+            _verb = _cmd->int_token();
+            verb_ok = true;
+            break;
+
          case 1:
-            cout << "\nAvailable Settings:\n";
-            cout << "verbosity   : Give verbosity parameter\n";
-            cout << "save-results: Give results saving parameter\n";
-            cout << "history     : Give name of history file\n";
-            cout << "log         : Give name of log file" << endl;
-            return 0;
+            _save_results = _cmd->int_token();
+            save_ok = true;
+            break;
 
          case 2:
-            if (_cmd->setNbArg(2,"Give new verbosity parameter.")) {
-               _ofl << "In rita>set>verbosity>: Missing verbosity value." << endl;
-               return 0;
-            }
-            ret = _cmd->get(_verb);
-            if (!ret)
-               _ofh << "set verbosity " << _verb << endl;
-            return 0;
+            hist_ok = true;
+            hfile = _his_file;
+            _his_file = _cmd->string_token();
+            break;
 
          case 3:
-            if (_cmd->setNbArg(2,"Give result saving parameter")) {
-               _ofl << "In rita>set>save-results>: Missing result saving parameter." << endl;
-               return 0;
-            }
-            ret = _cmd->get(_save_results);
-            if (!ret)
-               _ofh << "set save-results " << _save_results << endl;
-            return 0;
-
-         case 4:
-            if (_cmd->setNbArg(2,"Give name of history file")) {
-               _ofl << "In rita>set>history>: Missing name of history file." << endl;
-               return 0;
-            }
-            file = _his_file;
-            ret = _cmd->get(_his_file);
-            if (!ret)
-               _ofh << "set history " << _his_file << endl;
-            _ofh.close();
-            is.open(file);
-            _ofh.open(_his_file.c_str());
-            while (!is.eof()) {
-               getline(is,buffer);
-               _ofh << buffer << endl;
-            }
-            return 0;
-
-         case 5:
-            if (_cmd->setNbArg(2,"Give name of log file")) {
-               _ofl << "In rita>set>log>: Missing name of log file." << endl;
-               return 0;
-            }
-            file = _log_file;
-            ret = _cmd->get(_log_file);
-            if (!ret)
-               _ofh << "set log " << _log_file << endl;
-            _ofl.close();
-            is.open(file);
-            _ofl.open(_log_file.c_str());
-            while (!is.eof()) {
-               getline(is,buffer);
-               _ofl << buffer << endl;
-            }
-            return 0;
-
-         case 6:
-         case 7:
-            return 100;
-
-         case 8:
-            return 200;
-
-         case -2:
+            log_ok = true;
+            lfile = _log_file;
+            _log_file = _cmd->string_token();
             break;
 
          default:
             cout << "Unknown Setting: " << _cmd->token() << endl;
             cout << "Available settings: verbosity, save-results, history, log" << endl;
             _ofl << "In rita>set>: Unknown setting: " << _cmd->token() << endl;
-            return 0;
+            return 1;
        }
    }
+   if (nb_args>0) {
+      _ofh << "set";
+      if (verb_ok) {
+         if (_verb<0 || _verb>10) {
+            cout << "Error: Illegal value of verbosity: " << _verb << endl;
+            _ofl << "In rita>set>: Illegal value of verbosity: " << _verb << endl;
+            return 1;
+         }
+         _ofh << " verbosity=" << _verb;
+      }
+      if (save_ok) {
+         if (_save_results<0) {
+            cout << "Error: Illegal value of save: " << _save_results << endl;
+            _ofl << "In rita>set>: Illegal value of save: " << _save_results << endl;
+            return 1;
+         }
+	 _ofh << " save-results=" << _save_results;
+      }
+      if (hist_ok) {
+         _ofh.close();
+         is.open(hfile);
+         _ofh.open(_his_file.c_str());
+         while (!is.eof()) {
+            getline(is,buffer);
+            _ofh << buffer << endl;
+         }
+      }
+      if (log_ok) {
+         _ofl.close();
+         is.open(lfile);
+         _ofl.open(_log_file.c_str());
+         while (!is.eof()) {
+            getline(is,buffer);
+            _ofl << buffer << endl;
+         }
+      }
+   }
+   return 0;
 }
 
 } /* namespace RITA */

@@ -14,5 +14,5 @@ dist_tutorialODE_DATA = README \
                         example3.rita
 
 clean-local:
-	-rm -f *.dat *.sol *.log *.his .ritarc.backup
+	-rm -f *.dat *.sol .rita.log .rita.his .rita.rc.backup
 

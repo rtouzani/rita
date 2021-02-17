@@ -78,8 +78,7 @@ class configure
     string _his_file, _log_file;
     ofstream _ofh, _ofl, _ocf;
     ifstream _icf;
-    const vector<string> _kw = {"help","?","verb$osity","save$-results","hist$ory","log",
-                                "quit","exit","EXIT"};
+    const vector<string> _kw = {"verbo$sity","save$-results","history$-file","log$-file"};
     cmd *_cmd;
 };
 

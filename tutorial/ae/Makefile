@@ -510,7 +510,7 @@ uninstall-am: uninstall-dist_tutorialODEDATA uninstall-tutorialODEDATA
 
 
 clean-local:
-	-rm -f *.dat *.sol *.log *.his .ritarc.backup
+	-rm -f *.dat *.sol .rita.log .rita.his .rita.rc.backup
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
