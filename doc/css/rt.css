@@ -161,8 +161,8 @@ text li {
 span.text { font-size: 10 pt; color:#000000 }
 span.emtext { font-size: 10 pt; color:blue }
 span.kw { font-size: 10 pt; font-weight: bold; color: #660033 }
-span.var { font-size: 10 pt; color:#3498db }
-span.vvar { font-size: 10 pt; color:#3498db; font-weight: bold }
+span.var { font-size: 10 pt; color:#922b21 }
+span.vvar { font-size: 10 pt; color:#922b21; font-weight: bold }
 span.logo { font-size: 10 pt; color:#7d3c98; font-weight: bold }
 
 #navone li {

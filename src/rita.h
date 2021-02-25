@@ -214,13 +214,13 @@ class rita
                                       {"cg",OFELI::CG_SOLVER},
                                       {"cgs",OFELI::CGS_SOLVER},
                                       {"bicg",OFELI::BICG_SOLVER},
-                                      {"bicg_stab",OFELI::BICG_STAB_SOLVER},
+                                      {"bicg-stab",OFELI::BICG_STAB_SOLVER},
                                       {"gmres",OFELI::GMRES_SOLVER}};
    map<OFELI::Iteration,string> rLs = {{OFELI::DIRECT_SOLVER,"direct"},
                                        {OFELI::CG_SOLVER,"cg"},
                                        {OFELI::CGS_SOLVER,"cgs"},
                                        {OFELI::BICG_SOLVER,"bicg"},
-                                       {OFELI::BICG_STAB_SOLVER,"bicg_stab"},
+                                       {OFELI::BICG_STAB_SOLVER,"bicg-stab"},
                                        {OFELI::GMRES_SOLVER,"gmres"}};
    map<std::string,NonLinearIter> NLs = {{"bisection",BISECTION},
                                          {"regula-falsi",REGULA_FALSI},

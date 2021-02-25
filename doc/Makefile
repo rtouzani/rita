@@ -323,11 +323,9 @@ top_srcdir = ..
 MAINTAINERCLEANFILES = Makefile.in
 SUBDIRS = css fonts images js sass
 doc_DATA = index.html\
-           mesh.html\
            prepros-6.config
 
 dist_doc_DATA = index.html\
-                mesh.html\
                 prepros-6.config
 
 all: all-recursive

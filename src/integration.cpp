@@ -51,19 +51,33 @@ int integration::run()
    int count_fct=0, count_def=0, count_field=0;
    int nb=0, ind=0, ifield=0;
    nx = ny = nz = 10;
-   int d1=0, d2=0, d3=0;
    xmin = ymin = zmin = 0.;
    xmax = ymax = zmax = 1.;
    dim = 1;
    unif = 1;
    ng = 1;
-   _disp = 0;
    var.clear();
    data *theData = _rita->_data;
-   static const vector<string> kw = {"help","?","set","func$tion","def$inition","var$iable","field","min","max",
-                                     "ne","form$ula","disp$lay","end","<","quit","exit"};
+   static const string H = "Command: integration [function=f] [definition=exp] [interval=min,max] [variable=x] [ne=nx]\n"
+                           "                     [formula=f] [display]\n\n"
+                           "f: Name of already defined function to integrate\n"
+                           "exp: Expression defining function to integrate\n"
+                           "x: name of variable\n"
+                           "min, max: Integration is made on the interval (min,max)\n"
+                           "ne: Number of subdivisions of the interval\n"
+                           "m: Numerical integration formula. To choose among the values: left-rectangle,\n"
+                           "   right-rectangle, mid-point, trapezoidal, simpson, gauss-legendre, gauss-lobatto.\n"
+	                   "   For the Gauss formulae, the number of points can be specified by typing \n"
+ 	                   "   gauss-legendre,2 for instance.";
+   static const vector<string> kw = {"help","?","set","func$tion","def$inition","var$iable","field","interval",
+                                     "ne","form$ula","end","<","quit","exit"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
+   if (nb_args==0) {
+      cout << "Error: No argument for command." << H << endl;
+      *_ofl << "In rita>integration>: No argument for command." << endl;
+      return 1;
+   }
    if (nb_args<1) {
       cout << "Error: No argument for command." << endl;
       *_ofl << "In rita>integration>: No argument for command." << endl;
@@ -78,6 +92,11 @@ int integration::run()
          return 1;
       }
       switch (n) {
+
+         case 0:
+         case 1:
+            cout << H << endl;
+            return 0;
 
          case 3:
             fct = _cmd->string_token(0);
@@ -96,40 +115,14 @@ int integration::run()
             break;
 
          case 7:
-            d1 = nb;
             xmin = _cmd->double_token(0);
-            if (d1>1)
-               ymin = _cmd->double_token(1);
-            if (d1>2)
-               zmin = _cmd->double_token(2);
+            xmax = _cmd->double_token(1);
             break;
 
          case 8:
-            d2 = nb;
-            xmax = _cmd->double_token(0);
-            if (d2>1)
-               ymax = _cmd->double_token(1);
-            if (d2>2)
-               zmax = _cmd->double_token(2);
-            break;
-
-         case 9:
-            d3 = nb;
-            nx = _cmd->int_token(0);
-            if (d3>1)
-               ny = _cmd->int_token(1);
-            if (d3>2)
-               nz = _cmd->int_token(2);
-            break;
-
-         case 10:
             form = _cmd->string_token(0);
 	    if (nb>1)
                ng = _cmd->int_token(1);
-            break;
-
-         case 11:
-            _disp++;
             break;
 
          default:
@@ -140,18 +133,6 @@ int integration::run()
    }
 
    if (nb_args>0) {
-      if (d1!=d2) {
-         cout << "Error: Inconsistent dimension." << endl;
-         *_ofl << "In rita>integration>: Inconsistent dimension." << endl;
-         return 1;
-      }
-      if (d1!=0)
-         dim = d1;
-      if (!count_def && !count_fct) {
-         cout << "Error: Missing function." << endl;
-         *_ofl << "In rita>integration>: Missing function." << endl;
-         return 1;
-      }
       if (count_fct && count_field) {
          cout << "Error: Function already defined in data module." << endl;
          *_ofl << "In rita>integration>: Function already defined in data module." << endl;
@@ -174,17 +155,7 @@ int integration::run()
       }
       *_ofh << "integration";
       if (dim==1)
-         *_ofh << " min=" << xmin << " max=" << xmax << " ne=" << nx;
-      else if (dim==2) {
-         *_ofh << " min=" << xmin << "," << ymin;
-         *_ofh << " max=" << xmax << "," << ymax;
-         *_ofh << " ne=" << nx << "," << ny;
-      }
-      else if (dim==3) {
-         *_ofh << " min=" << xmin << "," << ymin << "," << zmin;
-         *_ofh << " max=" << xmax << "," << ymax << "," << zmax;
-         *_ofh << " ne=" << nx << "," << ny << "," << nz;
-      }
+         *_ofh << " interval=" << xmin << "," << xmax << " ne=" << nx;
       if (count_fct) {
          ind = theData->checkFct(fct);
          if (ind==-1) {
@@ -212,8 +183,6 @@ int integration::run()
       *_ofh << " formula=" << form;
       if (nim==GAUSS_LEGENDRE || nim==GAUSS_LOBATTO)
          *_ofh << "," << ng;
-      if (_disp)
-         *_ofh << " disp";
       *_ofh << endl;
    }
    return 0;
@@ -286,8 +255,7 @@ int integration::go()
          }
       }
    }
-   if (_disp)
-      cout << "Approximate Integral: " << res << endl;
+   cout << "Approximate Integral: " << res << endl;
    return 0;
 }
 

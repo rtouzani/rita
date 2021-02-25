@@ -69,7 +69,6 @@ class integration
     std::ofstream *_ofh, *_ofl;
     configure *_configure;
     cmd *_cmd;
-    int _disp;
     vector<double> _x, _y, _z;
     Fct *IFct;
     map<string,integration_formula> Nint = {{"left-rectangle",LRECTANGLE},

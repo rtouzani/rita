@@ -362,14 +362,40 @@ void rita::setTransient()
    _adapted_time_step = 0;
    double it=_init_time, ft=_final_time, ts=_time_step;
    _ret = 0;
+   static const string H = "transient [initial-time=it] [final-time=ft] [time-step=ts]  [scheme=s] [adapted]\n\n"
+                           "it: Initial value of time. Default value is 0.\n"
+                           "ft: Final (maximal) value of time. Default value is 1.\n"
+                           "ts: Time step value. Default value is 0.1.\n"
+                           "s: Time integration scheme. This is a string to choose among the values: forward-euler,\n"
+                           "   backward-euler, crank-nicolson, heun, newmark, leap-frog, AB2 (Adams-Bashforth, 2nd Order),\n"
+                           "   RK4 (Runge-Kutta, 4th Order), RK3-TVD (Runge-Kutta, 3rd order, TVD), BDF2 (Backward Difference\n"
+                           "   Formula, 2nd Order), builtin (Any scheme built in the chosen PDE). The default value for this\n"
+                           "   argument is backward-euler\n"
+                           "adapted: Toggle meaning that adaptive time stepping is chosen.\n";
    const vector<string> kw_scheme = {"forward-euler","backward-euler","crank-nicolson","heun","newmark",
                                      "leap-frog","AB2","RK4","RK3-TVD","BDF2","builtin"};
    const vector<string> kw = {"help","?","set","initial$-time","final$-time","time$-step","adapted",
                               "scheme","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    _nb_args = _cmd->getNbArgs();
+   if (_nb_args==0) {
+      cout << "Error: No argument for command." << H << endl;
+      *_ofl << "In rita>transient>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
+   if (_nb_args<1) {
+      cout << "Error: No valid argument for command." << endl;
+      *_ofl << "In rita>transient>: No valid argument for command." << endl;
+      _ret = 1;
+   }
    for (int k=0; k<_nb_args; ++k) {
       switch (_cmd->getArg()) {
+
+         case 0:
+         case 1:
+            cout << H << endl;
+            _ret = 0;
 
          case 3:
             it = _cmd->double_token();
@@ -697,7 +723,7 @@ int rita::setSpaceDiscretization(string& sp)
       *_ofl << "In rita>equation>pde>space>: Missing space discretization method." << endl;
       return 1;
    }
-   const vector<string> kw = {"fd","feP1","feP2","feQ1","fv"};
+   const static vector<string> kw = {"fd","feP1","feP2","feQ1","fv"};
    _ret = _cmd->get(kw,sp);
    if (_ret<0) {
       cout << "Unknown space discretization method.\n";

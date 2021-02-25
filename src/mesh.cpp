@@ -185,13 +185,40 @@ void mesh::set1D()
    _mesh_file = "rita-1d.m";
    _saved = false;
    _ret = 0;
+   const static string H = "1d [domain=m,M] [ne=n] [codes=c1,c2] [nbdof=d] [save=file]\n"
+                           "m, M: Extremal coordinates of interval ends. The default values are 0., 1.\n"
+                           "n: Number of elements in the interval. Its default value is 10.\n"
+                           "c1, c2: Codes associated to the first and the last node. These integer values\n"
+                           "        are necessary to enforce boundary conditions. A code 0 (Default value) means\n"
+                           "        no condition to prescribe.\n"
+                           "d: Number of degrees of freedom associated to any generated node. Default value is 1.\n"
+                           "file: Name of the file where the generated mesh will be stored. By default the mesh \n"
+                           "      remains in memory but is not saved in file.";
    const vector<string> kw = {"help","?","set","domain","ne","codes","nbdof","save","end",
                               "<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
+   if (nb_args==0) {
+      cout << "Error: No argument for command.\n\n" << H << endl;
+      *_ofl << "In rita>mesh>1d>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
+   if (nb_args<1) {
+      cout << "Error: No argument for command." << endl;
+      *_ofl << "In rita>mesh>1d>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
    for (int i=0; i<nb_args; ++i) {
       int n = _cmd->getArgs(nb);
       switch (n) {
+
+         case 0:
+         case 1:
+            cout << H << endl;
+            _ret = 1;
+            return;
 
          case 3:
             if (nb==1)
@@ -437,14 +464,47 @@ void mesh::setRectangle()
    _dim = 2;
    _ret = 0;
    _saved = false;
+   const static string H = "rectangle [min=mx,my] [max=Mx,My] [ne=nx,ny]  [codes=c1,c2,c3,c4]\n"
+                           "          [nbdof=d] [save=file]\n"
+                           "mx, my: coordinates of the lower left corner of the rectangle.\n"
+                           "        The default values are 0., 0.\n"
+                           "Mx, My: Coordinates of the upper right corner of the rectangle.\n"
+                           "        The default values are 1., 1.\n"
+                           "nx, ny: Number of elements in x and y direction respectively.\n"
+                           "        Their default value is 10.\n"
+                           "c1, c2, c3, c4: Codes associated to the nodes generated on the lines y=my,\n"
+                           "                x=Mx, y=My, x=mx respectively. These integer values are necessary\n"
+                           "                to enforce boundary conditions. A code 0 (Default value) means no\n"
+                           "                condition to prescribe.\n"
+                           "d: Number of degrees of freedom associated to any generated node. Default value is 1.\n"
+                           "file: Name of the file where the generated mesh will be stored. By default the mesh\n"
+                           "      remains in memory but is not saved in file.";
    _mesh_file = "rita-rectangle.m";
    const vector<string> kw = {"help","?","set","min","max","ne","codes","nbdof","save","end","<",
                               "quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
+   if (nb_args==0) {
+      cout << "Error: No argument for command.\n\n" << H << endl;
+      *_ofl << "In rita>mesh>rectangle>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
+   if (nb_args<1) {
+      cout << "Error: No argument for command." << endl;
+      *_ofl << "In rita>mesh>rectangle>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
    for (int i=0; i<nb_args; ++i) {
       int n = _cmd->getArgs(nb);
       switch (n) {
+
+         case  0:
+         case  1:
+            cout << H << endl;
+            _ret = 1;
+            return;
 
          case  3:
             if (nb==1)
@@ -737,6 +797,22 @@ void mesh::setCube()
    int nb=0, ret=0, nx=10, ny=10, nz=10, cxmin=0, cxmax=0, cymin=0, cymax=0, czmin=0, czmax=0;
    _nb_dof = 1;
    _dim = 3;
+   const static string H = "cube [min=mx,my,mz] [max=Mx,My,Mz] [ne=nx,ny,nz]  [codes=cxm,cxM,cym,cyM,czm,czMs]\n"
+                           "     [nbdof=d] [save=file]\n"
+                           "mx, my, mz: Minimal coordinates in each direction.\n"
+                           "            The default values are 0., 0., 0.\n"
+                           "Mx, My, Mz: Maximal coordinates in each direction.\n"
+                           "            The default values are 1., 1.,1.\n"
+                           "nx, ny, nz: Number of elements in x, y and z direction respectively.\n"
+                           "            Their default value is 10.\n"
+                           "cxm, cxM, cym, cyM, czm, czM: Codes associated to the nodes generated on the face x=mx\n" 
+                                                          "x=Mx, y=my, y=My, z=mz, z=Mz respectively.\n"
+                                                          "These integer values are necessary to enforce boundary\n"
+                                                          "conditions. A code 0 (Default value) means no condition to\n" 
+                                                          "prescribe.\n"
+                           "d: Number of degrees of freedom associated to any generated node. Default value is 1.\n"
+                           "file: Name of the file where the generated mesh will be stored. By default the mesh\n"
+                           "      remains in memory but is not saved in file.";
    *_ofh << "  cube" << endl;
    _saved = false;
    _ret = 0;
@@ -751,9 +827,27 @@ void mesh::setCube()
 
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
+   if (nb_args==0) {
+      cout << "Error: No argument for command.\n\n" << H << endl;
+      *_ofl << "In rita>mesh>cube>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
+   if (nb_args<1) {
+      cout << "Error: No argument for command." << endl;
+      *_ofl << "In rita>mesh>cube>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
    for (int i=0; i<nb_args; ++i) {
       int n = _cmd->getArgs(nb);
       switch (n) {
+
+         case  0:
+         case  1:
+            cout << H << endl;
+            _ret = 0;
+           return;   
 
          case  3:
             if (nb==1)
@@ -1039,6 +1133,12 @@ void mesh::setCode()
    int nb=0, c=0, np=0, nc=0, ns=0, nv=0;
    int c_ok=0, points_ok=0, curves_ok=0, surfaces_ok=0, volumes_ok=0;
    vector<int> points, curves, surfaces, volumes;
+   const static string H = "code value=v [points=p1,p2,...] [curves=c1,c2,...]  [surfaces=s1,s2,...] [volumes=v1,v2,...]\n\n"
+                           "v: Code value (integer) to assign to an entity\n"
+                           "p1, p2, ...: Points to which the code v is assigned\n"
+                           "c1, c2, ...: Curves to which the code v is assigned\n"
+                           "s1, s2, ...: Surfaces to which the code v is assigned\n"
+                           "v1, v2, ...: Volumes to which the code v is assigned.";
    _ret = 0;
    if (_generator>0 && _generator<4) {
       cout << "Error: This keyword is not allowed for generated mesh." << endl;
@@ -1055,10 +1155,28 @@ void mesh::setCode()
                               "end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
+   if (nb_args==0) {
+      cout << "Error: No argument for command.\n\n" << H << endl;
+      *_ofl << "In rita>mesh>codes>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
+   if (nb_args<1) {
+      cout << "Error: No argument for command." << endl;
+      *_ofl << "In rita>mesh>codes>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
    for (int i=0; i<nb_args; ++i) {
       int n = _cmd->getArgs(nb);
       switch (n) {
 
+         case 0:
+         case 1:
+            cout << H << endl;
+            _ret = 1;
+            return;
+  
          case 3:
             c = _cmd->int_token(0);
             if (c<0)
@@ -1170,11 +1288,34 @@ void mesh::setPoint()
    }
    it++;
    const vector<string> kw = {"help","?","set","label","n","coord","size","end","<","quit","exit","EXIT"};
+   const static string H = "point label=n coord=x,y,z size=h\n"
+                           "n: Point's label\n"
+                           "x, y, z: Point coordinates. If y and/or z are not given, their value is set to 0?.\n"
+                           "This can be the case for 1-D and 2-D.\n"
+                           "h: Mesh size around the point.";
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
+   if (nb_args==0) {
+      cout << "Error: No argument for command.\n\n" << H << endl;
+      *_ofl << "In rita>mesh>point>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
+   if (nb_args<1) {
+      cout << "Error: No argument for command." << endl;
+      *_ofl << "In rita>mesh>point>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
    for (int i=0; i<nb_args; ++i) {
       int n = _cmd->getArgs(nb);
       switch (n) {
+
+         case 0:
+         case 1:
+            cout << H << endl;
+            _ret = 0;
+            return;
 
          case 3:
          case 4:
@@ -1289,6 +1430,12 @@ void mesh::setCurve()
    int nb=0, n1=0, n2=0, n3=0;
    bool n_ok=false, line_ok=false, circle_ok=false, del_ok=false;
    _ret = 0;
+   const static string H = "curve label=n [line=n1,n2] [circle=n1,n2,n3]\n\n"
+                           "n: Curve's label\n"
+                           "n1, n2: Labels of points defining a line\n"
+                           "n1, n2, n3: Labels of points defining a circular arc, n1 and n2 are the two \n"
+                           "            points defining the extremities of the arc and n3 is the point defining\n"
+                           "            the center of the circular arc.";
    if (_generator>0 && _generator<=3) {
       if (_generator==1) {
          cout << "Error: A 1-D mesh has already been generated.\n"
@@ -1310,9 +1457,27 @@ void mesh::setCurve()
    const vector<string> kw = {"help","?","set","label","n","line","circle","del$ete","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
+   if (nb_args==0) {
+      cout << "Error: No argument for command.\n\n" << H << endl;
+      *_ofl << "In rita>mesh>curve>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
+   if (nb_args<1) {
+      cout << "Error: No argument for command." << endl;
+      *_ofl << "In rita>mesh>curve>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
    for (int i=0; i<nb_args; ++i) {
       int n = _cmd->getArgs(nb);
       switch (n) {
+
+         case 0:
+         case 1:
+            cout << H << endl;
+            _ret = 0;
+            return;
 
          case 3:
          case 4:
@@ -1453,6 +1618,9 @@ void mesh::setContour()
    int nb=0, nn=0, s=1, n1=0, n2=0;
    vector<int> curv, surf;
    int n_ok=0, curves_ok=0, surfaces_ok=0, del_ok=0;
+   const static string H = "contour label=n curve=c1,c2,...\n\n"
+                           "n: Contour's label\n"
+                           "c1, c2, ...: Labels of curves defining the contour";
    _ret = 0;
    if (_generator>0 && _generator<=3) {
       if (_generator==1) {
@@ -1475,9 +1643,27 @@ void mesh::setContour()
    const vector<string> kw = {"help","?","set","label","n","curv$es","surf$aces","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
+   if (nb_args==0) {
+      cout << "Error: No argument for command.\n\n" << H << endl;
+      *_ofl << "In rita>mesh>contour>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
+   if (nb_args<1) {
+      cout << "Error: No argument for command." << endl;
+      *_ofl << "In rita>mesh>contour>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
    for (int i=0; i<nb_args; ++i) {
       int n = _cmd->getArgs(nb);
       switch (n) {
+
+         case 0:
+         case 1:
+            cout << H << endl;
+            _ret = 0;
+            return;
 
          case 3:
          case 4:
@@ -1635,6 +1821,9 @@ void mesh::setSurface()
    int nb=0, n=_surface.size()+1;
    bool n_ok=false, cont_ok=false, del_ok=false;
    vector<int> cont;
+   const static string H = "surface label=n contours=c1,c2,...\n"
+                           "n: Surface's label\n"
+                           "c1, c2, ...: Labels of contours defining the surface.";
    _ret = 0;
    if (_generator>0 && _generator<=3) {
       if (_generator==1) {
@@ -1657,9 +1846,27 @@ void mesh::setSurface()
    const vector<string> kw = {"help","?","set","label","n","contours","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
+   if (nb_args==0) {
+      cout << "Error: No argument for command.\n\n" << H << endl;
+      *_ofl << "In rita>mesh>surface>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
+   if (nb_args<1) {
+      cout << "Error: No argument for command." << endl;
+      *_ofl << "In rita>mesh>surface>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
    for (int i=0; i<nb_args; ++i) {
       int n = _cmd->getArgs(nb);
       switch (n) {
+
+         case 0:
+         case 1:
+            cout << H << endl;
+            _ret = 0;
+            return;
 
          case 3:
          case 4:

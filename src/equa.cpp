@@ -898,73 +898,96 @@ int equa::setEq()
 void equa::setCoef()
 {
    int ret = 0, key = 0;
-   const vector<string> kw_coef = {"density","specific-heat","thermal-conductivity","magnetic-permeability",
-                                   "electric-conductivity","viscosity","electric-permittivity","angular-frequency",
-                                   "thermal-dilatation","velocity","young","poisson"};
-   const vector<string> kw_pde_coef = {"help","?","set","rho","Cp","kappa","mu","sigma","Mu","epsilon",
-                                       "omega","beta","v","young","poisson","<","quit","exit","EXIT"};
-   _cmd->set(kw_coef);
+   static const string H = "Command: coef [rho=x] [Cp=x] [kappa=x] [Mu=x] [sigma=x] [mu=x] [epsilon=x] [omega=x]\n"
+                           "              [beta=x] [v=x] [young=x] [poisson=x]\n\n";
+   const static vector<string> kw = {"help","?","set","rho","density","Cp","specific-heat","kappa","thermal-conductivity",
+                                     "Mu","magnetic-permeability","sigma","electric-conductivity","mu","viscosity","epsilon",
+                                     "electric-permittivity","omega","angular-frequency","beta","thermal-dilatation","v",
+                                     "velocity","young","poisson","<","quit","exit","EXIT"};
+   _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
+   if (nb_args==0) {
+      cout << "Error: No argument for command." << H << endl;
+      *_ofl << "In rita>pde>coef>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
+   if (nb_args<1) {
+      cout << "Error: No argument for command." << endl;
+      *_ofl << "In rita>pde>coef>: No argument for command." << endl;
+      _ret = 1;
+      return;
+   }
    for (int i=0; i<nb_args; ++i) {
       int n = _cmd->getArg();
       switch (n) {
 
-         case  0:
+         case  3:
+         case  4:
             _rho_exp = _cmd->string_token();
             _rho_set = true;
             break;
 
-         case  1:
+         case  5:
+         case  6:
             _Cp_exp = _cmd->string_token();
             _Cp_set = true;
             break;
 
-         case  2:
+         case  7:
+         case  8:
             _kappa_exp = _cmd->string_token();
             _kappa_set = true;
             break;
 
-         case  3:
-            _mu_exp = _cmd->string_token();
-            _mu_set = true;
-            break;
-
-         case  4:
-            _sigma_exp = _cmd->string_token();
-            _sigma_set = true;
-            break;
-
-         case  5:
+         case  9:
+         case 10:
             _Mu_exp = _cmd->string_token();
             _Mu_set = true;
             break;
 
-         case  6:
+         case 11:
+         case 12:
+            _sigma_exp = _cmd->string_token();
+            _sigma_set = true;
+            break;
+
+         case 13:
+         case 14:
+            _mu_exp = _cmd->string_token();
+            _mu_set = true;
+            break;
+
+         case 15:
+         case 16:
             _epsilon_exp = _cmd->string_token();
             _epsilon_set = true;
             break;
 
-         case  7:
+         case 17:
+         case 18:
             _omega_exp = _cmd->string_token();
             _omega_set = true;
             break;
 
-         case  8:
+         case 19:
+         case 20:
             _beta_exp = _cmd->string_token();
             _beta_set = true;
             break;
 
-         case  9:
+         case 21:
+         case 22:
             _v_exp = _cmd->string_token();
             _v_set = true;
             break;
 
-         case 10:
+         case 23:
             _young_exp = _cmd->string_token();
             _young_set = true;
             break;
 
-         case 11:
+         case 24:
             _poisson_exp = _cmd->string_token();
             _poisson_set = true;
             break;
@@ -1074,15 +1097,15 @@ void equa::setCoef()
          }
       }
    }
-
+   /*
    else {
       while (1) {
          if (_cmd->readline("rita>pde>coef> ")<0)
             continue;
-         switch (key=_cmd->getKW(kw_pde_coef)) {
+         switch (key=_cmd->getKW(kw)) {
 
-            case 0:
-            case 1:
+            case  0:
+            case  1:
                _cmd->setNbArg(0);
                cout << "\nAvailable Commands:\n";
                cout << "rho:      Density\n";
@@ -1100,11 +1123,12 @@ void equa::setCoef()
                cout << "end or <: go back to higher level" << endl;
                break;
 
-            case 2:
+            case  2:
                _rita->setConfigure();
                break;
 
-            case 3:
+            case  3:
+            case  4:
                if (ieq!=HEAT && ieq!=INCOMPRESSIBLE_NAVIER_STOKES && ieq!=COMPRESSIBLE_NAVIER_STOKES) {
                   cout << "Error: This PDE doesn't need density input" << endl;
                   *_ofl << "In rita>pde>coef>rho>: This PDE doesn't need density input" << endl;
@@ -1121,7 +1145,8 @@ void equa::setCoef()
 	       }
                break;
 
-            case 4:
+            case  5:
+            case  6:
                if (ieq!=HEAT && ieq!=COMPRESSIBLE_NAVIER_STOKES) {
                   cout << "Error: This PDE doesn't need specific heat input" << endl;
                   *_ofl << "In rita>pde>coef>Cp>: This PDE doesn't need specific heat input" << endl;
@@ -1136,7 +1161,8 @@ void equa::setCoef()
                   *_ofh << "    Cp " << _Cp_exp << endl;
                break;
 
-            case 5:
+            case  7:
+            case  8:
                if (ieq!=HEAT && ieq!=COMPRESSIBLE_NAVIER_STOKES) {
                   cout << "Error: This PDE doesn't need thermal conductivity input" << endl;
                   *_ofl << "In rita>pde>coef>kappa>: This PDE doesn't need thermal conductivity input" << endl;
@@ -1153,7 +1179,8 @@ void equa::setCoef()
                }
                break;
 
-            case 6:
+            case  9:
+            case 10:
                if (ieq!=INCOMPRESSIBLE_NAVIER_STOKES && ieq!=COMPRESSIBLE_NAVIER_STOKES) {
                   cout << "Error: This PDE doesn't need viscosity input" << endl;
                   *_ofl << "In rita>pde>coef>mu>: This PDE doesn't need viscosity input" << endl;
@@ -1170,172 +1197,178 @@ void equa::setCoef()
                }
                break;
 
-         case 7:
-            if (ieq!=EDDY_CURRENTS && ieq!=MAXWELL && ieq!=HELMHOLTZ) {
-               cout << "Error: This PDE doesn't need electric conductivity input" << endl;
-               *_ofl << "In rita>pde>coef>sigma>: This PDE doesn't need viscosity input" << endl;
+            case 11:
+            case 12:
+               if (ieq!=EDDY_CURRENTS && ieq!=MAXWELL && ieq!=HELMHOLTZ) {
+                  cout << "Error: This PDE doesn't need electric conductivity input" << endl;
+                  *_ofl << "In rita>pde>coef>sigma>: This PDE doesn't need viscosity input" << endl;
+                  break;
+               }
+               if (_cmd->setNbArg(1,"Give regular expression for electric conductivity as function of x,y,z,t.")) {
+                  *_ofl << "In rita>pde>coef>sigma>: Missing regular expression for electric conductivity" << endl;
+                  break;
+               }
+               ret = _cmd->get(_sigma_exp);
+               if (!ret) {
+                  *_ofh << "    sigma " << _sigma_exp << endl;
+                  _sigma_set = true;
+               }
                break;
-            }
-            if (_cmd->setNbArg(1,"Give regular expression for electric conductivity as function of x,y,z,t.")) {
-               *_ofl << "In rita>pde>coef>sigma>: Missing regular expression for electric conductivity" << endl;
-               break;
-            }
-            ret = _cmd->get(_sigma_exp);
-            if (!ret) {
-               *_ofh << "    sigma " << _sigma_exp << endl;
-               _sigma_set = true;
-            }
-            break;
 
-         case 8:
-            if (ieq!=EDDY_CURRENTS && ieq!=MAXWELL && ieq!=HELMHOLTZ) {
-               cout << "Error: This PDE doesn't need magnetic permeability input" << endl;
-               *_ofl << "In rita>pde>coef>Mu>: This PDE doesn't need viscosity input" << endl;
+            case 13:
+            case 14:
+               if (ieq!=EDDY_CURRENTS && ieq!=MAXWELL && ieq!=HELMHOLTZ) {
+                  cout << "Error: This PDE doesn't need magnetic permeability input" << endl;
+                  *_ofl << "In rita>pde>coef>Mu>: This PDE doesn't need viscosity input" << endl;
+                  break;
+               }
+               if (_cmd->setNbArg(1,"Give regular expression for magnetic permeability as function of x,y,z,t.")) {
+                  *_ofl << "In rita>pde>coef>Mu>: Missing regular expression for magnetic permeability" << endl;
+                  break;
+               }
+               ret = _cmd->get(_Mu_exp);
+               if (!ret) {
+                  *_ofh << "    Mu " << _Mu_exp << endl;
+                  _Mu_set = true;
+               }
                break;
-            }
-            if (_cmd->setNbArg(1,"Give regular expression for magnetic permeability as function of x,y,z,t.")) {
-               *_ofl << "In rita>pde>coef>Mu>: Missing regular expression for magnetic permeability" << endl;
-               break;
-            }
-            ret = _cmd->get(_Mu_exp);
-            if (!ret) {
-               *_ofh << "    Mu " << _Mu_exp << endl;
-               _Mu_set = true;
-            }
-            break;
 
-         case 9:
-            if (ieq!=MAXWELL && ieq!=HELMHOLTZ) {
-               cout << "Error: This PDE doesn't need electric permittivity input" << endl;
-               *_ofl << "In rita>pde>coef>epsilon>: This PDE doesn't need electric permittivity input" << endl;
+            case 15:
+            case 16:
+               if (ieq!=MAXWELL && ieq!=HELMHOLTZ) {
+                  cout << "Error: This PDE doesn't need electric permittivity input" << endl;
+                  *_ofl << "In rita>pde>coef>epsilon>: This PDE doesn't need electric permittivity input" << endl;
+                  break;
+               }
+               if (_cmd->setNbArg(1,"Give regular expression for electric permittivity as function of x,y,z,t.")) {
+                  *_ofl << "In rita>pde>coef>epsilon>: Missing regular expression for electric permittivity" << endl;
+                  break;
+               }
+               ret = _cmd->get(_epsilon_exp);
+               if (!ret) {
+                  *_ofh << "    epsilon " << _epsilon_exp << endl;
+                  _epsilon_set = true;
+               }
                break;
-            }
-            if (_cmd->setNbArg(1,"Give regular expression for electric permittivity as function of x,y,z,t.")) {
-               *_ofl << "In rita>pde>coef>epsilon>: Missing regular expression for electric permittivity" << endl;
-               break;
-            }
-            ret = _cmd->get(_epsilon_exp);
-            if (!ret) {
-               *_ofh << "    epsilon " << _epsilon_exp << endl;
-               _epsilon_set = true;
-            }
-            break;
 
-         case 10:
-            if (ieq!=EDDY_CURRENTS && ieq!=MAXWELL && ieq!=HELMHOLTZ) {
-               cout << "Error: This PDE doesn't need angular frequency input" << endl;
-               *_ofl << "In rita>pde>coef>omega>: This PDE doesn't need angular frequency input" << endl;
+            case 17:
+            case 18:
+               if (ieq!=EDDY_CURRENTS && ieq!=MAXWELL && ieq!=HELMHOLTZ) {
+                  cout << "Error: This PDE doesn't need angular frequency input" << endl;
+                  *_ofl << "In rita>pde>coef>omega>: This PDE doesn't need angular frequency input" << endl;
+                  break;
+               }
+               if (_cmd->setNbArg(1,"Give value of angular frequency.")) {
+                  *_ofl << "In rita>pde>coef>omega>: Missing value of angular frequency" << endl;
+                  break;
+               }
+               ret = _cmd->get(_omega_exp);
+               if (!ret) {
+                  *_ofh << "    omega " << _omega_exp << endl;
+                  _omega_set = true;
+               }
                break;
-            }
-            if (_cmd->setNbArg(1,"Give value of angular frequency.")) {
-               *_ofl << "In rita>pde>coef>omega>: Missing value of angular frequency" << endl;
-               break;
-            }
-            ret = _cmd->get(_omega_exp);
-            if (!ret) {
-               *_ofh << "    omega " << _omega_exp << endl;
-               _omega_set = true;
-            }
-            break;
 
-         case 11:
-            if (ieq!=HEAT && ieq!=COMPRESSIBLE_NAVIER_STOKES) {
-               cout << "Error: This PDE doesn't need thermal expansion coefficient input" << endl;
-               *_ofl << "In rita>pde>coef>beta>: This PDE doesn't need thermal expansion coefficient input" << endl;
+            case 19:
+            case 20:
+               if (ieq!=HEAT && ieq!=COMPRESSIBLE_NAVIER_STOKES) {
+                  cout << "Error: This PDE doesn't need thermal expansion coefficient input" << endl;
+                  *_ofl << "In rita>pde>coef>beta>: This PDE doesn't need thermal expansion coefficient input" << endl;
+                  break;
+               }
+               if (_cmd->setNbArg(1,"Give regular expression for thermal expansion coefficient as function of x,y,z,t.")) {
+                  *_ofl << "In rita>pde>coef>beta>: Missing regular expression for thermal expansion coefficient" << endl;
+                  break;
+               }
+               ret = _cmd->get(_beta_exp);
+               if (!ret) {
+                  *_ofh << "    beta " << _beta_exp << endl;
+                  _beta_set = true;
+               }
                break;
-            }
-            if (_cmd->setNbArg(1,"Give regular expression for thermal expansion coefficient as function of x,y,z,t.")) {
-               *_ofl << "In rita>pde>coef>beta>: Missing regular expression for thermal expansion coefficient" << endl;
+
+            case 21:
+            case 22:
+               if (ieq!=WAVE && ieq!=TRANSPORT) {
+                  cout << "Error: This PDE doesn't need velocity input" << endl;
+                  *_ofl << "In rita>pde>coef>v>: This PDE doesn't need velocity input" << endl;
+                  break;
+               }
+               if (_cmd->setNbArg(1,"Give regular expression for velocity as function of x,y,z,t.")) {
+                  *_ofl << "In rita>pde>coef>v>: Missing regular expression for velocity" << endl;
+                  break;
+               }
+               ret = _cmd->get(_v_exp);
+               if (!ret) {
+                  *_ofh << "    v " << _v_exp << endl;
+                  _v_set = true;
+               }
                break;
-            }
-            ret = _cmd->get(_beta_exp);
-            if (!ret) {
-               *_ofh << "    beta " << _beta_exp << endl;
-               _beta_set = true;
-            }
-            break;
 
-         case 12:
-            if (ieq!=WAVE && ieq!=TRANSPORT) {
-               cout << "Error: This PDE doesn't need velocity input" << endl;
-               *_ofl << "In rita>pde>coef>v>: This PDE doesn't need velocity input" << endl;
+            case 23:
+               if (ieq!=LINEAR_ELASTICITY && ieq!=BEAM) {
+                  cout << "Error: This PDE doesn't need Young modulus input" << endl;
+                  *_ofl << "In rita>pde>coef>young>: This PDE doesn't need Young's modulus input" << endl;
+                  break;
+               }
+               if (_cmd->setNbArg(1,"Give regular expression for Young's modulus as function of x,y,z,t.")) {
+                  *_ofl << "In rita>pde>coef>young>: Missing regular expression for Young's modulus" << endl;
+                  break;
+               }
+               ret = _cmd->get(_young_exp);
+               if (!ret) {
+                  *_ofh << "    young " << _young_exp << endl;
+                  _young_set = true;
+               }
                break;
-            }
-            if (_cmd->setNbArg(1,"Give regular expression for velocity as function of x,y,z,t.")) {
-               *_ofl << "In rita>pde>coef>v>: Missing regular expression for velocity" << endl;
+
+            case 24:
+               if (ieq!=LINEAR_ELASTICITY && ieq!=BEAM) {
+                  cout << "Error: This PDE doesn't need Poisson ratio input" << endl;
+                  *_ofl << "In rita>pde>coef>poisson>: This PDE doesn't need Poisson ratio input" << endl;
+                  break;
+               }
+               if (_cmd->setNbArg(1,"Give regular expression for Poisson ratio as function of x,y,z,t.")) {
+                  *_ofl << "In rita>pde>coef>poisson>: Missing regular expression for Poisson ratio" << endl;
+                  break;
+               }
+               ret = _cmd->get(_poisson_exp);
+               if (!ret) {
+                  *_ofh << "    poisson " << _poisson_exp << endl;
+                  _poisson_set = true;
+               }
                break;
-            }
-            ret = _cmd->get(_v_exp);
-            if (!ret) {
-               *_ofh << "    v " << _v_exp << endl;
-               _v_set = true;
-            }
-            break;
 
-         case 13:
-            if (ieq!=LINEAR_ELASTICITY && ieq!=BEAM) {
-               cout << "Error: This PDE doesn't need Young modulus input" << endl;
-               *_ofl << "In rita>pde>coef>young>: This PDE doesn't need Young's modulus input" << endl;
+            case 25:
+            case 26:
+               _ret = 0;
+               *_ofh << "    end" << endl;
+               return;
+
+            case 27:
+            case 28:
+               _ret = 100;
+               return;
+
+            case 29:
+               _ret = 200;
+               return;
+
+            case -2:
+            case -3:
+            case -4:
                break;
-            }
-            if (_cmd->setNbArg(1,"Give regular expression for Young's modulus as function of x,y,z,t.")) {
-               *_ofl << "In rita>pde>coef>young>: Missing regular expression for Young's modulus" << endl;
+
+            default:
+               cout << "Unknown Command: " << _cmd->token() << endl;
+               cout << "Available commands: rho, Cp, kappa, mu, sigma, Mu, epsilon" << endl;
+	       cout << "                    omega, beta, v, young, poisson, end, <" << endl;
+               cout << "Global commands:    help, ?, set, quit, exit" << endl;
+               *_ofl << "In rita>pde>coef>: Unknown PDE Coefficient " << _cmd->token() << endl;
                break;
-            }
-            ret = _cmd->get(_young_exp);
-            if (!ret) {
-               *_ofh << "    young " << _young_exp << endl;
-               _young_set = true;
-            }
-            break;
-
-         case 14:
-            if (ieq!=LINEAR_ELASTICITY && ieq!=BEAM) {
-               cout << "Error: This PDE doesn't need Poisson ratio input" << endl;
-               *_ofl << "In rita>pde>coef>poisson>: This PDE doesn't need Poisson ratio input" << endl;
-               break;
-            }
-            if (_cmd->setNbArg(1,"Give regular expression for Poisson ratio as function of x,y,z,t.")) {
-               *_ofl << "In rita>pde>coef>poisson>: Missing regular expression for Poisson ratio" << endl;
-               break;
-            }
-            ret = _cmd->get(_poisson_exp);
-            if (!ret) {
-               *_ofh << "    poisson " << _poisson_exp << endl;
-               _poisson_set = true;
-            }
-            break;
-
-         case 15:
-         case 16:
-            _ret = 0;
-            *_ofh << "    end" << endl;
-            return;
-
-         case 17:
-         case 18:
-            _ret = 100;
-            return;
-
-         case 19:
-            _ret = 200;
-            return;
-
-         case -2:
-         case -3:
-         case -4:
-            break;
-
-         default:
-            cout << "Unknown Command: " << _cmd->token() << endl;
-            cout << "Available commands: rho, Cp, kappa, mu, sigma, Mu, epsilon" << endl;
-	    cout << "                    omega, beta, v, young, poisson, end, <" << endl;
-            cout << "Global commands:    help, ?, set, quit, exit" << endl;
-            *_ofl << "In rita>pde>coef>: Unknown PDE Coefficient " << _cmd->token() << endl;
-         break;
+         }
       }
-   }
-   }
+      }*/
 }
 
 
