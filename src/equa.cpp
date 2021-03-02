@@ -897,7 +897,6 @@ int equa::setEq()
 
 void equa::setCoef()
 {
-   int ret = 0, key = 0;
    static const string H = "Command: coef [rho=x] [Cp=x] [kappa=x] [Mu=x] [sigma=x] [mu=x] [epsilon=x] [omega=x]\n"
                            "              [beta=x] [v=x] [young=x] [poisson=x]\n\n";
    const static vector<string> kw = {"help","?","set","rho","density","Cp","specific-heat","kappa","thermal-conductivity",

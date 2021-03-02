@@ -46,7 +46,7 @@ configure::~configure()
 
 void configure::save()
 {
-   _ocf.open(".rita.rc");
+   _ocf.open((_HOME+"/.rita").c_str());
    _ocf << "# rita configuration file" << endl;
    _ocf << "# " << currentDateTime() << "\n#\n";
    _ocf << "verbosity " << _verb << endl;
@@ -59,19 +59,22 @@ void configure::save()
 
 void configure::init()
 {
-   _icf.open(".rita.rc");
-   if (_icf.fail())
+   _HOME = getenv("HOME");
+   _icf.open((_HOME+"/.rita").c_str());
+   if (_icf.fail()) {
       _icf.close();
+      _ocf.open((_HOME+"/.rita").c_str());
+   }
    else {
       read();
       _icf.close();
-      _ocf.open(".rita.rc.backup");
-      _ocf << "# rita configuration file" << endl;
-      _ocf << "# " << currentDateTime() << "\n#\n";
-      _ocf << "verbosity " << _verb << endl;
-      _ocf << "save-results " << _save_results << endl;
-      _ocf.close();
+      _ocf.open((_HOME+"/.rita.backup").c_str());
    }
+   _ocf << "# rita configuration file" << endl;
+   _ocf << "# " << currentDateTime() << "\n#\n";
+   _ocf << "verbosity " << _verb << endl;
+   _ocf << "save-results " << _save_results << endl;
+   _ocf.close();
    _ofl.open(_log_file);
    _ofl << "# rita Log file" << endl;
    _ofl << "# " << currentDateTime() << "\n#\n";

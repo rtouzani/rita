@@ -75,7 +75,7 @@ class configure
     }
 
     int _verb, _ret, _key, _save_results;
-    string _his_file, _log_file;
+    string _HOME, _his_file, _log_file;
     ofstream _ofh, _ofl, _ocf;
     ifstream _icf;
     const vector<string> _kw = {"verbo$sity","save$-results","history$-file","log$-file"};

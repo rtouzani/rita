@@ -7,13 +7,13 @@ echo "==============================================="
 echo "Testing rita Tutorial ..."
 echo "==============================================="
 
-
 cd tutorial/ae
 
 echo "-----------------------------------------------"
 echo "Test solution of algebraic equations (y/n) ? \c"
 read ans
 if test "$ans" = "y" ; then
+
 ../../src/rita example1.rita
 ../../src/rita example2.rita
 ../../src/rita example3.rita
