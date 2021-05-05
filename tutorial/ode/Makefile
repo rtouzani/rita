@@ -262,7 +262,7 @@ top_build_prefix = ../../
 top_builddir = ../..
 top_srcdir = ../..
 MAINTAINERCLEANFILES = Makefile.in
-tutorialODEdir = $(datadir)/rita/tutorial
+tutorialODEdir = $(datadir)/rita/tutorial/ode
 tutorialODE_DATA = README \
                    example1.rita \
                    example2.rita
@@ -508,7 +508,7 @@ uninstall-am: uninstall-dist_tutorialODEDATA uninstall-tutorialODEDATA
 
 
 clean-local:
-	-rm -f *.dat *.sol .rita.log .rita.his .rita.rc.backup
+	-rm -f *.dat *.sol .rita.log .rita.his
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

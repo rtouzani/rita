@@ -8,5 +8,5 @@ tutorialEIGEN_DATA = README
 dist_tutorialEIGEN_DATA = README
 
 clean-local:
-	-rm -f .rita.his .rita.log .rita.rc.backup
+	-rm -f .rita.his .rita.log
 

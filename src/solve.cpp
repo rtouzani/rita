@@ -30,6 +30,7 @@
 #include "solve.h"
 #include "configure.h"
 #include "data.h"
+#include "equa.h"
 #include "stationary.h"
 #include "transient.h"
 #include "optim.h"

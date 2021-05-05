@@ -67,10 +67,10 @@ int optim::run()
    grad.clear();
    hess.clear();
    map<int,double> llb, uub;
-   const vector<string> kw = {"help","?","set","size","func$tion","obj$ective","lp","grad$ient","hess$ian",
-                              "low$-bound","up$-bound","ge$-constraint","le$-constraint","eq$-constraint",
-                              "penal$ty","var$iable","field","init$ial","algo$rithm","summary","clear",
-                              "end","<","quit","exit"};
+   const vector<string> kw {"help","?","set","size","func$tion","obj$ective","lp","grad$ient","hess$ian",
+                            "low$-bound","up$-bound","ge$-constraint","le$-constraint","eq$-constraint",
+                            "penal$ty","var$iable","field","init$ial","algo$rithm","summary","clear",
+                            "end","<","quit","exit"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    for (int k=0; k<nb_args; ++k) {

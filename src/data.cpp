@@ -45,12 +45,14 @@ data::data(rita*      r,
      : _rita(r), _size(0), _ifield(0), _imesh(0), _igrid(0), _ifct(0), _itab(0),
        _nb_fields(0), _default_field(0), _nb_fcts(0), _nb_meshes(0), _nb_tabs(0), _nb_grids(0),
        _verb(1), _configure(config), _cmd(command),
-       _theMesh_alloc(0), _theTab_alloc(0), _theGrid_alloc(0), _theFct_alloc(0), _u_alloc(0),
-       _theMesh(nullptr), _theTab(nullptr), _theGrid(nullptr), _theFct(nullptr)
+       _theMesh_alloc(0), _theTab_alloc(0), _theGrid_alloc(0), _theFct_alloc(0),
+       _theVector_alloc(0), _theMatrix_alloc(0), _u_alloc(0),
+       _theMesh(nullptr), _theTab(nullptr), _theGrid(nullptr), _theFct(nullptr), 
+       _theVector(nullptr), _theMatrix(nullptr)
 {
    _u = nullptr;
    _ret = 0; _key = 0;
-   _nb_grids = _nb_tabs = _nb_meshes = _nb_fcts = iifct = 0;
+   _nb_grids = _nb_tabs = _nb_meshes = _nb_fcts = iifct = _nb_vectors = _nb_matrices = 0;
    ok = false;
 }
 
@@ -65,6 +67,10 @@ data::~data()
       delete _theFct;
    if (_theTab_alloc)
       delete _theTab;
+   if (_theVector_alloc)
+      delete _theVector;
+   if (_theMatrix_alloc)
+      delete _theMatrix;
    if (_u_alloc)
       delete _u;
 }
@@ -275,6 +281,8 @@ int data::run()
             cout << "field:      Define a field\n";
             cout << "tabulation: Define a tabulated function\n";
             cout << "function:   Define a function\n";
+            cout << "vector:     Define a vector\n";
+            cout << "matrix:     Define a matrix\n";
             cout << "summary:    Summary of prescribed data\n";
             cout << "end or <:   go back to higher level" << endl;
             break;
@@ -304,26 +312,34 @@ int data::run()
             break;
 
          case 8:
-	   //            Clear();
+            _ret = setVector();
             break;
 
          case 9:
-            Summary();
+            _ret = setMatrix();
             break;
 
          case 10:
+	   //            Clear();
+            break;
+
          case 11:
+            Summary();
+            break;
+
+         case 12:
+         case 13:
             _ret = 0;
             ok = true;
             *_ofh << "  end" << endl;
             return _ret;
 
-         case 12:
-         case 13:
+         case 14:
+         case 15:
             _ret = 100;
             return _ret;
 
-         case 14:
+         case 16:
             _ret = 200;
             return _ret;
 
@@ -332,7 +348,7 @@ int data::run()
 
          default:
             cout << "Unknown Command: " << _cmd->token() << endl;
-            cout << "Available commands: grid, mesh, field, tabulation, function, summary" << endl;
+            cout << "Available commands: grid, mesh, field, tabulation, function, vector, matrix, summary" << endl;
             cout << "Global commands:    help, ?, set, <, end, quit, exit" << endl;
             *_ofl << "In rita>data>: Unknown Command " << _cmd->token() << endl;
             break;
@@ -371,7 +387,7 @@ int data::setGrid()
    double xmin=0., xmax=1., ymin=0., ymax=1., zmin=0., zmax=1.;
    int nb=0, d1=-1, d2=-1, d3=-1, dim=0, nx=10, ny=10, nz=10;
    string name="G-"+to_string(_nb_grids+1);
-   vector<string> kw = {"name","min","max","ne"};
+   vector<string> kw {"name","min","max","ne"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args<=0) {
@@ -471,6 +487,64 @@ int data::setGrid()
    theGrid.push_back(_theGrid);
    grid_name.push_back(name);
    _nb_grids++;
+   return 0;
+}
+
+
+int data::setVector()
+{
+   int size=0, nb=0;
+   string name="vect-"+to_string(_nb_vectors+1);
+   vector<string> kw = {"name","size","def$ine","set"};
+   _cmd->set(kw);
+   int nb_args = _cmd->getNbArgs();
+   if (nb_args<=0) {
+      cout << "Error in command." << endl;
+      cout << "Available arguments: name, size, define, set." << endl;
+      *_ofl << "In rita>data>vector>: Error in command." << endl;
+      return 1;
+   }
+   for (int i=0; i<nb_args; ++i) {
+      int n = _cmd->getArgs(nb);
+      switch (n) {
+
+         case 0:
+            name = _cmd->string_token(0);
+            break;
+
+         case 1:
+            size = _cmd->int_token(0);
+            break;
+
+         case 2:
+            break;
+
+         case 3:
+            break;
+
+         default:
+            cout << "Error: Unknown argument: " << kw[n] << endl;
+            *_ofl << "In rita>data>vector>: Unknown argument: " << kw[n] << endl;
+            return 1;
+      }
+   }
+   if (nb_args>0) {
+      *_ofh << endl;
+   }
+   theVector.push_back(_theVector);
+   vector_name.push_back(name);
+   _nb_vectors++;
+   return 0;
+}
+
+
+int data::setMatrix()
+{
+   string name="mat-"+to_string(_nb_matrices+1);
+   vector<string> kw = {"name","storage","size","def$ine","set"};
+   theMatrix.push_back(_theMatrix);
+   matrix_name.push_back(name);
+   _nb_matrices++;
    return 0;
 }
 
@@ -582,7 +656,7 @@ int data::setFunction()
    string vv="", def="", name="f";
    int nb=1, ret=0;
    vector<string> var;
-   vector<string> kw = {"name","var","field","nb","def","definition"};
+   vector<string> kw {"name","var","field","nb","def","definition"};
 
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
@@ -748,9 +822,9 @@ int data::setTab()
          case 2:
             dim1 = nb;
             xmin = _cmd->double_token(0);
-	    if (nb>1)
+            if (nb>1)
                ymin = _cmd->double_token(1);
-	    if (nb>2)
+            if (nb>2)
                zmin = _cmd->double_token(2);
             grid_ok += 1;
             break;
@@ -758,9 +832,9 @@ int data::setTab()
          case 3:
             dim2 = nb;
             xmax = _cmd->double_token(0);
-	    if (nb>1)
+            if (nb>1)
                ymax = _cmd->double_token(1);
-	    if (nb>2)
+            if (nb>2)
                zmax = _cmd->double_token(2);
             grid_ok += 10;
             break;
@@ -768,9 +842,9 @@ int data::setTab()
          case 4:
             dim3 = nb;
             nx = _cmd->int_token(0);
-	    if (nb>1)
+            if (nb>1)
                ny = _cmd->int_token(1);
-	    if (nb>2)
+            if (nb>2)
                nz = _cmd->int_token(2);
             grid_ok += 100;
             break;
@@ -822,11 +896,11 @@ int data::setTab()
    }
    else {
       if (dim1==1)
-         _theGrid = new Grid(xmin,xmax,nx);
+         _theGrid = new OFELI::Grid(xmin,xmax,nx);
       else if (dim1==2)
-         _theGrid = new Grid(xmin,xmax,ymin,ymax,nx,ny);
+         _theGrid = new OFELI::Grid(xmin,xmax,ymin,ymax,nx,ny);
       if (dim1==3)
-         _theGrid = new Grid(xmin,xmax,ymin,ymax,zmin,zmax,nx,ny,nz);
+         _theGrid = new OFELI::Grid(xmin,xmax,ymin,ymax,zmin,zmax,nx,ny,nz);
    }
    tab_name.push_back(name);
    theTab.push_back(_theTab);

@@ -30,7 +30,7 @@
 #define __APPROXIMATION_H
 
 #include "OFELI.h"
-#include "OFELI.h"
+#include "io/Tabulation.h"
 #include "rita.h"
 #include "cmd.h"
 #include <map>
@@ -44,11 +44,20 @@ class approximation
 
     enum ApproxType {
        LAGRANGE,
+       PIECEWISE_LAGRANGE,
+       HERMITE,
        FITTING,
        BSPLINE,
        BEZIER,
        NURBS
     };
+
+    enum FitType {
+       POLYNOMIAL,
+       EXPONENTIAL,
+       DEFINED
+    };
+
     approximation(rita* r, cmd* command, configure* config);
     ~approximation();
     int set();
@@ -62,6 +71,10 @@ class approximation
     configure *_configure;
     cmd *_cmd;
     std::ofstream *_ofh, *_ofl;
+    ApproxType method;
+    FitType ft;
+    int nl, nf, nn, nb;
+    OFELI::Tabulation tab;
     const vector<string> _kw = {"help","?","set","file","lagrange","fitting","bspline","bezier","nurbs"
                                 "end","<","quit","exit","EXIT"};
     map<ApproxType,string> rApp = {{LAGRANGE,"lagrange"},

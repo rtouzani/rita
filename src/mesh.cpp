@@ -85,9 +85,9 @@ int mesh::run()
 {
    _nb_dof = 1;
    _data = _rita->_data;
-   const vector<string> kw = {"help","?","set","1d","rect$angle","cube","point","curve",
-                              "surface","volume","contour","code","gen$erate","nbdof",
-                              "list","plot","clear","save","read","end","<","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","1d","rect$angle","cube","point","curve",
+                            "surface","volume","contour","code","gen$erate","nbdof",
+                            "list","plot","clear","save","read","end","<","quit","exit","EXIT"};
 #ifndef USE_GMSH
    _theDomain = new OFELI::Domain;
 #endif
@@ -194,8 +194,8 @@ void mesh::set1D()
                            "d: Number of degrees of freedom associated to any generated node. Default value is 1.\n"
                            "file: Name of the file where the generated mesh will be stored. By default the mesh \n"
                            "      remains in memory but is not saved in file.";
-   const vector<string> kw = {"help","?","set","domain","ne","codes","nbdof","save","end",
-                              "<","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","domain","ne","codes","nbdof","save","end",
+                            "<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
@@ -480,8 +480,8 @@ void mesh::setRectangle()
                            "file: Name of the file where the generated mesh will be stored. By default the mesh\n"
                            "      remains in memory but is not saved in file.";
    _mesh_file = "rita-rectangle.m";
-   const vector<string> kw = {"help","?","set","min","max","ne","codes","nbdof","save","end","<",
-                              "quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","min","max","ne","codes","nbdof","save","end","<",
+                            "quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
@@ -822,8 +822,8 @@ void mesh::setCube()
       cout << "Default subdivision: 10*10*10\n";
       cout << "Default nb of dof: 1" << endl;
    }
-   const vector<string> kw = {"help","?","set","min","max","ne","codes","nbdof","save","end","<",
-                              "quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","min","max","ne","codes","nbdof","save","end","<",
+                            "quit","exit","EXIT"};
 
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
@@ -936,7 +936,7 @@ void mesh::setCube()
          return;
       }
       if (zmax<=zmin) {
-	cout << "Error: zmax must be > zmin: " << zmin << ", " << zmax << endl;
+         cout << "Error: zmax must be > zmin: " << zmin << ", " << zmax << endl;
          *_ofl << "In rita>mesh>cube>: Error in values of zmin and zmax." << endl;
          return;
       }
@@ -1151,8 +1151,8 @@ void mesh::setCode()
       cout << "Default codes for generated elements: 1" << endl;
    }
 
-   const vector<string> kw = {"help","?","set","value","points","curves","surfaces","volumes",
-                              "end","<","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","value","points","curves","surfaces","volumes",
+                            "end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
@@ -1287,7 +1287,7 @@ void mesh::setPoint()
       _point.h = 0.1;
    }
    it++;
-   const vector<string> kw = {"help","?","set","label","n","coord","size","end","<","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","label","n","coord","size","end","<","quit","exit","EXIT"};
    const static string H = "point label=n coord=x,y,z size=h\n"
                            "n: Point's label\n"
                            "x, y, z: Point coordinates. If y and/or z are not given, their value is set to 0?.\n"
@@ -1454,7 +1454,7 @@ void mesh::setCurve()
       return;
    }
    _generator = 10;
-   const vector<string> kw = {"help","?","set","label","n","line","circle","del$ete","end","<","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","label","n","line","circle","del$ete","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
@@ -1640,7 +1640,7 @@ void mesh::setContour()
       return;
    }
    _generator = 10;
-   const vector<string> kw = {"help","?","set","label","n","curv$es","surf$aces","end","<","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","label","n","curv$es","surf$aces","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
@@ -1843,7 +1843,7 @@ void mesh::setSurface()
       return;
    }
    _generator = 10;
-   const vector<string> kw = {"help","?","set","label","n","contours","end","<","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","label","n","contours","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
@@ -1981,7 +1981,7 @@ void mesh::setSubDomain()
       cout << "Default code: 10" << endl;
    }
 
-   const vector<string> kw = {"help","?","set","line","orient$ation","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","line","orient$ation","quit","exit","EXIT"};
    while (1) {
       if (_cmd->readline("rita>mesh>subdomain> ")<0)
          continue;
@@ -2307,7 +2307,7 @@ void mesh::Read()
    ifstream ip;
    string dom_file, file, bamg_file, geo_file, out_file, Cmd, msh_file;
    int mesh_ok=0, geo_ok=0, gmsh_ok=0;
-   const vector<string> kw = {"help","?","set","mesh","geo","gmsh","end","<","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","mesh","geo","gmsh","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    for (int i=0; i<nb_args; ++i) {
@@ -2566,8 +2566,8 @@ void mesh::Save()
    string tecplot_f="rita-tecplot.dat";
    int domain_ok=0, geo_ok=0, mesh_ok=0, gmsh_ok=0, vtk_ok=0, gnuplot_ok=0, matlab_ok=0, tecplot_ok=0;
    _ret = 0;
-   const vector<string> kw = {"help","?","set","domain","geo","mesh","gmsh","vtk","gnuplot",
-                              "matlab","tecplot","end","<","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","domain","geo","mesh","gmsh","vtk","gnuplot",
+                            "matlab","tecplot","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    for (int i=0; i<nb_args; ++i) {

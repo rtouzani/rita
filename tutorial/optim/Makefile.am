@@ -16,5 +16,5 @@ dist_tutorialOPTIM_DATA = README \
                    example4.rita
 
 clean-local:
-	-rm -f .rita.his .rita.log .rita.rc.backup
+	-rm -f .rita.his .rita.log
 

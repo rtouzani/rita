@@ -29,6 +29,7 @@
 #include "stationary.h"
 #include "io/IOField.h"
 #include "io/saveField.h"
+#include "equa.h"
 #include <iostream>
 
 using std::map;

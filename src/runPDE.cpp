@@ -28,6 +28,7 @@
 
 #include "rita.h"
 #include "data.h"
+#include "equa.h"
 #include "cmd.h"
 #include "configure.h"
 

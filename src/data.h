@@ -35,6 +35,7 @@ using std::string;
 
 #include "mesh/Mesh.h"
 #include "linear_algebra/Vect.h"
+#include "linear_algebra/Matrix.h"
 #include "io/Fct.h"
 #include "io/Tabulation.h"
 
@@ -98,7 +99,9 @@ class data
     vector<OFELI::Mesh *> theMesh;
     vector<OFELI::Tabulation *> theTab;
     vector<OFELI::Fct *> theFct;
-    vector<string> grid_name, tab_name, mesh_name, fct_name;
+    vector<OFELI::Matrix<double> *> theMatrix;
+    vector<OFELI::Vect<double> *> theVector;
+    vector<string> grid_name, tab_name, mesh_name, fct_name, vector_name, matrix_name;
     double obj, integral;
     bool ok;
     int iifct;
@@ -107,23 +110,27 @@ class data
 
     rita *_rita;
     int _size, _ifield, _imesh, _igrid, _ifct, _itab;
-    int _nb_fields, _default_field, _nb_fcts, _nb_meshes, _nb_tabs, _nb_grids; 
+    int _nb_fields, _default_field, _nb_fcts, _nb_meshes, _nb_tabs, _nb_grids, _nb_vectors, _nb_matrices; 
     int _nb_args, _verb, _key, _ret, _nb_dof, _nb, _sr;
     std::ofstream *_ofh, *_ofl;
     configure *_configure;
     cmd *_cmd;
-    int _theMesh_alloc, _theTab_alloc, _theGrid_alloc, _theFct_alloc, _u_alloc;
+    int _theMesh_alloc, _theTab_alloc, _theGrid_alloc, _theFct_alloc, _theVector_alloc, _theMatrix_alloc, _u_alloc;
 
     vector<string> _kw;
     OFELI::Mesh *_theMesh;
     OFELI::Tabulation *_theTab;
     OFELI::Grid *_theGrid;
     OFELI::Fct *_theFct;
+    OFELI::Vect<double> *_theVector;
+    OFELI::Matrix<double> *_theMatrix;
     OFELI::Vect<double> *_u;
     void getHelp();
     int setNbDOF();
 
     int setConfigure();
+    int setVector();
+    int setMatrix();
     int setGrid();
     int setField();
     int setTab();
@@ -134,7 +141,7 @@ class data
     vector<double> _xv;
 
     vector<string> _kw_data = {"help","?","set","grid","mesh","field","tab$ulation","func$tion",
-                               "clear","summary","end","<","quit","exit","EXIT"};
+                               "vect$or","matr$ix","clear","summary","end","<","quit","exit","EXIT"};
     vector<string> _kw_fct = {"help","?","set","name","var","exp","clear","end","<","quit","exit","EXIT"};
     vector<string> _kw_field = {"help","?","set","name","size","type","clear","end","<","quit","exit","EXIT"};
 };

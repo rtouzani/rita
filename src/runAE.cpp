@@ -46,12 +46,12 @@ int rita::runAE()
    vector<string> def, var, name;
    vector<double> init;
    _ae->isSet = false;
-   Vect<string> J(1,1);
+   OFELI::Vect<string> J(1,1);
    if (_analysis_type==NONE)
       _analysis_type = STEADY_STATE;
 
-   const vector<string> kw = {"help","?","set","size","func$tion","def$inition","jacob$ian","init","field",
-                              "var$iable","nls","summary","clear","remove","end","<","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","size","func$tion","def$inition","jacob$ian","init","field",
+                            "var$iable","nls","summary","clear","remove","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    for (int k=0; k<_nb_args; ++k) {
 

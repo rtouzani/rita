@@ -81,7 +81,7 @@
                                 <li class="active"><a href="#" data-nav-section="approximation">approximation</a>
                              </ul>
                          </div>
-                        <li><a href="#" data-nav-section="tutorial">Tutorial</a></li>
+<!--                        <li><a href="#" data-nav-section="tutorial">Tutorial</a></li>
                         <div id="navbar" class="collapse">
                            <ul>
                               <li class="active"><a href="#" data-nav-section="tutorial-algebraic">algebraic</a></li>
@@ -92,7 +92,7 @@
                               <li class="active"><a href="#" data-nav-section="tutorial-integration">integration</a></li>
                               <li class="active"><a href="#" data-nav-section="tutorial-approximation">approximation</a></li>             
                            </ul>
-                         </div>
+                         </div>-->
                         <li><a href="#" data-nav-section="license">License</a></li>
                         <li><a href="#" data-nav-section="download">Download and install</a></li>
                      </ul>
@@ -876,7 +876,7 @@
 
                <!-- ************************************************************************************************************ -->
 
-               <section class="rita-text" data-section="tutorial">
+<!--               <section class="rita-text" data-section="tutorial">
                   <div class="rita-narrow-content">
                      <div class="row">
                         <div class="col-md-12">
@@ -888,9 +888,53 @@
                                         <ul>
                                            <li><section class="rita-text" data-section="tutorial-algebraic"><h3>Algebraic equations</h3>
                                                </section>
-                                               Under development.
+                                               Let us present some examples of script files to solve algebraic (systems of) equations by iterative methods.
                                                <p></p>
-                                           </li>
+                                               <ul>
+                                                   <li><span class=var>Example 1: A simple algebraic equation</span><br>
+                                                       We want to compute the square root of <span class=var>2</span> by the Newton method. This consists in solving the
+                                                       algebraic equation:<br>
+                                                       <span class=var>x^2 - 2 = 0</span><br>
+                                                       The <span class=logo>rita</span> can be for instance:
+                                                       <p><span class=src>algebraic var=x def=x^2-2 init=1.</span></p>
+                                                       <ul>
+                                                           <li>The argument <span class=var>var</span> is necessary to the function interpreter. It is a shorthand for 
+                                                               <span class=var>variable</span>.</li>
+                                                           <li>The argument <span class=var>def</span> defines the analytic expression of the function for which the zero is sought.
+                                                               It is a shorthand for <span class=var>definition</span>.</li>
+                                                           <li>The argument <span class=var>init</span> is optional. It defines an initial guess for iterations.</li>
+                                                       </ul>
+                                                   </li>
+                                                   Once the problem is defined, we go to the solver section by typing:
+                                                       <p><span class=src>solver</span><br>
+                                                       In this section, we solve run the solver and then output the solution:<br>
+                                                          <span class=src>&emsp;&emsp;run</span><br>
+                                                          <span class=src>&emsp;&emsp;display</span></p>
+                                                   <li><span class=var>Example 2: A simple algebraic equation with a function declaration</span><br>
+                                                    We want to solve the same problem as in the previous example, but here the function is defined sepately in the 
+                                                    <span class=var>data</span> section. For this, we start by entering the keyword data and then define a function::<br>
+                                                    <p><span class=src>data</span><br>
+                                                       <span class=src>&emsp;&emsp;function name=f var=z def=z^2-2</span><br>
+                                                       <span class=src>&emsp;&emsp;end</span><br></p>
+                                                       Here the function is defined by a name, the name of the variable and and expression defining it.
+                                                       The <span class=var>data</span> section is left by tying <span class=var>end</span>.<br>
+                                                       We can then define the algebraic equation by typing:
+                                                       <p><span class=src>algebraic function=f init=1. nls=newton</span><br>
+                                                       Note we have added an argument specifying the nonlinear solver which the Newton method. This argument is 
+                                                       not necessary since this is the default method. </p>
+                                                   </li>
+                                                   <li><span class=var>Example 3: A nonlinear system of algebraic equations</span><br>
+                                                    In this example, we consider a system of equations. For this, it is highly recommended to resort to the extended 
+                                                    version of the command <span class=var>algebra</span>. This is given in the following sequence:
+                                                    <p><span class=src>algebraic<br>
+                                                       &emsp;&emsp;size 2<br>
+                                                       &emsp;&emsp;variable x<br>
+                                                       &emsp;&emsp;definition "x1^2size 2<br>
+                                                       &emsp;&emsp;size 2<br>
+                                                       &emsp;&emsp;size 2<br>
+                                                       &emsp</span></p>
+                                                    </li>
+                                                   </ul>
                                            <li><section class="rita-text" data-section="tutorial-ode">
                                                <h3>ODE's</h3>
                                                Under development.
@@ -928,7 +972,7 @@
                          </div>
                       </div>
                    </div>
-          </section>
+          </section>-->
 
                <!-- ************************************************************************************************************ -->
                <section class="rita-text" data-section="license">
@@ -966,15 +1010,20 @@
                               <div class="col-md-12">
                                  <div class="start-desc">
                                     <h2 class="rita-heading">Downloading and Installation</h2>
-                                     <p>The latest stable release of <span class=logo>rita</span> <span class=var>(1.0.0)</span> is available for download:
-				                    <ul>
-                                       <li>Download the <a href="http://ofeli.org/rita/releases/rita-1.0.0-src.tar.gz">source code</a>
-                                       <li>Download the executable for <a href="http://ofeli.org/rita/releases/rita-1.0.0-MacOSX.tar.gz">Mac OS</a>,
-                                                                       <a href="http://ofeli.org/rita/releases/rita-1.0.0-Linux64.tar.gz">Linux 64-bit</a>,
-                                                                       <a href="http://ofeli.org/rita/releases/rita-1.0.0-Linux32.tar.gz">Linux 32-bit</a>
-                                    </ul>
-				                    </p>
-				                 </div>
+                                     <p>The latest stable release of <span class=logo>rita</span> <span class=var>(1.0.1)</span> is available for download:
+                                    <ul>
+                                       <li>Download compiled version for <a href="http://ofeli.org/rita/releases/rita-1.0.1-MacOSX.tar.gz">Mac OS</a>,
+                                                                         <a href="http://ofeli.org/rita/releases/rita-1.0.1-Linux64.tar.gz">Linux 64-bit</a>,
+                                                                         <a href="http://ofeli.org/rita/releases/rita-1.0.1-Linux32.tar.gz">Linux 32-bit</a>
+                                       <li>Old releases:
+                                           <ul>
+                                              <li>rita-1.0.0 for <a href="http://ofeli.org/rita/releases/rita-1.0.0-MacOSX.tar.gz">Mac OS</a>,
+                                                                 <a href="http://ofeli.org/rita/releases/rita-1.0.0-Linux64.tar.gz">Linux 64-bit</a>,
+                                                                 <a href="http://ofeli.org/rita/releases/rita-1.0.0-Linux32.tar.gz">Linux 32-bit</a>
+                                           </ul>
+                                        </p>
+                                        <li>Download <a href="http://ofeli.org/rita/releases/rita-1.0.1-src.tar.gz">source code</a>
+                                  </div>
                               </div>
                            </div>
                         </div>

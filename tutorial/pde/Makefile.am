@@ -18,5 +18,5 @@ dist_tutorialPDE_DATA = README \
                         example5.rita
 
 clean-local:
-	-rm -f *.bamg *.dom rita.m *.geo *.pos *.vtk rita-1d.m example*.m *.msh *.sol .rita.log .rita.his .rita.rc.backup
+	-rm -f *.bamg *.dom rita.m *.geo *.pos *.vtk rita-1d.m example*.m *.msh *.sol .rita.log .rita.his
 

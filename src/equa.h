@@ -26,8 +26,8 @@
 
   ==============================================================================*/
 
-#ifndef __EQUA_H
-#define __EQUA_H
+#ifndef __EQUAT_H
+#define __EQUAT_H
 
 #include <string>
 #include <fstream>
@@ -37,7 +37,7 @@ using std::map;
 
 #include "data.h"
 
-#include "equations/AbsEqua_impl.h"
+#include "equations/Equa_impl.h"
 #include "equations/Equation_impl.h"
 #include "Laplace.h"
 #include "Therm.h"
@@ -81,7 +81,8 @@ class equa
        INCOMPRESSIBLE_POROUS_1PHASE,
        EDDY_CURRENTS,
        MAXWELL,
-       HELMHOLTZ
+       HELMHOLTZ,
+       EIKONAL
     };
 
     enum sdm {
@@ -101,7 +102,7 @@ class equa
     vector<int> field;
     vector<string> fn;
     vector<int> nb_dof;
-    AbsEqua<double> *theEquation;
+    Equa<double> *theEquation;
     void setFields();
     int set(string e, Mesh* ms);
     int setEq();

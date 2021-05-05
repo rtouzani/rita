@@ -12,5 +12,5 @@ dist_tutorialAPPROX_DATA = README \
                    example2.rita
 
 clean-local:
-	-rm -f .rita.his .rita.log .rita.rc.backup
+	-rm -f .rita.his .rita.log
 

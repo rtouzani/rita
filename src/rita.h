@@ -44,7 +44,6 @@ using std::string;
 
 #include "ritaException.h"
 #include "OFELI.h"
-#include "equa.h"
 
 
 namespace RITA {
@@ -65,6 +64,7 @@ class approximation;
 class help;
 class solve;
 class mesh;
+class equa;
 
 #define CATCH                                                   \
    catch(OFELIException &e) {                                   \

@@ -1,18 +1,18 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-tutorialODEdir = $(datadir)/rita/tutorial
+tutorialAEdir = $(datadir)/rita/tutorial/ae
 
-tutorialODE_DATA = README \
-                   example1.rita \
-                   example2.rita \
-                   example3.rita
+tutorialAE_DATA = README \
+                  example1.rita \
+                  example2.rita \
+                  example3.rita
 
-dist_tutorialODE_DATA = README \
-                        example1.rita \
-                        example2.rita \
-                        example3.rita
+dist_tutorialAE_DATA = README \
+                       example1.rita \
+                       example2.rita \
+                       example3.rita
 
 clean-local:
-	-rm -f *.dat *.sol .rita.log .rita.his .rita.rc.backup
+	-rm -f *.dat *.sol .rita.log .rita.his
 

@@ -34,6 +34,7 @@
 #include "data.h"
 #include "cmd.h"
 #include "mesh.h"
+#include "equa.h"
 #include "solve.h"
 #include "optim.h"
 #include "integration.h"

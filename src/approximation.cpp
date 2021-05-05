@@ -28,12 +28,11 @@
 
 
 #include "approximation.h"
-#include "io/Tabulation.h"
 
 namespace RITA {
 
 approximation::approximation(rita* r, cmd* command, configure* config)
-      : _rita(r), _configure(config), _cmd(command)
+              : _rita(r), _configure(config), _cmd(command)
 {
 }
 
@@ -47,8 +46,9 @@ int approximation::run()
 {
    _rita->_analysis_type = APPROXIMATION;
    string file="";
-   int nb=0, nl=0;
-   int file_count=0, lagrange_count=0, bspline_count=0, fitting_count=0, bezier_count=0, nurbs_count=0;
+   int nb=0, nl=0, nb_tab=0;
+   int file_count=0, lagrange_count=0, bspline_count=0, fitting_count=0, bezier_count=0;
+   int nurbs_count=0, approx_count=0;
    const vector<string> _kw = {"help","?","set","file","lagrange","fitting","bspline","bezier","nurbs"
                                "end","<","quit","exit","EXIT"};
    _cmd->set(_kw);
@@ -65,28 +65,37 @@ int approximation::run()
 
          case 3:
             file = _cmd->string_token(0);
+            nb_tab = 1;
             file_count++;
             break;
 
          case 4:
             nl = _cmd->int_token(0);
-            lagrange_count++;
+            lagrange_count++, approx_count++;
             break;
 
          case 5:
-            fitting_count++;
+            approx_count++;
             break;
 
          case 6:
-            bspline_count++;
+            approx_count++;
             break;
 
          case 7:
-            bezier_count++;
+            fitting_count++, approx_count++;
             break;
 
          case 8:
-            nurbs_count++;
+            bspline_count++, approx_count++;
+            break;
+
+         case 9:
+            bezier_count++, approx_count++;
+            break;
+
+         case 10:
+            nurbs_count++, approx_count++;
             break;
 
          default:
@@ -98,15 +107,20 @@ int approximation::run()
 
    if (nb_args>0) {
       if (file_count==0) {
-	cout << "Error: No data file given." << endl;
+         cout << "Error: No data file given." << endl;
          *_ofl << "In rita>approximation>: No data file given." << endl;
          return 1;
       }
       *_ofh << "approximation";
-      OFELI::Tabulation tab(file);
+      tab.setFile(file);
       *_ofh << " file=" << file;
       if (lagrange_count++) {
          *_ofh << "lagrange=" << nl;
+      }
+      if (approx_count>1) {
+         cout << "Error: More than one approximation method given." << endl;
+         *_ofl << "In rita>approximation>: More than one approximation method given." << endl;
+         return 1;
       }
    }
    /*   else {
@@ -204,6 +218,29 @@ int approximation::run()
 
 int approximation::go()
 {
+   switch (method) {
+
+      case LAGRANGE:
+         break;
+
+      case PIECEWISE_LAGRANGE:
+         break;
+
+      case HERMITE:
+         break;
+
+      case FITTING:
+         break;
+
+      case BSPLINE:
+         break;
+
+      case BEZIER:
+         break;
+
+      case NURBS:
+         break;
+   }
    return 0;
 }
 

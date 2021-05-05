@@ -70,7 +70,7 @@ class integration
     configure *_configure;
     cmd *_cmd;
     vector<double> _x, _y, _z;
-    Fct *IFct;
+    OFELI::Fct *IFct;
     map<string,integration_formula> Nint = {{"left-rectangle",LRECTANGLE},
                                             {"right-rectangle",RRECTANGLE},
                                             {"mid-point",MIDPOINT},

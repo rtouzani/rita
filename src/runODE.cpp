@@ -47,8 +47,8 @@ int rita::runODE()
    _ode->isSet = false;
    _analysis_type = TRANSIENT;
    string str="", var_name="y", scheme="forward-euler";
-   const vector<string> kw = {"help","?","set","size","func$tion","def$inition","field","var$iable","init$ial",
-                              "final$-time","time-step","scheme","summary","clear","end","<","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","size","func$tion","def$inition","field","var$iable","init$ial",
+                            "final$-time","time-step","scheme","summary","clear","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    for (int k=0; k<_nb_args; ++k) {
 
@@ -277,10 +277,10 @@ int rita::runODE()
                for (int i=0; i<_data->getNbFcts(); ++i) {
                   if (_data->theFct[i]->name==name[count_fct])
                      ind = i;
-	       }
+               }
                if (ind==-1) {
-                  cout << "Error: Non defined function " << name << endl;
-                  *_ofl << "In rita>ode>function>: Non defined function " << name << endl;
+                  cout << "Error: Non defined function " << name[count_fct] << endl;
+                  *_ofl << "In rita>ode>function>: Non defined function " << name[count_fct] << endl;
                   ret = 1;
                   break;
                }

@@ -93,7 +93,7 @@ ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/VERSION $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-DIST_COMMON = $(srcdir)/Makefile.am $(dist_tutorialODE_DATA) \
+DIST_COMMON = $(srcdir)/Makefile.am $(dist_tutorialAE_DATA) \
 	$(am__DIST_COMMON)
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/src/config.h
@@ -145,9 +145,9 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(tutorialODEdir)" \
-	"$(DESTDIR)$(tutorialODEdir)"
-DATA = $(dist_tutorialODE_DATA) $(tutorialODE_DATA)
+am__installdirs = "$(DESTDIR)$(tutorialAEdir)" \
+	"$(DESTDIR)$(tutorialAEdir)"
+DATA = $(dist_tutorialAE_DATA) $(tutorialAE_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 am__DIST_COMMON = $(srcdir)/Makefile.in README
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -262,16 +262,16 @@ top_build_prefix = ../../
 top_builddir = ../..
 top_srcdir = ../..
 MAINTAINERCLEANFILES = Makefile.in
-tutorialODEdir = $(datadir)/rita/tutorial
-tutorialODE_DATA = README \
-                   example1.rita \
-                   example2.rita \
-                   example3.rita
+tutorialAEdir = $(datadir)/rita/tutorial/ae
+tutorialAE_DATA = README \
+                  example1.rita \
+                  example2.rita \
+                  example3.rita
 
-dist_tutorialODE_DATA = README \
-                        example1.rita \
-                        example2.rita \
-                        example3.rita
+dist_tutorialAE_DATA = README \
+                       example1.rita \
+                       example2.rita \
+                       example3.rita
 
 all: all-am
 
@@ -305,48 +305,48 @@ $(top_srcdir)/configure: # $(am__configure_deps)
 $(ACLOCAL_M4): # $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-install-dist_tutorialODEDATA: $(dist_tutorialODE_DATA)
+install-dist_tutorialAEDATA: $(dist_tutorialAE_DATA)
 	@$(NORMAL_INSTALL)
-	@list='$(dist_tutorialODE_DATA)'; test -n "$(tutorialODEdir)" || list=; \
+	@list='$(dist_tutorialAE_DATA)'; test -n "$(tutorialAEdir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(tutorialODEdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(tutorialODEdir)" || exit 1; \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(tutorialAEdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(tutorialAEdir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(tutorialODEdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(tutorialODEdir)" || exit $$?; \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(tutorialAEdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(tutorialAEdir)" || exit $$?; \
 	done
 
-uninstall-dist_tutorialODEDATA:
+uninstall-dist_tutorialAEDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(dist_tutorialODE_DATA)'; test -n "$(tutorialODEdir)" || list=; \
+	@list='$(dist_tutorialAE_DATA)'; test -n "$(tutorialAEdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(tutorialODEdir)'; $(am__uninstall_files_from_dir)
-install-tutorialODEDATA: $(tutorialODE_DATA)
+	dir='$(DESTDIR)$(tutorialAEdir)'; $(am__uninstall_files_from_dir)
+install-tutorialAEDATA: $(tutorialAE_DATA)
 	@$(NORMAL_INSTALL)
-	@list='$(tutorialODE_DATA)'; test -n "$(tutorialODEdir)" || list=; \
+	@list='$(tutorialAE_DATA)'; test -n "$(tutorialAEdir)" || list=; \
 	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(tutorialODEdir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(tutorialODEdir)" || exit 1; \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(tutorialAEdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(tutorialAEdir)" || exit 1; \
 	fi; \
 	for p in $$list; do \
 	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
 	  echo "$$d$$p"; \
 	done | $(am__base_list) | \
 	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(tutorialODEdir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(tutorialODEdir)" || exit $$?; \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(tutorialAEdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(tutorialAEdir)" || exit $$?; \
 	done
 
-uninstall-tutorialODEDATA:
+uninstall-tutorialAEDATA:
 	@$(NORMAL_UNINSTALL)
-	@list='$(tutorialODE_DATA)'; test -n "$(tutorialODEdir)" || list=; \
+	@list='$(tutorialAE_DATA)'; test -n "$(tutorialAEdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(tutorialODEdir)'; $(am__uninstall_files_from_dir)
+	dir='$(DESTDIR)$(tutorialAEdir)'; $(am__uninstall_files_from_dir)
 tags TAGS:
 
 ctags CTAGS:
@@ -391,7 +391,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(tutorialODEdir)" "$(DESTDIR)$(tutorialODEdir)"; do \
+	for dir in "$(DESTDIR)$(tutorialAEdir)" "$(DESTDIR)$(tutorialAEdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -445,7 +445,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-dist_tutorialODEDATA install-tutorialODEDATA
+install-data-am: install-dist_tutorialAEDATA install-tutorialAEDATA
 
 install-dvi: install-dvi-am
 
@@ -489,28 +489,28 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-dist_tutorialODEDATA uninstall-tutorialODEDATA
+uninstall-am: uninstall-dist_tutorialAEDATA uninstall-tutorialAEDATA
 
 .MAKE: install-am install-strip
 
 .PHONY: all all-am check check-am clean clean-generic clean-local \
 	cscopelist-am ctags-am distclean distclean-generic distdir dvi \
 	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dist_tutorialODEDATA \
+	install-data install-data-am install-dist_tutorialAEDATA \
 	install-dvi install-dvi-am install-exec install-exec-am \
 	install-html install-html-am install-info install-info-am \
 	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip install-tutorialODEDATA \
+	install-ps-am install-strip install-tutorialAEDATA \
 	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am tags-am uninstall uninstall-am \
-	uninstall-dist_tutorialODEDATA uninstall-tutorialODEDATA
+	uninstall-dist_tutorialAEDATA uninstall-tutorialAEDATA
 
 .PRECIOUS: Makefile
 
 
 clean-local:
-	-rm -f *.dat *.sol .rita.log .rita.his .rita.rc.backup
+	-rm -f *.dat *.sol .rita.log .rita.his
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
