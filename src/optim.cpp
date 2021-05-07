@@ -137,61 +137,50 @@ int optim::run()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << _cmd->Arg() << endl;
-            *_ofl << "In rita>optimization>: Unknown argument: " << _cmd->Arg() << endl;
+            _rita->msg("optimization>","Unknown argument: "+_cmd->Arg());
 	    return 1;
       }
    }
 
    if (nb_args>0) {
       if (size<=0) {
-         cout << "Error: Illegal size value." << endl;
-         *_ofl << "In rita>optimization>: Illegal size value." << endl;
+         _rita->msg("optimization>","Illegal size value.");
          return 1;
       }
       if (!count_obj && !count_fct) {
-         cout << "Error: Missing objective function." << endl;
-         *_ofl << "In rita>optimization>: Missing objective function." << endl;
+         _rita->msg("optimization>","Missing objective function.");
          return 1;
       }
       if (count_fct && count_field) {
-         cout << "Error: Function already defined in data module." << endl;
-         *_ofl << "In rita>optimization>: Function already defined in data module." << endl;
+         _rita->msg("optimization>","Function already defined in data module.");
          return 1;
       }
       if (count_fct && count_obj) {
-         cout << "Error: Function already defined." << endl;
-         *_ofl << "In rita>optimization>: Function already defined." << endl;
+         _rita->msg("optimization>","Function already defined.");
          return 1;
       }
       if (count_fct>1 || count_obj>1) {
-         cout << "Error: Too many objective functions defined." << endl;
-         *_ofl << "In rita>optimization>: Too many objective functions defined." << endl;
+         _rita->msg("optimization>","Too many objective functions defined.");
          return 1;
       }
       if (count_obj && !count_field) {
-         cout << "Error: Missing a variable name." << endl;
-         *_ofl << "In rita>optimization>: Missing a variable name." << endl;
+         _rita->msg("optimization>","Missing a variable name.");
          return 1;
       }
       if (count_init>size) {
-         cout << "Error: Illegal number of initial guesses given." << endl;
-         *_ofl << "In rita>optimization>: Too many initial guesses given." << endl;
+         _rita->msg("optimization>","Too many initial guesses given.");
          return 1;
       }
       *_ofh << "optimization";
       if (count_fct>0) {
          ind = theData->checkFct(name);
          if (ind==-1) {
-            cout << "Error: Non defined function " << name << endl;
-            *_ofl << "In rita>optimization>: Non defined function " << name << endl;
+            _rita->msg("optimization>","Non defined function "+name);
             return 1;
          }
          J_Fct = theData->theFct[ind];
          if (J_Fct->set(name,theData->theFct[ind]->expr,theData->theFct[ind]->var,1)) {
-            cout << "Error in function evaluation: " << J_Fct->getErrorMessage() << endl;
-            *_ofl << "In rita>optimization>: Error in function evaluation: "
-                  << J_Fct->getErrorMessage() << endl;
+            _rita->msg("optimization>","Error in function evaluation: "+J_Fct->getErrorMessage());
             return 1;
          }
          *_ofh << " function=" << name;
@@ -210,8 +199,7 @@ int optim::run()
          J_Fct = theData->theFct[theData->getNbFcts()-1];
          if (count_grad) {
             if (count_grad!=size) {
-               cout << "Error: Illegal number of gradient components given." << endl;
-               *_ofl << "In rita>optimization>: Illegal number of gradient components given." << endl;
+               _rita->msg("optimization>:","Illegal number of gradient components given.");
                return 1;
             }
             G_ok = true;
@@ -226,8 +214,7 @@ int optim::run()
          }
          if (count_hess) {
             if (count_hess!=size*size) {
-               cout << "Error: Illegal number of hessian components given." << endl;
-               *_ofl << "In rita>optimization>: Illegal number of hessian components given." << endl;
+               _rita->msg("optimization>","Illegal number of hessian components given.");
                return 1;
             }
             H_ok = true;
@@ -305,8 +292,7 @@ int optim::run()
 
             case 3:
                if (size<=0) {
-                  cout << "Illegal size value." << endl;
-                  *_ofl << "In rita>optimization>size>: Illegal size value." << endl;
+                  _rita->msg("optimization>size>","Illegal size value.");
                   _ret = 1;
 	          break;
                }
@@ -319,13 +305,12 @@ int optim::run()
 
             case 4:
                if (lp) {
-                  cout << "Error: This argument is not compatible with linear programming." << endl;
-                  *_ofl << "In rita>optimization>function>: Argument not compatible with linear programming." << endl;
+                  _rita->msg("optimization>function>","Argument not compatible with linear programming.");
                   _ret = 1;
                   break;
                }
                if (_cmd->setNbArg(1,"Function name to be given.")) {
-                  *_ofl << "In rita>optimization>function>: Missing function name." << endl;
+                  _rita->msg("optimization>function>","Missing function name.","",1);
                   _ret = 1;
                   break;
                }
@@ -340,8 +325,7 @@ int optim::run()
             case 5:
               if (lp) {
                  if (count_lp==size+1) {
-                    cout << "Error: Too many objective function data." << endl;
-                    *_ofl << "In rita>optimization>objective>: Too many objective function data." << endl;
+                    _rita->msg("optimization>objective>","Too many objective function data.");
                     break;
                   }
                   while (!_cmd->get(x)) {
@@ -354,7 +338,7 @@ int optim::run()
               }
               else {
                  if (_cmd->setNbArg(1,"Objective function to be given.",1)) {
-                    *_ofl << "In rita>optimization>objective>: Missing objective function expression." << endl;
+                    _rita->msg("optimization>objective>","Missing objective function expression.","",1);
                     _ret = 1;
                     break;
                   }
@@ -369,8 +353,7 @@ int optim::run()
 
             case 6:
                if (count_fct || count_grad || count_hess || penal_ok) {
-                  cout << "Error: Linear programming option incompatible other arguments." << endl;
-                  *_ofl << "In rita>optimization>lp>: Linear programming option incompatible with other arguments." << endl;
+                  _rita->msg("optimization>lp>","Linear programming option incompatible with other arguments.");
                }
                lp = true;
                count_lec = count_gec = count_eqc = 0;
@@ -378,17 +361,15 @@ int optim::run()
 
             case 7:
                if (lp) {
-                  cout << "Error: This argument is not compatible with linear programming." << endl;
-                  *_ofl << "In rita>optimization>gradient>: Argument not compatible with linear programming." << endl;
+                  _rita->msg("optimization>gradient>","Argument not compatible with linear programming.");
                   _ret = 1;
                   break;
                }
                if (count_grad==size) {
-                  cout << "Error: Too many gradient definitions." << endl;
-                  *_ofl << "In rita>optimization>gradient>: Too many gradient definitions." << endl;
+                  _rita->msg("optimization>gradient>","Too many gradient definitions.");
                }
                if (_cmd->setNbArg(size,"Partial derivative of objective function to be given.")) {
-                  *_ofl << "In rita>optimization>gradient>: Missing partial derivatives of objective function." << endl;
+                  _rita->msg("optimization>gradient>","Missing partial derivatives of objective function.","",1);
                   _ret = 1;
                   break;
                }
@@ -400,19 +381,17 @@ int optim::run()
 
             case 8:
                if (lp) {
-                  cout << "Error: This argument is not compatible with linear programming." << endl;
-                  *_ofl << "In rita>optimization>hessian>: Argument not compatible with linear programming." << endl;
+                  _rita->msg("optimization>hessian>","Argument not compatible with linear programming.");
                   _ret = 1;
                   break;
                }
                if (count_hess==size*size) {
-                  cout << "Error: Too many hessian definitions." << endl;
-                  *_ofl << "In rita>optimization>hessian>: Too many functions defining hessian." << endl;
+                  _rita->msg("optimization>hessian>","Too many functions defining hessian.");
                   _ret = 1;
                   break;
                }
                if (_cmd->setNbArg(size,"Partial derivatives of gradient to be given.")) {
-                  *_ofl << "In rita>optimization>hessian>: Missing partial derivatives of gradient." << endl;
+                  _rita->msg("optimization>hessian>","Missing partial derivatives of gradient.","",1);
                   _ret = 1;
                   break;
                }
@@ -424,29 +403,27 @@ int optim::run()
 
             case 9:
                if (lp) {
-                  cout << "Error: This argument is not compatible with linear programming." << endl;
-                  *_ofl << "In rita>optimization>low-bound>: Argument not compatible with linear programming." << endl;
+                  _rita->msg("optimization>low-bound>","Argument not compatible with linear programming.");
                   _ret = 1;
                   break;
                }
                if (_cmd->setNbArg(2,"Lower value to enforce to be given.")) {
-                  *_ofl << "In rita>optimization>low-bound>: Lower value to enforce to be given." << endl;
+                  _rita->msg("optimization>low-bound>","Lower value to enforce to be given.","",1);
                   break;
                }
                _ret = _cmd->get(ind);
-               _ret = _cmd->get(x);
+               _ret += _cmd->get(x);
                llb[ind] = x;
                break;
 
             case 10:
                if (lp) {
-                  cout << "Error: This argument is not compatible with linear programming." << endl;
-                  *_ofl << "In rita>optimization>up-bound>: Argument not compatible with linear programming." << endl;
+                  _rita->msg("optimization>up-bound>","Argument not compatible with linear programming.");
                   _ret = 1;
                   break;
                }
                if (_cmd->setNbArg(2,"Upper value to enforce to be given.")) {
-                  *_ofl << "In rita>optimization>up-bound>: Upper value to enforce to be given." << endl;
+                  _rita->msg("optimization>up-bound>","Upper value to enforce to be given.","",1);
                   break;
                }
                _ret = _cmd->get(ind);
@@ -456,8 +433,7 @@ int optim::run()
 
             case 11:
                if (!lp) {
-                  cout << "Error: This argument is valid for linear programming problems only." << endl;
-                  *_ofl << "In rita>optimization>ge-constraint>: This argument is valid for linear programming problems only." << endl;
+                  _rita->msg("optimization>ge-constraint>","This argument is valid for linear programming problems only.");
                   _ret = 1;
                   break;
                }
@@ -522,8 +498,7 @@ int optim::run()
 
             case 14:
                if (lp) {
-                  cout << "Error: This argument is not compatible with linear programming." << endl;
-                  *_ofl << "In rita>optimization>penal>: Argument not compatible with linear programming." << endl;
+                  _rita->msg("optimization>penal>","Argument not compatible with linear programming.");
                   _ret = 1;
                   break;
                }
@@ -534,7 +509,7 @@ int optim::run()
             case 15:
             case 16:
                if (_cmd->setNbArg(1,"Give name of associated field.")) {
-                  *_ofl << "In rita>optimization>variable>: Missing name of associated field." << endl;
+                  _rita->msg("optimization>variable>","Missing name of associated field.","",1);
                   break;
                }
                _cmd->get(str);
@@ -544,18 +519,16 @@ int optim::run()
 
             case 17:
                if (lp) {
-                  cout << "Error: This argument is not necessary for linear programming." << endl;
-                  *_ofl << "In rita>optimization>initial>: Argument not necessary for linear programming." << endl;
+                  _rita->msg("optimization>initial>","Argument not necessary for linear programming.");
                   _ret = 1;
                   break;
                }
                if (count_init==size) {
-                  cout << "Error: Too many initial solution definitions." << endl;
-                  *_ofl << "In rita>optimization>initial>: Too many initial solutions definitions." << endl;
+                  _rita->msg("optimization>initial>","Too many initial solutions definitions.");
 	          break;
                }
                if (_cmd->setNbArg(size,1,"Initial guess to be given.",1)) {
-                  *_ofl << "In rita>optimization>initial>: Missing initial guess." << endl;
+                  _rita->msg("optimization>initial>","Missing initial guess.","",1);
                   break;
                }
                while (!_cmd->get(x))
@@ -565,18 +538,16 @@ int optim::run()
             case 18:
                if (_log) {
                   cout << "Please define algebraic equation first." << endl;
-                  *_ofl << "In rita>optimization>algorithm>: equation must be set first." << endl;
+                  _rita->msg("optimization>algorithm>","equation must be set first.","",1);
                   break;
                }
                if (_cmd->setNbArg(1,"Optimization algorithm to be supplied.",1)) {
-                  *_ofl << "In rita>optimization>algorithm>: Missing optimization algorithm." << endl;
+                  _rita->msg("optimization>algorithm>","Missing optimization algorithm.","",1);
                   break;
                }
                _ret = _cmd->get(_alg);
-               if (Nopt.find(_alg) == Nopt.end() ) {
-                  cout << "Error: Unknown or nonimplemented optimization algorithm: " << _alg << endl;
-                  *_ofl << "In rita>optimization>algorithm>: Unknown or nonimplemented optimization algorithm: " << _alg << endl;
-               }
+               if (Nopt.find(_alg)==Nopt.end())
+                  _rita->msg("optimization>algorithm>","Unknown or nonimplemented optimization algorithm: "+_alg);
                _rita->_ret = 0;
                break;
 
@@ -597,14 +568,12 @@ int optim::run()
                _cmd->setNbArg(0);
                if (lp) {
                   if (!count_lp && lp) {
-                     cout << "Error: Missing objective function." << endl;
-                     *_ofl << "In rita>optimization>end>: Missing objective function." << endl;
+                     _rita->msg("optimization>end>","Missing objective function.");
                      return 1;
                      break;
                   }
                   if (!count_field) {
-                     cout << "Error: Missing a variable name." << endl;
-                     *_ofl << "In rita>optimization>end>: Missing a variable name." << endl;
+                     _rita->msg("optimization>end>","Missing a variable name.");
                      break;
                   }
                   *_ofh << "optimization\n  size " << size << endl << "  lp" << endl;
@@ -641,46 +610,38 @@ int optim::run()
                      *_ofh << b_ge[i] << endl;
                   }
                }
-	       else {
+               else {
                   if (!count_obj && !count_fct) {
-                     cout << "Error: Missing objective function." << endl;
-                     *_ofl << "In rita>optimization>end>: Missing objective function." << endl;
+                     _rita->msg("optimization>end>","Missing objective function.");
                      break;
                   }
                   if (count_fct && count_field) {
-                     cout << "Error: Function already defined in data module." << endl;
-                     *_ofl << "In rita>optimization>end>: Function already defined in data module." << endl;
+                     _rita->msg("optimization>end>","Function already defined in data module.");
                      break;
                   }
                   if (count_fct && count_obj) {
-                     cout << "Error: Function already defined." << endl;
-                     *_ofl << "In rita>optimization>end>: Function already defined." << endl;
+                     _rita->msg("optimization>end>","Function already defined.");
                      return 1;
                   }
                   if (count_fct>1 || count_obj>1) {
-                     cout << "Error: Too many objective functions defined." << endl;
-                     *_ofl << "In rita>optimization>end>: Too many objective functions defined." << endl;
+                     _rita->msg("optimization>end>","Too many objective functions defined.");
                      break;
                   }
                   if (count_obj && !count_field) {
-                     cout << "Error: Missing a variable name." << endl;
-                     *_ofl << "In rita>optimization>end>: Missing a variable name." << endl;
+                     _rita->msg("optimization>end>","Missing a variable name.");
                      break;
                   }
                   *_ofh << "optimization\n  size " << size << endl;
                   if (count_fct>0) {
                      ind = theData->checkFct(name);
                      if (ind==-1) {
-                        cout << "Error: Non defined function " << name << endl;
-                        *_ofl << "In rita>optimization>end>: Non defined function " << name << endl;
+                        _rita->msg("optimization>end>","Non defined function "+name);
                         _ret = 1;
                         break;
                      }
                      J_Fct = theData->theFct[ind];
                      if (J_Fct->set(name,theData->theFct[ind]->expr,theData->theFct[ind]->var,1)) {
-                        cout << "Error in function evaluation: " << J_Fct->getErrorMessage() << endl;
-                        *_ofl << "In rita>optimization>end>: Error in function evaluation: "
-                              << J_Fct->getErrorMessage() << endl;
+                        _rita->msg("optimization>end>:","Error in function evaluation: "+J_Fct->getErrorMessage());
                         _ret = 1;
                         break;
                      }
@@ -702,8 +663,7 @@ int optim::run()
                   }
                   if (count_grad) {
                      if (count_grad!=size) {
-                        cout << "Error: Illegal number of gradient components given." << endl;
-                        *_ofl << "In rita>optimization>: Illegal number of gradient components given." << endl;
+                        _rita->msg("optimization>","Illegal number of gradient components given.");
                         break;
                      }
                      G_ok = true;
@@ -731,8 +691,7 @@ int optim::run()
                      *_ofh << "  penalty " << penal << endl;
                   if (count_hess) {
                      if (count_hess!=size*size) {
-                        cout << "Error: Illegal number of hessian components given." << endl;
-                        *_ofl << "In rita>optimization>end>: Illegal number of hessian components given." << endl;
+                        _rita->msg("optimization>end>","Illegal number of hessian components given.");
                         return 1;
                      }
                      H_ok = true;
@@ -788,12 +747,11 @@ int optim::run()
                break;
 
             default:
-               cout << "Unknown Command: " << _cmd->token() << endl;
-               cout << "Available commands: size, objective, lp, gradient, hessian, low-bound, up-bound" << endl;
-	       cout << "                    ineq-constraint, eq-constraint, penalty, variable, init, algorithm" << endl;
-	       cout << "                    summary, clear, end, <" << endl;
-               cout << "Global commands:    help, ?, set, quit, exit" << endl;
-               *_ofl << "In rita>optimization>: Unknown Command " << _cmd->token() << endl;
+               _rita->msg("optimization>","Unknown Command "+_cmd->token(),
+                          "Available commands: size, objective, lp, gradient, hessian, low-bound, up-bound\n"
+	                       "                    ineq-constraint, eq-constraint, penalty, variable, init, algorithm\n"
+	                       "                    summary, clear, end, <\n"
+                          "Global commands:    help, ?, set, quit, exit");
                break;
          }
       }

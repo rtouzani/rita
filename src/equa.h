@@ -114,7 +114,7 @@ class equa
     int setBF();
     int setSF();
     void check();
-    void set(cmd* cmd, std::ofstream* ofl, std::ofstream* ofh) { _cmd = cmd; _ofl = ofl; _ofh = ofh; }
+    void set(cmd* cmd) { _cmd = cmd; }
     void setNodeBC(int code, string exp, double t, Vect<double>& v);
     void setSize(Vect<double>& v, dataSize s);
     Log log;
@@ -141,7 +141,6 @@ class equa
                                {"incompressible-porous-1phase",INCOMPRESSIBLE_POROUS_1PHASE}};
     const vector<string> _kw = {"expression","value","file","save"};
     Mesh *_theMesh;
-    std::ofstream *_ofh, *_ofl;
     string _rho_exp, _Cp_exp, _kappa_exp, _mu_exp,_sigma_exp, _Mu_exp, _epsilon_exp, _omega_exp;
     string _beta_exp, _v_exp, _young_exp, _poisson_exp;
     OFELI::Fct _theFct;

@@ -57,7 +57,7 @@ class integration
     int set();
     int run();
     int go();
-    void set(std::ofstream* ofl, std::ofstream* ofh) { _ofl = ofl; _ofh = ofh; }
+    void set(std::ofstream* ofh) { _ofh = ofh; }
     integration_formula nim;
     vector<string> var;
     double xmin, xmax, ymin, ymax, zmin, zmax, res;
@@ -66,7 +66,7 @@ class integration
  private:
 
     rita *_rita;
-    std::ofstream *_ofh, *_ofl;
+    std::ofstream *_ofh;
     configure *_configure;
     cmd *_cmd;
     vector<double> _x, _y, _z;

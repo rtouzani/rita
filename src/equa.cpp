@@ -177,8 +177,7 @@ void equa::setSize(Vect<double>& v, dataSize s)
 {
    _theMesh = _rita->_theMesh;
    if (_theMesh==nullptr) {
-      cout << "Error: No mesh data available." << endl;
-      *_ofl << "In rita>pde>: No mesh data available." << endl;
+      _rita->msg("pde>","No mesh data available.");
       _ret = 1;
       return;
    }
@@ -194,8 +193,7 @@ void equa::setSize(Vect<double>& v, dataSize s)
 
    if (s==NODES) {
       if (_theMesh->getNbNodes()==0) {
-         cout << "Error: Mesh has no nodes." << endl;
-         *_ofl << "In rita>pde>: Mesh has no nodes" << endl;
+         _rita->msg("pde>","Mesh has no nodes");
          _ret = 1;
          return;
       }
@@ -203,8 +201,7 @@ void equa::setSize(Vect<double>& v, dataSize s)
    }
    else if (s==ELEMENTS) {
       if (_theMesh->getNbElements()==0) {
-         cout << "Error: Mesh has no elements." << endl;
-         *_ofl << "In rita>pde>: Mesh has no elements" << endl;
+         _rita->msg("pde>:","Mesh has no elements");
          _ret = 1;
          return;
       }
@@ -212,8 +209,7 @@ void equa::setSize(Vect<double>& v, dataSize s)
    }
    else if (s==SIDES) {
       if (_theMesh->getNbSides()==0) {
-         cout << "Error: Mesh has no sides." << endl;
-         *_ofl << "In rita>pde>: Mesh has no sides" << endl;
+         _rita->msg("pde>:","Mesh has no sides");
          _ret = 1;
          return;
       }
@@ -221,8 +217,7 @@ void equa::setSize(Vect<double>& v, dataSize s)
    }
    else if (s==EDGES) {
       if (_theMesh->getNbEdges()==0) {
-         cout << "Error: Mesh has no edges." << endl;
-         *_ofl << "In rita>pde>: Mesh has no edges" << endl;
+         _rita->msg("pde>","Mesh has no edges");
          _ret = 1;
          return;
       }
@@ -242,8 +237,7 @@ int equa::setIn()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
-      cout << "Error in command: No given arguments" << endl;
-      *_ofl << "In rita>pde>initial>: Error in command: No arguments" << endl;
+      _rita->msg("pde>initial>","No argument given");
       return _ret;
    }
    for (int i=0; i<nb_args; ++i) {
@@ -266,31 +260,28 @@ int equa::setIn()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << _kw[n] << endl;
-            *_ofl << "In rita>pde>initial>: Unknown argument: " << _kw[n] << endl;
+            _rita->msg("pde>initial>","Unknown argument: "+_kw[n]);
             return _ret;
       }
    }
-   if (!val_ok) {
-      cout << "Error: No value or expression given for initial condition." << endl;
-      *_ofl << "In rita>pde>initial> No value or expression given for initial condition." << endl;
-   }
-   *_ofh << "  in  value=" << regex_u;
+   if (!val_ok)
+      _rita->msg("pde>initial>","No value or expression given for initial condition.");
+   *_rita->ofh << "  in  value=" << regex_u;
    u.setRegex(1);
    if (file_ok) {
       OFELI::IOField ffi(file,OFELI::IOField::IN);
       ffi.get(u);
-      *_ofh << "  file=" << file;
+      *_rita->ofh << "  file=" << file;
    }
    if (save_ok) {
       OFELI::IOField ffo(save,OFELI::IOField::OUT);
       ffo.put(u);
       if (_verb)
          cout << "Initial condition saved in file: " << save << endl;
-      *_ofh << "  save=" << save;
+      *_rita->ofh << "  save=" << save;
    }
    set_u = true;
-   *_ofh << endl;
+   *_rita->ofh << endl;
    return 0;
 }
 
@@ -306,8 +297,7 @@ int equa::setBC()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
-      cout << "Error in command: No given arguments" << endl;
-      *_ofl << "In rita>pde>bc>: Error in command: No arguments" << endl;
+      _rita->msg("pde>bc>","No argument given");
       return _ret;
    }
    for (int i=0; i<nb_args; ++i) {
@@ -335,24 +325,20 @@ int equa::setBC()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << kw[n] << endl;
-            *_ofl << "In rita>pde>bc>: Unknown argument: " << kw[n] << endl;
+            _rita->msg("pde>bc>","Unknown argument: "+kw[n]);
             return 1;
       }
    }
    if (!code_ok) {
-      cout << "Error: No code given for boundary condition." << endl;
-      *_ofl << "In rita>pde>bc> No code given for boundary condition." << endl;
+      _rita->msg("pde>bc>","No code given for boundary condition.");
       return 1;
    }
    if (!val_ok) {
-      cout << "Error: No value or expression given for boundary condition." << endl;
-      *_ofl << "In rita>pde>bc> No value or expression given for boundary condition." << endl;
+      _rita->msg("pde>bc>","No value or expression given for boundary condition.");
       return 1;
    }
    if (code<=0) {
-      cout << "Error: You cannot give a boundary condition for a nonpositive code." << endl;
-      *_ofl << "In rita>pde>bc>: Illegal value of code: " << code << endl;
+      _rita->msg("pde>bc>","Illegal boundary condition for a nonpositive code "+to_string(code));
       return 1;
    }
    regex_bc.insert(pair<int,string>(code,val));
@@ -360,20 +346,20 @@ int equa::setBC()
    set_bc = true;
    if (_verb)
       cout << "Nodes with code " << code << " have prescribed value by the expression: " << val << endl;
-   *_ofh << "  bc  code=" << code << "  value=" << val;
+   *_rita->ofh << "  bc  code=" << code << "  value=" << val;
    if (file_ok) {
       OFELI::IOField ffi(file,OFELI::IOField::IN);
       ffi.get(bc);
-      *_ofh << "  file=" << file;
+      *_rita->ofh << "  file=" << file;
    }
    if (save_ok) {
       OFELI::IOField ffo(file,OFELI::IOField::OUT);
       ffo.put(bc);
-      *_ofh << "  save=" << save;
+      *_rita->ofh << "  save=" << save;
       if (_verb)
          cout << "Boundary condition saved in file: " << save << endl;
    }
-   *_ofh << endl;
+   *_rita->ofh << endl;
    return 0;
 }
 
@@ -389,8 +375,7 @@ int equa::setSF()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
-      cout << "Error in command: No given arguments" << endl;
-      *_ofl << "In rita>pde>sf>: Error in command: No arguments" << endl;
+      _rita->msg("pde>sf>","No arguments");
       return _ret;
    }
    for (int i=0; i<nb_args; ++i) {
@@ -418,41 +403,37 @@ int equa::setSF()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << kw[n] << endl;
-            *_ofl << "In rita>pde>sf>: Unknown argument: " << kw[n] << endl;
+            _rita->msg("pde>sf>","Unknown argument: "+kw[n]);
             return 1;
       }
    }
    if (!code_ok) {
-      cout << "Error: No code given." << endl;
-      *_ofl << "In rita>pde>sf> No code given." << endl;
+      _rita->msg("pde>sf>","No code given.");
       return 1;
    }
    if (!val_ok) {
-      cout << "Error: No value or expression given for surface force." << endl;
-      *_ofl << "In rita>pde>sf> No value or expression given for surface force." << endl;
+      _rita->msg("pde>sf>","No value or expression given for surface force.");
       return 1;
    }
    if (code<=0) {
-      cout << "Error: You cannot give a surface force for a nonpositive code." << endl;
-      *_ofl << "In rita>pde>sf>: Illegal value of code: " << code << endl;
+      _rita->msg("pde>sf>","Illegal value of code: "+to_string(code));
       return 1;
    }
-   *_ofh << "  sf  code=" << code << "  value=" << val;
+   *_rita->ofh << "  sf  code=" << code << "  value=" << val;
    regex_sf.insert(std::pair<int,string>(code,val));
    sf.setRegex(1);
    set_sf = true;
    if (file_ok) {
       OFELI::IOField ffi(file,OFELI::IOField::IN);
       ffi.get(sf);
-      *_ofh << "  file=" << file;
+      *_rita->ofh << "  file=" << file;
    }
    if (save_ok) {
       OFELI::IOField ffo(save,OFELI::IOField::OUT);
       ffo.put(sf);
-      *_ofh << "  save=" << save;
+      *_rita->ofh << "  save=" << save;
    }
-   *_ofh << endl;
+   *_rita->ofh << endl;
    return 0;
 }
 
@@ -467,8 +448,7 @@ int equa::setBF()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
-      cout << "Error in command: No given arguments" << endl;
-      *_ofl << "In rita>pde>bf>: Error in command: No arguments" << endl;
+      _rita->msg("pde>bf>","No arguments");
       return _ret;
    }
    for (int i=0; i<nb_args; ++i) {
@@ -499,23 +479,20 @@ int equa::setBF()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << kw[n] << endl;
-            *_ofl << "In rita>pde>source>: Unknown argument: " << kw[n] << endl;
-	    return 1;
+            _rita->msg("pde>source>","Unknown argument: "+kw[n]);
+            return 1;
       }
    }
-   if (!val_ok) {
-      cout << "Error: No value or expression given for source." << endl;
-      *_ofl << "In rita>pde>source> No value or expression given for source." << endl;
-   }
-   *_ofh << "  source  value=" << regex_bf;
+   if (!val_ok)
+      _rita->msg("pde>source>","No value or expression given for source.");
+   *_rita->ofh << "  source  value=" << regex_bf;
    bf.setRegex(1);
    set_bf = true;
    if (file_ok)
-      *_ofh << "  file=" << file;
+      *_rita->ofh << "  file=" << file;
    if (save_ok)
-      *_ofh << "  save=" << save;
-   *_ofh << endl;
+      *_rita->ofh << "  save=" << save;
+   *_rita->ofh << endl;
    return 0;
 }
 
@@ -538,8 +515,7 @@ int equa::setEq()
 {
    int ret = 0;
    if (_theMesh==nullptr) {
-      cout << "Error: No mesh provided." << endl;
-      *_ofl << "In rita>pde>: No mesh provided." << endl;
+      _rita->msg("pde>","No mesh provided.");
       log.mesh = true;
       return 1;
    }
@@ -553,24 +529,21 @@ int equa::setEq()
   
             case 1:
                if (spD!="feP1" && spD!="feP2") {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.pde = true;
                }
                break;
 
             case 2:
                if (spD!="feP1") {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.spd = true;
                }
                break;
 
             case 3:
                if (spD!="feP1") {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.spd = true;
                }
                break;
@@ -583,27 +556,24 @@ int equa::setEq()
 
             case 1:
                if (spD!="feP1") {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.pde = true;
                }
                break;
 
             case 2:
                if (spD!="feP1" && spD!="feP2") {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.spd = true;
                }
                break;
 
             case 3:
                if (spD!="feP1") {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.spd = true;
                }
-                    break;
+               break;
          }
          break;
 
@@ -613,39 +583,33 @@ int equa::setEq()
 
             case 1:
                if (spD=="feP1") {
-                  cout << "Error: This equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.pde = true;
                }
                else {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.spd = true;
                }
                break;
 
             case 2:
                if (spD=="feP1") {
-                  cout << "Error: This equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.pde = true;
                }
                else {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.spd = true;
                }
                break;
 
             case 3:
                if (spD=="feP1") {
-                  cout << "Error: This equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.pde = true;
                }
                else {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.spd = true;
                }
                break;
@@ -658,39 +622,33 @@ int equa::setEq()
 
             case 1:
                if (spD=="feP1") {
-                  cout << "Error: This equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Equation not implemented in rita.");
                   log.pde = true;
                }
                else {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.spd = true;
                }
                break;
 
             case 2:
                if (spD=="feP1") {
-                  cout << "Error: This equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Equation not implemented in rita.");
                   log.pde = true;
                }
                else {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.spd = true;
                }
                break;
 
             case 3:
                if (spD=="feP1") {
-                  cout << "Error: This equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Equation not implemented in rita.");
                   log.pde = true;
                }
                else {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.spd = true;
                }
                break;
@@ -702,29 +660,25 @@ int equa::setEq()
 
             case 1:
                if (spD=="feP1") {
-                  cout << "Error: This equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Equation not implemented in rita.");
                   log.pde = true;
                }
                else {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.spd = true;
                }
                break;
 
             case 2:
                if (spD!="feP1" && spD!="feQ1") {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.pde = true;
                }
                break;
 
             case 3:
                if (spD!="feP1" && spD!="feQ1") {
-                  cout << "Error: This approximation of the equation is not implemented in rita." << endl;
-                  *_ofl << "In rita>pde>: Approximation of equation not implemented in rita." << endl;
+                  _rita->msg("pde>","Approximation of equation not implemented in rita.");
                   log.spd = true;
                }
                break;
@@ -735,22 +689,19 @@ int equa::setEq()
          switch (_dim) {
 
             case 1:
-               cout << "Error: No implementation for 1-D available for bar equation." << endl;
-               *_ofl << "In rita>pde>: No implementation for 1-D available for bar equation." << endl;
+               _rita->msg("pde>","No implementation for 1-D available for bar equation.");
                log.pde = true;
                break;
 
             case 2:
                if (spD!="feP1") {
-                  cout << "Error: Only 2-D P1 finite element is available for bar equation." << endl;
-                  *_ofl << "In rita>pde>: Only 2-D P1 finite element is available for bar equation." << endl;
+                  _rita->msg("pde>","Only 2-D P1 finite element is available for bar equation.");
                   log.pde = true;
                }
                break;
 
             case 3:
-               cout << "Error: No implementation for 3-D available for bar equation." << endl;
-               *_ofl << "In rita>pde>: No implementation for 3-D available for bar equation." << endl;
+               _rita->msg("pde>","No implementation for 3-D available for bar equation.");
                log.pde = true;
                break;
          }
@@ -761,29 +712,25 @@ int equa::setEq()
 
             case 1:
                if (spD=="feP1") {
-                  cout << "Error: No implementation for 1-D P1 finite element available for beam equation." << endl;
-                  *_ofl << "In rita>pde>: No implementation for 1-D P1 finite element available for beam equation." << endl;
+                  _rita->msg("pde>","No implementation for 1-D P1 finite element available for beam equation.");
                   log.pde = true;
                }
                break;
 
             case 2:
                if (spD=="feP1") {
-                  cout << "Error: No implementation for 2-D P1 finite element available for beam equation." << endl;
-                  *_ofl << "In rita>pde>: No implementation for 2-D P1 finite element available for beam equation." << endl;
+                  _rita->msg("pde>","No implementation for 2-D P1 finite element available for beam equation.");
                   log.pde = true;
                }
                else if (spD=="feP2") {
-                  cout << "Error: No implementation for 2-D P2 finite element available for beam equation." << endl;
-                  *_ofl << "In rita>pde>: No implementation for 2-D P2 finite element available for beam equation." << endl;
+                  _rita->msg("pde>","No implementation for 2-D P2 finite element available for beam equation.");
                    log.pde = true;
                }
                break;
 
             case 3:
                if (spD=="feP1") {
-                  cout << "Error: No implementation for 3-D P1 finite element available for beam equation." << endl;
-                  *_ofl << "In rita>pde>: No implementation for 3-D P1 finite element available for beam equation." << endl;
+                  _rita->msg("pde>","No implementation for 3-D P1 finite element available for beam equation.");
                   log.pde = true;
                }
                break;
@@ -795,16 +742,14 @@ int equa::setEq()
 
             case 1:
                if (spD=="feP1") {
-                  cout << "Error: No implementation for 1-D available for incompressible Navier-Stokes equations." << endl;
-                  *_ofl << "In rita>pde>: No implementation for 1-D available for incompressible Navier-Stokes equations." << endl;
+                  _rita->msg("pde>","No implementation for 1-D available for incompressible Navier-Stokes equations.");
                   log.pde = true;
                }
                break;
 
             case 2:
                if (spD!="feP1") {
-                  cout << "Error: Only P1 finite element is implemented is available for incompressible Navier-Stokes equations." << endl;
-                  *_ofl << "In rita>pde>: Only P1 finite element is implemented is available for incompressible Navier-Stokes equations." << endl;
+                  _rita->msg("pde>","Only P1 finite element is implemented is available for incompressible Navier-Stokes equations.");
                   log.pde = true;
                }
                break;
@@ -821,29 +766,25 @@ int equa::setEq()
 
             case 1:
                if (spD=="feP1") {
-                  cout << "Error: This Space discretization method is not implemented for this PDE." << endl;
-                  *_ofl << "In rita>pde>: Space discretization method not implemented for this PDE." << endl;
+                  _rita->msg("pde>","Space discretization method not implemented for this PDE.");
                    log.pde = true;
                }
                break;
 
             case 2:
                if (spD=="feP1") {
-                  cout << "Error: This Space discretization method is not implemented for this PDE." << endl;
-                  *_ofl << "In rita>pde>: Space discretization method not implemented for this PDE." << endl;
+                  _rita->msg("pde>","Space discretization method not implemented for this PDE.");
                   log.pde = true;
                }
                else if (spD=="feP2") {
-                  cout << "Error: This Space discretization method is not implemented for this PDE." << endl;
-                  *_ofl << "In rita>pde>: Space discretization method not implemented for this PDE." << endl;
+                  _rita->msg("pde>","Space discretization method not implemented for this PDE.");
                   log.pde = true;
                }
                break;
 
             case 3:
                if (spD=="feP1") {
-                  cout << "Error: This Space discretization method is not implemented for this PDE." << endl;
-                  *_ofl << "In rita>pde>: Space discretization method not implemented for this PDE." << endl;
+                  _rita->msg("pde>","Space discretization method not implemented for this PDE.");
                   log.pde = true;
                }
                break;
@@ -855,29 +796,25 @@ int equa::setEq()
 
             case 1:
                if (spD=="feP1") {
-                  cout << "Error: This Space discretization method is not implemented for this PDE." << endl;
-                  *_ofl << "In rita>pde>: Space discretization method not implemented for this PDE." << endl;
+                  _rita->msg("pde>","Space discretization method not implemented for this PDE.");
                   log.pde = true;
                }
                break;
 
             case 2:
                if (spD=="feP1") {
-                  cout << "Error: This Space discretization method is not implemented for this PDE." << endl;
-                  *_ofl << "In rita>pde>: Space discretization method not implemented for this PDE." << endl;
+                  _rita->msg("pde>","Space discretization method not implemented for this PDE.");
                   log.pde = true;
                }
                else if (spD=="feP2") {
-                  cout << "Error: This Space discretization method is not implemented for this PDE." << endl;
-                  *_ofl << "In rita>pde>: Space discretization method not implemented for this PDE." << endl;
+                  _rita->msg("pde>","Space discretization method not implemented for this PDE.");
                   log.pde = true;
                }
                break;
 
             case 3:
                if (spD=="feP1") {
-                  cout << "Error: This Space discretization method is not implemented for this PDE." << endl;
-                  *_ofl << "In rita>pde>: Space discretization method not implemented for this PDE." << endl;
+                  _rita->msg("pde>","Space discretization method not implemented for this PDE.");
                   log.pde = true;
                }
                break;
@@ -885,8 +822,7 @@ int equa::setEq()
          break;
 
       default:
-         cout << "Error: This equation is not implemented in rita." << endl;
-         *_ofl << "In rita>pde>: Equation not implemented in rita." << endl;
+         _rita->msg("pde>","Equation not implemented in rita.");
          log.pde = true;
          break;
 
@@ -906,14 +842,12 @@ void equa::setCoef()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
-      cout << "Error: No argument for command." << H << endl;
-      *_ofl << "In rita>pde>coef>: No argument for command." << endl;
+      _rita->msg("pde>coef>","No argument");
       _ret = 1;
       return;
    }
    if (nb_args<1) {
-      cout << "Error: No argument for command." << endl;
-      *_ofl << "In rita>pde>coef>: No argument for command." << endl;
+      _rita->msg("pde>coef>","No argument.");
       _ret = 1;
       return;
    }
@@ -992,8 +926,7 @@ void equa::setCoef()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << _kw[n] << endl;
-            *_ofl << "In rita>pde>coef>: Unknown argument: " << _kw[n] << endl;
+            _rita->msg("pde>coef>","Unknown argument: "+_kw[n]);
             _ret = 1;
 	    return;
       }
@@ -1001,96 +934,84 @@ void equa::setCoef()
    if (nb_args>0) {
       if (_rho_set) {
          if (ieq!=HEAT && ieq!=INCOMPRESSIBLE_NAVIER_STOKES && ieq!=COMPRESSIBLE_NAVIER_STOKES) {
-            cout << "Error: This PDE doesn't need density input" << endl;
-            *_ofl << "In rita>pde>coef>: This PDE doesn't need density input" << endl;
+            _rita->msg("pde>coef>","This PDE doesn't need density input.");
             _ret = 1;
             return;
          }
       }
       if (_Cp_set) {
          if (ieq!=HEAT && ieq!=COMPRESSIBLE_NAVIER_STOKES) {
-            cout << "Error: This PDE doesn't need specific heat input" << endl;
-            *_ofl << "In rita>pde>coef>: This PDE doesn't need specific heat input" << endl;
+            _rita->msg("pde>coef>","This PDE doesn't need specific heat input.");
             _ret = 1;
             return;
          }
       }
       if (_kappa_set) {
          if (ieq!=HEAT && ieq!=COMPRESSIBLE_NAVIER_STOKES) {
-            cout << "Error: This PDE doesn't need thermal conductivity input" << endl;
-            *_ofl << "In rita>pde>coef>: This PDE doesn't need thermal conductivity input" << endl;
+            _rita->msg("pde>coef>","This PDE doesn't need thermal conductivity input.");
             _ret = 1;
             return;
          }
       }
       if (_mu_set) {
          if (ieq!=INCOMPRESSIBLE_NAVIER_STOKES && ieq!=COMPRESSIBLE_NAVIER_STOKES) {
-            cout << "Error: This PDE doesn't need viscosity input" << endl;
-            *_ofl << "In rita>pde>coef>: This PDE doesn't need viscosity input" << endl;
+            _rita->msg("pde>coef>","This PDE doesn't need viscosity input.");
             _ret = 1;
             return;
          }
       }
       if (_sigma_set) {
          if (ieq!=EDDY_CURRENTS && ieq!=MAXWELL && ieq!=HELMHOLTZ) {
-            cout << "Error: This PDE doesn't need electric conductivity input" << endl;
-            *_ofl << "In rita>pde>coef>: This PDE doesn't need electric conductivity input" << endl;
+            _rita->msg("pde>coef>","This PDE doesn't need electric conductivity input.");
             _ret = 1;
             return;
          }
       }
       if (_Mu_set) {
          if (ieq!=EDDY_CURRENTS && ieq!=MAXWELL && ieq!=HELMHOLTZ) {
-            cout << "Error: This PDE doesn't need magnetic permeability input" << endl;
-            *_ofl << "In rita>pde>coef>: This PDE doesn't need viscosity input" << endl;
+            _rita->msg("pde>coef>","This PDE doesn't need viscosity input.");
             _ret = 1;
             return;
          }
       }
       if (_epsilon_set) {
          if (ieq!=MAXWELL && ieq!=HELMHOLTZ) {
-            cout << "Error: This PDE doesn't need electric permittivity input" << endl;
-            *_ofl << "In rita>pde>coef>: This PDE doesn't need electric permittivity input" << endl;
+            _rita->msg("pde>coef>","This PDE doesn't need electric permittivity input.");
             _ret = 1;
             return;
          }
       }
       if (_omega_set) {
          if (ieq!=EDDY_CURRENTS && ieq!=MAXWELL && ieq!=HELMHOLTZ) {
-            cout << "Error: This PDE doesn't need angular frequency input" << endl;
-            *_ofl << "In rita>pde>coef>: This PDE doesn't need angular frequency input" << endl;
+            _rita->msg("pde>coef>","This PDE doesn't need angular frequency input.");
             _ret = 1;
             return;
          }
       }
       if (_beta_set) {
          if (ieq!=HEAT && ieq!=COMPRESSIBLE_NAVIER_STOKES) {
-            cout << "Error: This PDE doesn't need thermal expansion coefficient input" << endl;
-            *_ofl << "In rita>pde>coef>: This PDE doesn't need thermal expansion coefficient input" << endl;
+            _rita->msg("pde>coef>","This PDE doesn't need thermal expansion coefficient input.");
             _ret = 1;
             return;
          }
       }
       if (_v_set) {
          if (ieq!=WAVE && ieq!=TRANSPORT) {
-            cout << "Error: This PDE doesn't need velocity input" << endl;
-            *_ofl << "In rita>pde>coef>: This PDE doesn't need velocity input" << endl;
+            _rita->msg("pde>coef>","This PDE doesn't need velocity input.");
             _ret = 1;
             return;
          }
       }
       if (_young_set) {
          if (ieq!=LINEAR_ELASTICITY && ieq!=BEAM) {
-            cout << "Error: This PDE doesn't need Young modulus input" << endl;
-            *_ofl << "In rita>pde>coef>: This PDE doesn't need Young's modulus input" << endl;
+            _rita->msg("pde>coef>","This PDE doesn't need Young's modulus input.");
             _ret = 1;
             return;
          }
       }
       if (_poisson_set) {
          if (ieq!=LINEAR_ELASTICITY && ieq!=BEAM) {
-            cout << "Error: This PDE doesn't need Poisson ratio input" << endl;
-            *_ofl << "In rita>pde>coef>: This PDE doesn't need Poisson ratio input" << endl;
+            _rita->msg("pde>coef>","This PDE doesn't need Poisson ratio input");
             _ret = 1;
             return;
          }
@@ -1139,7 +1060,7 @@ void equa::setCoef()
                }
                ret = _cmd->get(_rho_exp);
                if (!ret) {
-                  *_ofh << "    rho " << _rho_exp << endl;
+                  **_rita->ofh << "    rho " << _rho_exp << endl;
                   _rho_set = true;
 	       }
                break;
@@ -1157,7 +1078,7 @@ void equa::setCoef()
                }
                ret = _cmd->get(_Cp_exp);
                if (!ret)
-                  *_ofh << "    Cp " << _Cp_exp << endl;
+                  **_rita->ofh << "    Cp " << _Cp_exp << endl;
                break;
 
             case  7:
@@ -1173,7 +1094,7 @@ void equa::setCoef()
                }
                ret = _cmd->get(_kappa_exp);
                if (!ret) {
-                  *_ofh << "    kappa " << _kappa_exp << endl;
+                  **_rita->ofh << "    kappa " << _kappa_exp << endl;
                   _kappa_set = true;
                }
                break;
@@ -1191,7 +1112,7 @@ void equa::setCoef()
                }
                ret = _cmd->get(_mu_exp);
                if (!ret) {
-                  *_ofh << "    mu " << _mu_exp << endl;
+                  **_rita->ofh << "    mu " << _mu_exp << endl;
                   _mu_set = true;
                }
                break;
@@ -1209,7 +1130,7 @@ void equa::setCoef()
                }
                ret = _cmd->get(_sigma_exp);
                if (!ret) {
-                  *_ofh << "    sigma " << _sigma_exp << endl;
+                  **_rita->ofh << "    sigma " << _sigma_exp << endl;
                   _sigma_set = true;
                }
                break;
@@ -1227,7 +1148,7 @@ void equa::setCoef()
                }
                ret = _cmd->get(_Mu_exp);
                if (!ret) {
-                  *_ofh << "    Mu " << _Mu_exp << endl;
+                  **_rita->ofh << "    Mu " << _Mu_exp << endl;
                   _Mu_set = true;
                }
                break;
@@ -1245,7 +1166,7 @@ void equa::setCoef()
                }
                ret = _cmd->get(_epsilon_exp);
                if (!ret) {
-                  *_ofh << "    epsilon " << _epsilon_exp << endl;
+                  **_rita->ofh << "    epsilon " << _epsilon_exp << endl;
                   _epsilon_set = true;
                }
                break;
@@ -1263,7 +1184,7 @@ void equa::setCoef()
                }
                ret = _cmd->get(_omega_exp);
                if (!ret) {
-                  *_ofh << "    omega " << _omega_exp << endl;
+                  **_rita->ofh << "    omega " << _omega_exp << endl;
                   _omega_set = true;
                }
                break;
@@ -1281,7 +1202,7 @@ void equa::setCoef()
                }
                ret = _cmd->get(_beta_exp);
                if (!ret) {
-                  *_ofh << "    beta " << _beta_exp << endl;
+                  **_rita->ofh << "    beta " << _beta_exp << endl;
                   _beta_set = true;
                }
                break;
@@ -1299,7 +1220,7 @@ void equa::setCoef()
                }
                ret = _cmd->get(_v_exp);
                if (!ret) {
-                  *_ofh << "    v " << _v_exp << endl;
+                  **_rita->ofh << "    v " << _v_exp << endl;
                   _v_set = true;
                }
                break;
@@ -1316,7 +1237,7 @@ void equa::setCoef()
                }
                ret = _cmd->get(_young_exp);
                if (!ret) {
-                  *_ofh << "    young " << _young_exp << endl;
+                  **_rita->ofh << "    young " << _young_exp << endl;
                   _young_set = true;
                }
                break;
@@ -1333,7 +1254,7 @@ void equa::setCoef()
                }
                ret = _cmd->get(_poisson_exp);
                if (!ret) {
-                  *_ofh << "    poisson " << _poisson_exp << endl;
+                  **_rita->ofh << "    poisson " << _poisson_exp << endl;
                   _poisson_set = true;
                }
                break;
@@ -1341,7 +1262,7 @@ void equa::setCoef()
             case 25:
             case 26:
                _ret = 0;
-               *_ofh << "    end" << endl;
+               **_rita->ofh << "    end" << endl;
                return;
 
             case 27:

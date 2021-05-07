@@ -79,7 +79,6 @@ class data
     int getVerbose() const { return _verb; }
     void set(cmd* command) { _cmd = command; }
     int ret() const { return _ret; }
-    void set(std::ofstream* ofl, std::ofstream* ofh) { _ofl = ofl; _ofh = ofh; }
     int addFunction(const string &name, const string &def, const vector<string> &var);
     int addMesh(OFELI::Mesh* ms, string name);
 
@@ -112,7 +111,6 @@ class data
     int _size, _ifield, _imesh, _igrid, _ifct, _itab;
     int _nb_fields, _default_field, _nb_fcts, _nb_meshes, _nb_tabs, _nb_grids, _nb_vectors, _nb_matrices; 
     int _nb_args, _verb, _key, _ret, _nb_dof, _nb, _sr;
-    std::ofstream *_ofh, *_ofl;
     configure *_configure;
     cmd *_cmd;
     int _theMesh_alloc, _theTab_alloc, _theGrid_alloc, _theFct_alloc, _theVector_alloc, _theMatrix_alloc, _u_alloc;

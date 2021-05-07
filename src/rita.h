@@ -124,8 +124,9 @@ class rita
     void initConfig();
     int setIn();
     bool meshOK, solveOK, dataOK;
-    data *_data;
+    ofstream *ofh, *ofl, ocf;
 
+    friend class configure;
     friend class mesh;
     friend class solve;
     friend class transient;
@@ -140,10 +141,10 @@ class rita
  private:
 
    bool _load, _obj_analytic;
+   data *_data;
    odae *_ae, *_ode;
    equa *_pde;
    string _script_file, _scheme;
-   ofstream *_ofh, *_ofl, _ocf;
    ifstream _icf, *_in;
    cmd *_cmd;
    int _verb, _key, _ret, _opt;
@@ -171,7 +172,6 @@ class rita
 
    void set(OFELI::Mesh* ms) { _theMesh = ms; }
    void set(cmd* com) { _cmd = com; }
-   void set(std::ofstream* ofl, std::ofstream* ofh) { _ofl = ofl; _ofh = ofh; }
    OFELI::Mesh* getMesh() const { return _theMesh; }
    void setDim(int dim) { _dim = dim; }
    void set(data *d) { _data = d; }
@@ -205,6 +205,7 @@ class rita
    int set_ls(string ls, string prec);
    int set_nls(string nls);
    int findField(const string& s);
+   void msg(const string& loc, const string& m1, const string& m2="", int c=0);
 
    const vector<string> _kw = {"?","help","lic$ense","set","load","unload","data","mesh",
                                "stat$ionary","trans$ient","eigen","optim","approx$imation",

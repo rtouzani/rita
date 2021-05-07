@@ -99,17 +99,15 @@ int mesh::run()
       if (_key<-1)
          continue;
       if (_key==-1) {
-         cout << "Unknown Command: " << _cmd->token() << endl;
-         cout << "Available commands:\n";
-         cout << "1d, rectangle, cube, point, curve, surface, volume, contour, code\n";
-         cout << "generate, list, plot, clear, save, read, end, <" << endl;
-         cout << "Global commands:\n";
-         cout << "help, ?, set, quit, exit" << endl;
-         *_ofl << "In rita>mesh>: Unknown Command " << _cmd->token() << endl;
+         _rita->msg("mesh>","Unknown Command "+_cmd->token(),
+                    "Available commands:\n"
+                    "1d, rectangle, cube, point, curve, surface, volume, contour, code\n"
+                    "generate, list, plot, clear, save, read, end, <"
+                    "Global commands:\nhelp, ?, set, quit, exit");
          continue;
       }
       else if (_key==19 || _key==20) {
-          *_ofh << "  end" << endl;
+          *_rita->ofh << "  end" << endl;
           _ret = 0;
          return _ret;
       }
@@ -199,14 +197,12 @@ void mesh::set1D()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
-      cout << "Error: No argument for command.\n\n" << H << endl;
-      *_ofl << "In rita>mesh>1d>: No argument for command." << endl;
+      _rita->msg("mesh>1d>","No argument for command.");
       _ret = 1;
       return;
    }
    if (nb_args<1) {
-      cout << "Error: No argument for command." << endl;
-      *_ofl << "In rita>mesh>1d>: No argument for command." << endl;
+      _rita->msg("mesh>1d>","No argument for command.");
       _ret = 1;
       return;
    }
@@ -228,8 +224,7 @@ void mesh::set1D()
                xmax = _cmd->double_token(1);
             }
             else {
-               cout << "Error: This argument requires 1 or 2 parameters." << endl;
-               *_ofl << "In rita>mesh>1d>: This argument requires 1 or 2 parameters." << endl;
+               _rita->msg("mesh>1d>","This argument requires 1 or 2 parameters.");
                _ret = 1;
                return;
             }
@@ -247,8 +242,7 @@ void mesh::set1D()
                cmax = _cmd->int_token(1);
             }
             else {
-               cout << "Error: This argument requires 1 or 2 parameters." << endl;
-               *_ofl << "In rita>mesh>1d>: This argument requires 1 or 2 parameters." << endl;
+               _rita->msg("mesh>1d>","This argument requires 1 or 2 parameters.");
                _ret = 1;
                return;
             }
@@ -263,21 +257,18 @@ void mesh::set1D()
             break;
 
          default:
-	    cout << "Error: Unknown argument: " << kw[n] << endl;
-            *_ofl << "In rita>mesh>1d>: Unknown argument: " << kw[n] << endl;
+            _rita->msg("mesh>1d>","Unknown argument: "+kw[n]);
 	    return;
       }
    }
    if (nb_args>0) {
       if (xmax<=xmin) {
-         cout << "Error: xmax must be > xmin: " << xmin << endl;
-         *_ofl << "In rita>mesh>1d>: Error in values of xmin and xmax: " << xmin << " " << xmax << endl;
+         _rita->msg("mesh>1d>","Error in values of xmin and xmax: "+to_string(xmin)+", "+to_string(xmax));
          _ret = 1;
          return;
       }
       if (ne<2) {
-         cout << "Error: Number of elements must be > 1" << endl;
-         *_ofl << "In rita>mesh>1d>: Illegal number of elements." << endl;
+         _rita->msg("mesh>1d>","Number of elements must be > 1");
          _ret = 1;
          return;
       }
@@ -294,9 +285,9 @@ void mesh::set1D()
       _data->theMesh.push_back(_theMesh);
       if (_verb)
          cout << "1-D mesh complete and saved in file " << _mesh_file << endl;
-      *_ofh << "  1d  domain=" << xmin << "," << xmax << "  codes=" << cmin
-            << "," << cmax << "  ne=" << ne << "  nbdof=" << _nb_dof
-            << "  save=" << _mesh_file << endl;
+      *_rita->ofh << "  1d  domain=" << xmin << "," << xmax << "  codes=" << cmin
+                 << "," << cmax << "  ne=" << ne << "  nbdof=" << _nb_dof
+                 << "  save=" << _mesh_file << endl;
    }
 
    else {
@@ -306,7 +297,7 @@ void mesh::set1D()
          cout << "Default codes for end nodes: 0 0\n";
          cout << "Default nb of dof: 1" << endl;
       }
-      *_ofh << "  1d" << endl;
+      *_rita->ofh << "  1d" << endl;
       while (1) {
          if (_cmd->readline("rita>mesh>1d> ")<0)
             continue;
@@ -334,64 +325,61 @@ void mesh::set1D()
                if (_verb>1)
                   cout << "Setting interval bounds ..." << endl;
                if (_cmd->setNbArg(2,"Give xmin and xmax.")) {
-                  *_ofl << "In rita>mesh>1d>interval>: Missing values of xmin and xmax." << endl;
+                  _rita->msg("mesh>1d>interval>","Missing values of xmin and xmax.");
                   break;
                }
                ret  = _cmd->get(xmin);
                ret += _cmd->get(xmax);
                if (xmax<=xmin) {
-                  cout << "Error: xmax must be > xmin: " << xmin << endl;
-                  *_ofl << "In rita>mesh>1d>interval>: Error in values of xmin and xmax: " << xmin
-                        << " " << xmax << endl;
+                  _rita->msg("mesh>1d>interval>","Value of xmax: "+to_string(xmax)+" must be > xmin: "+to_string(xmin));
                   break;
                }
                if (!ret)
-                  *_ofh << "    interval " << xmin << " " << xmax << endl;
+                  *_rita->ofh << "    interval " << xmin << " " << xmax << endl;
                break;
 
             case 4:
                if (_verb>1)
                   cout << "Setting interval subdivision ..." << endl;
                if (_cmd->setNbArg(1,"Give number of elements.")) {
-                  *_ofl << "In rita>mesh>1d>ne>: Missing number of elements." << endl;
+                  _rita->msg("mesh>1d>ne>","Missing number of elements.","",1);
                   break;
                }
                _cmd->get(ne);
-               *_ofh << "    ne " << ne << endl;
+               *_rita->ofh << "    ne " << ne << endl;
                break;
 
             case 5:
                if (_verb>1)
                   cout << "Setting boundary codes ..." << endl;
                if (_cmd->setNbArg(2,"Give cmin and cmax.")) {
-                  *_ofl << "In rita>mesh>1d>codes>: Missing codes for end nodes." << endl;
+                  _rita->msg("mesh>1d>codes>","Missing codes for end nodes.","",1);
                   break;
                }
                ret  = _cmd->get(cmin);
                ret += _cmd->get(cmax);
                if (!ret)
-                  *_ofh << "    codes " << cmin << " " << cmax << endl;
+                  *_rita->ofh << "    codes " << cmin << " " << cmax << endl;
                break;
 
             case 6:
                if (_verb>1)
                   cout << "Setting number of degrees of freedom ..." << endl;
                if (_cmd->setNbArg(1,"Give number of dof per node.")) {
-                  *_ofl << "In rita>mesh>1d>nbdof>: Missing number of dof." << endl;
+                  _rita->msg("mesh>1d>nbdof>","Missing number of dof.","",1);
                   break;
                }
                ret = _cmd->get(_nb_dof);
                if (!ret)
-                  *_ofh << "    nbdof " << _nb_dof << endl;
+                  *_rita->ofh << "    nbdof " << _nb_dof << endl;
                break;
 
             case 7:
                if (_verb>1)
                   cout << "Saving mesh in file ..." << endl;
                if (_saved) {
-                  cout << "Warning: You are trying to delete an existing mesh.\n";
-                  cout << "retype command 'save' to confirm." << endl;
-                  *_ofl << "In rita>mesh>1d>save>: Trying to delete a created mesh." << endl;
+                  _rita->msg("mesh>1d>save>","You are trying to delete an existing mesh.",
+                             "retype command 'save' to confirm.");
                   _saved = false;
                   break;
                }
@@ -409,7 +397,7 @@ void mesh::set1D()
                   _theMesh->put(_mesh_file);
                   _data->mesh_name.push_back("M"+to_string(_data->theMesh.size()));
                   _data->theMesh.push_back(_theMesh);
-                  *_ofh << "  save " << _mesh_file << endl;
+                  *_rita->ofh << "  save " << _mesh_file << endl;
                   cout << "1-D mesh complete and saved in file " << _mesh_file << endl;
                }
                break;
@@ -425,7 +413,7 @@ void mesh::set1D()
                   _theMesh->removeImposedDOF();
                   _saved = true;
                }
-               *_ofh << "  end" << endl;
+               *_rita->ofh << "  end" << endl;
                if (_verb && !_saved)
                   cout << "Mesh '1d' complete." << endl;
                _ret = 90;
@@ -444,10 +432,9 @@ void mesh::set1D()
                break;
 
             default:
-               cout << "Unknown Command: " << _cmd->token() << endl;
-               cout << "Available commands:\ninterval, ne, codes, nbdof, save, end, <" << endl;
-               cout << "Global commands:\nhelp, ?, set, quit, exit" << endl;
-               *_ofl << "In rita>mesh>1d>: Unknown command: " << _cmd->token() << endl;
+               _rita->msg("mesh>1d>","Unknown command: "+_cmd->token(),
+                          "Available commands:\ninterval, ne, codes, nbdof, save, end, <\n"
+                          "Global commands:\nhelp, ?, set, quit, exit");
                break;
          }
       }
@@ -485,14 +472,12 @@ void mesh::setRectangle()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
-      cout << "Error: No argument for command.\n\n" << H << endl;
-      *_ofl << "In rita>mesh>rectangle>: No argument for command." << endl;
+      _rita->msg("mesh>rectangle>","No argument for command.");
       _ret = 1;
       return;
    }
    if (nb_args<1) {
-      cout << "Error: No argument for command." << endl;
-      *_ofl << "In rita>mesh>rectangle>: No argument for command." << endl;
+      _rita->msg("mesh>rectangle>","No argument for command.");
       _ret = 1;
       return;
    }
@@ -513,12 +498,11 @@ void mesh::setRectangle()
                xmin = _cmd->double_token(0);
                ymin = _cmd->double_token(1);
             }
-	    else {
-               cout << "Error: This argument requires 1 or 2 parameters." << endl;
-               *_ofl << "In rita>mesh>rectangle>: This argument requires 1 or 2 parameters." << endl;
+            else {
+               _rita->msg("mesh>rectangle>","This argument requires 1 or 2 parameters.");
                _ret = 1;
                return;
-	    }
+            }
             break;
 
          case  4:
@@ -528,12 +512,11 @@ void mesh::setRectangle()
                xmax = _cmd->double_token(0);
                ymax = _cmd->double_token(1);
             }
-	    else {
-               cout << "Error: This argument requires 1 or 2 parameters." << endl;
-               *_ofl << "In rita>mesh>rectangle>: This argument requires 1 or 2 parameters." << endl;
+            else {
+               _rita->msg("mesh>rectangle>","This argument requires 1 or 2 parameters.");
                _ret = 1;
                return;
-	    }
+            }
             break;
 
          case  5:
@@ -542,7 +525,7 @@ void mesh::setRectangle()
             else {
                nx = _cmd->int_token(0);
                ny = _cmd->int_token(1);
-	    }
+            }
             break;
 
          case  6:
@@ -555,8 +538,7 @@ void mesh::setRectangle()
                c[3] = _cmd->int_token(3);
             }
             else {
-               cout << "Error: This argument requires 1 or 4 parameters." << endl;
-               *_ofl << "In rita>mesh>rectangle>: This argument requires 1 or 4 parameters." << endl;
+               _rita->msg("mesh>rectangle>","This argument requires 1 or 4 parameters.");
                _ret = 1;
                return;
             }
@@ -571,20 +553,17 @@ void mesh::setRectangle()
             break;
 
          default:
-	    cout << "Error: Unknown argument: " << kw[n] << endl;
-            *_ofl << "In rita>mesh>rectangle>: Unknown argument: " << kw[n] << endl;
-	    return;
+            _rita->msg("mesh>rectangle>","Unknown argument: "+kw[n]);
+            return;
       }
    }
    if (nb_args>0) {
       if (xmax<=xmin) {
-         cout << "Error: xmax must be > xmin: " << xmin << endl;
-         *_ofl << "In rita>mesh>rectangle>: Error in values of xmin and xmax: " << xmin << " " << xmax << endl;
+         _rita->msg("mesh>rectangle>","xmax: "+to_string(xmax)+" must be > than xmin: "+ to_string(xmin));
          return;
       }
       if (ymax<=ymin) {
-         cout << "Error: ymax must be > ymin: " << xmin << endl;
-         *_ofl << "In rita>mesh>rectangle>: Error in values of ymin and ymax: " << ymin << " " << ymax << endl;
+         _rita->msg("mesh>rectangle>","ymax: "+to_string(ymax)+" must be > ymin: "+to_string(ymin));
          return;
       }
       if (!_saved) {
@@ -597,9 +576,9 @@ void mesh::setRectangle()
       }
       _generator = 1;
       _generated = true;
-      *_ofh << "  rectangle min=" << xmin << "," << ymin << " max=" << xmax << "," << ymax;
-      *_ofh << "  ne=" << nx << "," << ny << "  codes=" << c[0] << "," << c[1] << "," << c[2];
-      *_ofh << "," << c[3] << "  nbdof=" << _nb_dof << "  save=" << _mesh_file << endl;
+      *_rita->ofh << "  rectangle min=" << xmin << "," << ymin << " max=" << xmax << "," << ymax;
+      *_rita->ofh << "  ne=" << nx << "," << ny << "  codes=" << c[0] << "," << c[1] << "," << c[2];
+      *_rita->ofh << "," << c[3] << "  nbdof=" << _nb_dof << "  save=" << _mesh_file << endl;
       _ret = 0;
       return;
    }
@@ -611,7 +590,7 @@ void mesh::setRectangle()
          cout << "Default subdivision: 10*10\n";
          cout << "Default nb of dof: 1" << endl;
       }
-      *_ofh << "  rectangle" << endl;
+      *_rita->ofh << "  rectangle" << endl;
 
       while (1) {
          if (_cmd->readline("rita>mesh>rectangle> ")<0)
@@ -641,46 +620,46 @@ void mesh::setRectangle()
                if (_verb>1)
                   cout << "Setting xmin and ymin ..." << endl;
                if (_cmd->setNbArg(2,"Give values of xmin and ymin.")) {
-                  *_ofl << "In rita>mesh>rectangle>min>: Missing xmin and ymin values" << endl;
+                  _rita->msg("mesh>rectangle>min>","Missing xmin and ymin values","",1);
                   break;
                }
                ret  = _cmd->get(xmin);
                ret += _cmd->get(ymin);
                if (!ret)
-                  *_ofh << "    min " << xmin << " " << ymin << endl;
+                  *_rita->ofh << "    min " << xmin << " " << ymin << endl;
                break;
 
             case 4:
                if (_verb>1)
                   cout << "Setting xmax and ymax ..." << endl;
                if (_cmd->setNbArg(2,"Give values of ymax and ymax.")) {
-                  *_ofl << "In rita>mesh>rectangle>max>: Missing xmax and ymax values" << endl;
+                  _rita->msg("mesh>rectangle>max>","Missing xmax and ymax values","",1);
                   break;
                }
                ret  = _cmd->get(xmax);
                ret += _cmd->get(ymax);
                if (!ret)
-                  *_ofh << "    max " << xmax << " " << ymax << endl;
+                  *_rita->ofh << "    max " << xmax << " " << ymax << endl;
                break;
 
             case 5:
                if (_verb>1)
                   cout << "Setting mesh subdivisions ..." << endl;
                if (_cmd->setNbArg(2,"Give subdivision in the x and y-directions.")) {
-                  *_ofl << "In rita>mesh>rectangle>ne>: Missing subvdivisions in x and y directions" << endl;
+                  _rita->msg("mesh>rectangle>ne>","Missing subdivisions in x and y directions","",1);
                   break;
                }
                ret  = _cmd->get(nx);
                ret += _cmd->get(ny);
                if (!ret)
-                  *_ofh << "    ne " << nx << " " << ny << endl;
+                  *_rita->ofh << "    ne " << nx << " " << ny << endl;
                break;
 
             case 6:
                if (_verb>1)
                   cout << "Setting boundary codes ..." << endl;
                if (_cmd->setNbArg(4,"Code to assign on the line y=ymin.")) {
-                  *_ofl << "In rita>mesh>rectangle>codes>: Missing code to assign on the line y=ymin." << endl;
+                  _rita->msg("mesh>rectangle>codes>","Missing code to assign on the line y=ymin.","",1);
                   break;
                }
                ret1 = _cmd->get(c[0]);
@@ -688,7 +667,7 @@ void mesh::setRectangle()
                ret3 = _cmd->get(c[2]);
                ret4 = _cmd->get(c[3]);
                if (!ret1 && !ret2 && !ret3 && !ret4) {
-                  *_ofh << "    codes " << c[0] << " " << c[1] << " " << c[2] << " " << c[3] << endl;
+                  *_rita->ofh << "    codes " << c[0] << " " << c[1] << " " << c[2] << " " << c[3] << endl;
                   if (cv[0]==0)
                      cv[0] = c[0];
                   if (cv[1]==0)
@@ -712,21 +691,19 @@ void mesh::setRectangle()
                if (_verb>1)
                   cout << "Setting number of degrees of freedom ..." << endl;
                if (_cmd->setNbArg(1,"Give number of dof per node.")) {
-                  *_ofl << "In rita>mesh>rectangle>nbdof>: Missing number of dof." << endl;
+                  _rita->msg("mesh>rectangle>nbdof>","Missing number of dof.","",1);
                   break;
                }
                ret = _cmd->get(_nb_dof);
                if (!ret)
-                  *_ofh << "    nbdof " << _nb_dof << endl;
+                  *_rita->ofh << "    nbdof " << _nb_dof << endl;
                break;
 
             case 8:
                if (_verb>1)
                   cout << "Saving mesh in file ..." << endl;
                if (_saved) {
-                  cout << "Warning: You are trying to delete an existing mesh.\n";
-                  cout << "retype command 'save' to confirm." << endl;
-                  *_ofl << "In rita>mesh>rectangle>save>: Trying to delete a created mesh." << endl;
+                  _rita->msg("mesh>rectangle>save>","Trying to delete a created mesh.","retype command 'save' to confirm.");
                   _saved = false;
                   break;
                }
@@ -741,7 +718,7 @@ void mesh::setRectangle()
                   _theMesh->put(_mesh_file);
                   _data->mesh_name.push_back("M"+to_string(_data->theMesh.size()));
                   _data->theMesh.push_back(_theMesh);
-                  *_ofh << "    save " << _mesh_file << endl;
+                  *_rita->ofh << "    save " << _mesh_file << endl;
                   _saved = true;
                   cout << "2-D mesh of rectangle complete and saved in file " << _mesh_file << endl;
                }
@@ -751,7 +728,7 @@ void mesh::setRectangle()
             case 10:
                if (_verb>1)
                   cout << "Getting back to higher level ..." << endl;
-               *_ofh << "    end" << endl;
+               *_rita->ofh << "    end" << endl;
                if (!_saved) {
                   if (_theMesh!=nullptr)
                      delete _theMesh, _theMesh = nullptr;
@@ -778,10 +755,9 @@ void mesh::setRectangle()
                break;
 
             default:
-               cout << "Unknown Command!" << endl;
-               cout << "Available commands: min, max, ne, codes, nbdof, save, end, <" << endl;
-               cout << "Global commands: help, ?, set, quit, exit" << endl;
-               *_ofl << "In rita>mesh>rectangle>: Unknown command: " << _cmd->token() << endl;
+               _rita->msg("mesh>rectangle>","Unknown Command: "+_cmd->token(),
+                          "Available commands: min, max, ne, codes, nbdof, save, end,\n"
+                          "Global commands: help, ?, set, quit, exit");
                break;
          }
       }
@@ -806,14 +782,13 @@ void mesh::setCube()
                            "nx, ny, nz: Number of elements in x, y and z direction respectively.\n"
                            "            Their default value is 10.\n"
                            "cxm, cxM, cym, cyM, czm, czM: Codes associated to the nodes generated on the face x=mx\n" 
-                                                          "x=Mx, y=my, y=My, z=mz, z=Mz respectively.\n"
-                                                          "These integer values are necessary to enforce boundary\n"
-                                                          "conditions. A code 0 (Default value) means no condition to\n" 
-                                                          "prescribe.\n"
+                           "x=Mx, y=my, y=My, z=mz, z=Mz respectively.\n"
+                           "These integer values are necessary to enforce boundary\n"
+                           "conditions. A code 0 (Default value) means no condition to prescribe.\n"
                            "d: Number of degrees of freedom associated to any generated node. Default value is 1.\n"
                            "file: Name of the file where the generated mesh will be stored. By default the mesh\n"
                            "      remains in memory but is not saved in file.";
-   *_ofh << "  cube" << endl;
+   *_rita->ofh << "  cube" << endl;
    _saved = false;
    _ret = 0;
    if (_verb) {
@@ -829,13 +804,12 @@ void mesh::setCube()
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
       cout << "Error: No argument for command.\n\n" << H << endl;
-      *_ofl << "In rita>mesh>cube>: No argument for command." << endl;
+      _rita->msg("mesh>cube>","No argument for command.");
       _ret = 1;
       return;
    }
    if (nb_args<1) {
-      cout << "Error: No argument for command." << endl;
-      *_ofl << "In rita>mesh>cube>: No argument for command." << endl;
+      _rita->msg("mesh>cube>","No argument for command.");
       _ret = 1;
       return;
    }
@@ -857,12 +831,11 @@ void mesh::setCube()
                ymin = _cmd->double_token(1);
                zmin = _cmd->double_token(2);
             }
-	    else {
-               cout << "Error: This argument requires 1 or 3 parameters." << endl;
-               *_ofl << "In rita>mesh>cube>: This argument requires 1 or 3 parameters." << endl;
+            else {
+               _rita->msg("mesh>cube>","This argument requires 1 or 3 parameters.");
                _ret = 1;
                return;
-	    }
+            }
             break;
 
          case  4:
@@ -873,12 +846,11 @@ void mesh::setCube()
                ymax = _cmd->double_token(1);
                zmax = _cmd->double_token(2);
             }
-	    else {
-               cout << "Error: This argument requires 1 or 3 parameters." << endl;
-               *_ofl << "In rita>mesh>cube>: This argument requires 1 or 3 parameters." << endl;
+            else {
+               _rita->msg("mesh>cube>","This argument requires 1 or 3 parameters.");
                _ret = 1;
                return;
-	    }
+            }
             break;
 
          case  5:
@@ -888,7 +860,7 @@ void mesh::setCube()
                nx = _cmd->int_token(0);
                ny = _cmd->int_token(1);
                nz = _cmd->int_token(2);
-	    }
+            }
             break;
 
          case  8:
@@ -903,8 +875,7 @@ void mesh::setCube()
                czmax = _cmd->int_token(5);
             }
             else {
-               cout << "Error: This argument requires 1 or 6 parameters." << endl;
-               *_ofl << "In rita>mesh>cube>: This argument requires 1 or 6 parameters." << endl;
+               _rita->msg("mesh>cube>","This argument requires 1 or 6 parameters.");
                _ret = 1;
                return;
             }
@@ -919,25 +890,21 @@ void mesh::setCube()
             break;
 
          default:
-	    cout << "Error: Unknown argument: " << kw[n] << endl;
-            *_ofl << "In rita>mesh>cube>: Unknown argument: " << kw[n] << endl;
+            _rita->msg("mesh>cube>","Unknown argument: "+kw[n]);
 	    return;
       }
    }
    if (nb_args>0) {
       if (xmax<=xmin) {
-	cout << "Error: xmax must be > xmin: " << xmin << ", " << xmax << endl;
-         *_ofl << "In rita>mesh>cube>: Error in values of xmin and xmax." << endl;
+         _rita->msg("mesh>cube>","Value of xmax: "+to_string(xmax)+" must be > xmin: "+to_string(xmin));
          return;
       }
       if (ymax<=ymin) {
-	cout << "Error: ymax must be > ymin: " << ymin << ", " << ymax << endl;
-         *_ofl << "In rita>mesh>cube>: Error in values of ymin and ymax." << endl;
+         _rita->msg("mesh>cube>","Value of ymax: "+to_string(ymax)+" must be > ymin: "+to_string(ymin));
          return;
       }
       if (zmax<=zmin) {
-         cout << "Error: zmax must be > zmin: " << zmin << ", " << zmax << endl;
-         *_ofl << "In rita>mesh>cube>: Error in values of zmin and zmax." << endl;
+         _rita->msg("mesh>cube>","Value of zmax: "+to_string(zmax)+" must be > zmin: "+to_string(zmin));
          return;
       }
       if (!_saved) {
@@ -951,9 +918,9 @@ void mesh::setCube()
       }
       _generator = 1;
       _generated = true;
-      *_ofh << "  cube min=" << xmin << "," << ymin << "," << zmin << " max=" << xmax << "," << ymax << "," << zmax;
-      *_ofh << " ne=" << nx << "," << ny << "," << nz << " codes=" << cxmin << "," << cxmax << "," << cymin << ",";
-      *_ofh << cymax << "," << czmin << "," << czmax << " nbdof=" << _nb_dof << " save=" << _mesh_file << endl;
+      *_rita->ofh << "  cube min=" << xmin << "," << ymin << "," << zmin << " max=" << xmax << "," << ymax << "," << zmax;
+      *_rita->ofh << " ne=" << nx << "," << ny << "," << nz << " codes=" << cxmin << "," << cxmax << "," << cymin << ",";
+      *_rita->ofh << cymax << "," << czmin << "," << czmax << " nbdof=" << _nb_dof << " save=" << _mesh_file << endl;
       _ret = 0;
       return;
    }
@@ -987,49 +954,49 @@ void mesh::setCube()
                if (_verb>1)
                   cout << "Setting xmin, ymin and zmin ..." << endl;
                if (_cmd->setNbArg(3,"Give values of xmin, ymin and zmin.")) {
-                  *_ofl << "In rita>mesh>cube>min>: Missing values of xmin, ymin and zmin." << endl;
+                  _rita->msg("mesh>cube>min>","Missing values of xmin, ymin and zmin.","",1);
                   break;
                }
                ret  = _cmd->get(xmin);
                ret += _cmd->get(ymin);
                ret += _cmd->get(zmin);
                if (!ret)
-                  *_ofh << "    min " << xmin << " " << ymin << " " << zmin << endl;
+                  *_rita->ofh << "    min " << xmin << " " << ymin << " " << zmin << endl;
                break;
 
             case 4:
                if (_verb>1)
                cout << "Setting xmax, ymax and zmax ..." << endl;
                if (_cmd->setNbArg(3,"Give values of xmax, ymax and zmax.")) {
-                  *_ofl << "In rita>mesh>cube>max>: Missing values of xmax, ymax and zmax." << endl;
+                  _rita->msg("mesh>cube>min>","Missing values of xmax, ymax and zmax.","",1);
                   break;
                }
                ret  = _cmd->get(xmax);
                ret += _cmd->get(ymax);
                ret += _cmd->get(zmax);
                if (!ret)
-                  *_ofh << "    max " << xmax << " " << ymax << " " << zmax << endl;
+                  *_rita->ofh << "    max " << xmax << " " << ymax << " " << zmax << endl;
                break;
 
             case 6:
                if (_verb>1)
                   cout << "Setting mesh subdivisions ..." << endl;
                if (_cmd->setNbArg(3,"Give subdivision in the x-, y- and z-directions.")) {
-                  *_ofl << "In rita>mesh>cube>ne>: Missing subvdivisions in x, y and z directions" << endl;
+                  _rita->msg("mesh>cube>ne>","Missing subvdivisions in x, y and z directions","",1);
                   break;
                }
                ret  = _cmd->get(nx);
                ret += _cmd->get(ny);
                ret += _cmd->get(nz);
                if (!ret)
-                  *_ofh << "    ne " << nx << " " << ny << " " << nz << endl;
+                  *_rita->ofh << "    ne " << nx << " " << ny << " " << nz << endl;
                break;
    
             case 7:
                if (_verb>1)
                   cout << "Setting boundary codes ..." << endl;
                if (_cmd->setNbArg(6,"Codes to assign to faces.")) {
-                  *_ofl << "In rita>mesh>cube>codes>: Missing codes to assign to faces." << endl;
+                  _rita->msg("mesh>cube>codes>","Missing codes to assign to faces.","",1);
                   break;
                }
                ret  = _cmd->get(cxmin);
@@ -1039,29 +1006,29 @@ void mesh::setCube()
                ret += _cmd->get(czmin);
                ret += _cmd->get(czmax);
                if (!ret)
-                  *_ofh << "    codes " << cxmin << " " << cxmax << " " << cymin << " " << cymax
-                        << " " << czmin << " " << czmax << endl;
+                  *_rita->ofh << "    codes " << cxmin << " " << cxmax << " " << cymin << " " << cymax
+                             << " " << czmin << " " << czmax << endl;
                break;
 
             case 8:
                if (_verb>1)
                   cout << "Setting number of degrees of freedom ..." << endl;
                if (_cmd->setNbArg(1,"Give number of dof per node.")) {
-                  *_ofl << "In rita>mesh>cube>nbdof>: Missing number of dof." << endl;
+                  _rita->msg("mesh>cube>nbdof>","Missing number of dof.");
                   break;
                }
                ret = _cmd->get(_nb_dof);
                if (!ret)
-                  *_ofh << "    nbdof " << _nb_dof << endl;
+                  *_rita->ofh << "    nbdof " << _nb_dof << endl;
                break;
 
             case 9:
                if (_verb>1)
                   cout << "Saving mesh in file ..." << endl;
                if (_saved) {
-                  cout << "Warning: You are trying to delete an existing mesh.\n";
-                  cout << "retype command 'save' to confirm." << endl; 
-                  *_ofl << "In rita>mesh>cube>save>: Trying to delete a created mesh." << endl;
+                  _rita->msg("mesh>cube>save>","Trying to delete a created mesh.",
+                             "You are trying to delete an existing mesh.\n"
+                             "retype command 'save' to confirm.");
                   _saved = false;
                   break;
                }
@@ -1079,7 +1046,7 @@ void mesh::setCube()
                _generated = true;
                cout << "Mesh of cube complete and saved in file " << _mesh_file << endl;
                if (!ret)
-                  *_ofh << "    save " << _mesh_file << endl;
+                  *_rita->ofh << "    save " << _mesh_file << endl;
                _saved = true;
                break;
 
@@ -1096,7 +1063,7 @@ void mesh::setCube()
                   _data->theMesh.push_back(_theMesh);
                   _saved = true;
                }
-               *_ofh << "    end" << endl;
+               *_rita->ofh << "    end" << endl;
                if (_verb && !_saved)
                   cout << "Mesh 'cube' complete." << endl;
                _ret = 90;
@@ -1115,10 +1082,9 @@ void mesh::setCube()
                break;
 
             default:
-               cout << "Unknown Command: " << _cmd->token() << endl;
-               cout << "Available commands: min, max, ne, codes, nbdof, save, end, <" << endl;
-               cout << "Global commands: help, ?, set, quit, exit" << endl;
-               *_ofl << "In rita>mesh>cube>: Unknown command: " << _cmd->token() << endl;
+               _rita->msg("mesh>cube>","Unknown command: "+_cmd->token(),
+                          "Available commands: min, max, ne, codes, nbdof, save, end, <\n"
+                          "Global commands: help, ?, set, quit, exit");
                break;
          }
       }
@@ -1141,8 +1107,7 @@ void mesh::setCode()
                            "v1, v2, ...: Volumes to which the code v is assigned.";
    _ret = 0;
    if (_generator>0 && _generator<4) {
-      cout << "Error: This keyword is not allowed for generated mesh." << endl;
-      *_ofl << "In rita>mesh>code>: Keyword not allowed for generated mesh" << endl;
+      _rita->msg("mesh>code>","Keyword not allowed for generated mesh");
       return;
    }
    _generator = 10;
@@ -1155,15 +1120,8 @@ void mesh::setCode()
                             "end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
-   if (nb_args==0) {
-      cout << "Error: No argument for command.\n\n" << H << endl;
-      *_ofl << "In rita>mesh>codes>: No argument for command." << endl;
-      _ret = 1;
-      return;
-   }
    if (nb_args<1) {
-      cout << "Error: No argument for command." << endl;
-      *_ofl << "In rita>mesh>codes>: No argument for command." << endl;
+      _rita->msg("mesh>codes>"," No argument for command.",H);
       _ret = 1;
       return;
    }
@@ -1213,62 +1171,58 @@ void mesh::setCode()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << _kw[n] << endl;
-            *_ofl << "In rita>mesh>code>: Unknown argument: " << _kw[n] << endl;
+            _rita->msg("mesh>code>","Unknown argument: "+_kw[n]);
             _ret = 1;
 	    return;
       }
    }
    if (!c_ok) {
-      cout << "Error: Missing code value." << endl;
-      *_ofl << "In rita>mesh>code>: Missing code value." << endl;
+      _rita->msg("mesh>code>","Missing code value.");
       _ret = 1;
       return;
    }
    if (points_ok>1 || curves_ok>1 || surfaces_ok>1 || volumes_ok>1) {
-      cout << "Error: Each entity must be given once only." << endl;
-      *_ofl << "In rita>mesh>code>:  Each entity must be given once only." << endl;
+      _rita->msg("mesh>code>","Each entity must be given only once.");
       _ret = 1;
       return;
    }
    if (np+nc+ns+nv==0) {
-      cout << "Error: At least one entity must be given." << endl;
-      *_ofl << "In rita>mesh>code>: At least one entity must be given." << endl;
+      _rita->msg("mesh>code>","At least one entity must be given.");
       _ret = 1;
       return;
    }
-   *_ofh << "  code  value=" << c;
+   *_rita->ofh << "  code  value=" << c;
    if (points_ok) {
-      *_ofh << "  points=";
+      *_rita->ofh << "  points=";
       for (int j=0; j<np; ++j)
          _Pcode[c].l.push_back(points[j]), _Pcode[c].nb++;
       for (int j=0; j<np-1; ++j)
-         *_ofh << points[j] << ",";
-      *_ofh << points[np-1] << endl;
+         *_rita->ofh << points[j] << ",";
+      *_rita->ofh << points[np-1] << endl;
    }
    if (curves_ok) {
-      *_ofh << "  curves=";
+      *_rita->ofh << "  curves=";
       for (int j=0; j<nc; ++j)
          _Ccode[c].l.push_back(curves[j]), _Ccode[c].nb++;
       for (int j=0; j<nc-1; ++j)
-         *_ofh << curves[j] << ",";
-      *_ofh << curves[nc-1] << endl;
+         *_rita->ofh << curves[j] << ",";
+      *_rita->ofh << curves[nc-1] << endl;
    }
    if (surfaces_ok) {
-      *_ofh << "  surfaces=";
+      *_rita->ofh << "  surfaces=";
       for (int j=0; j<ns; ++j)
          _Scode[c].l.push_back(surfaces[j]), _Scode[c].nb++;
       for (int j=0; j<ns-1; ++j)
-         *_ofh << surfaces[j] << ",";
-      *_ofh << surfaces[ns-1] << endl;
+         *_rita->ofh << surfaces[j] << ",";
+      *_rita->ofh << surfaces[ns-1] << endl;
    }
    if (volumes_ok) {
-      *_ofh << "  volumes=";
+      *_rita->ofh << "  volumes=";
       for (int j=0; j<nv; ++j)
          _Vcode[c].l.push_back(volumes[j]), _Vcode[c].nb++;
       for (int j=0; j<nv-1; j++)
-         *_ofh << volumes[j] << ",";
-      *_ofh << volumes[nv-1] << endl;
+         *_rita->ofh << volumes[j] << ",";
+      *_rita->ofh << volumes[nv-1] << endl;
    }
    _ret = 0;
    return;
@@ -1296,14 +1250,12 @@ void mesh::setPoint()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
-      cout << "Error: No argument for command.\n\n" << H << endl;
-      *_ofl << "In rita>mesh>point>: No argument for command." << endl;
+      _rita->msg("mesh>point>","No argument for command.",H);
       _ret = 1;
       return;
    }
    if (nb_args<1) {
-      cout << "Error: No argument for command." << endl;
-      *_ofl << "In rita>mesh>point>: No argument for command." << endl;
+      _rita->msg("mesh>point>","No argument for command.");
       _ret = 1;
       return;
    }
@@ -1352,21 +1304,19 @@ void mesh::setPoint()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << _kw[n] << endl;
-            *_ofl << "In rita>mesh>point>: Unknown argument: " << _kw[n] << endl;
+            _rita->msg("mesh>point>","Unknown argument: "+_kw[n]);
             _ret = 1;
-	    return;
+            return;
       }
    }
    if (del_ok) {
       if (!n_ok) {
-         cout << "Error: Point label must be given to be deleted." << endl;
-         *_ofl << "In rita>mesh>point>: No point label given." << endl;
+         _rita->msg("mesh>point>","No point label given.");
          _ret = 1;
          return;
       }
       _points.erase(_point.n);
-      *_ofh << "  point  label="<< _point.n << "  delete" << endl;
+      *_rita->ofh << "  point  label="<< _point.n << "  delete" << endl;
       _ret = 0;
       return;
    }
@@ -1376,45 +1326,24 @@ void mesh::setPoint()
          cout << "Assumed point label: " << _point.n << endl;
    }
    if (_point.n<=0) {
-      cout << "Error: Label must be positive." << endl;
-      *_ofl << "In rita>mesh>point>: Label must be positive." << endl;
+      _rita->msg("mesh>point>","Label must be positive.");
       _ret = 1;
       return;
    }
-   if (!x_ok && _verb>1) {
+   if (!x_ok && _verb>1)
       cout << "Warning: No x-coordinate given. Assumed x-coordinate: " << _point.x << endl;
-      *_ofl << "In rita>mesh>point>: No x-coordinate given. Assumed x-coordinate: " << _point.x << endl;
-   }
-   if (!y_ok && _verb>1) {
+   if (!y_ok && _verb>1)
       cout << "Warning: No y-coordinate given. Assumed y-coordinate: " << _point.y << endl;
-      *_ofl << "In rita>mesh>point>: No y-coordinate given. Assumed y-coordinate: " << _point.y << endl;
-   }
-   if (!z_ok && _verb>1) {
+   if (!z_ok && _verb>1)
       cout << "Warning: No z-coordinate given. Assumed z-coordinate: " << _point.z << endl;
-      *_ofl << "In rita>mesh>point>: No z-coordinate given. Assumed z-coordinate: " << _point.z << endl;
-   }
-   if (!h_ok && _verb) {
+   if (!h_ok && _verb)
       cout << "Warning: No mesh size given. Assumed mesh size: " << _point.h << endl;
-      *_ofl << "In rita>mesh>point>: No mesh size given. Assumed mesh size: " << _point.h << endl;
-   }
    if (_generator>0 && _generator<=3) {
-      if (_generator==1) {
-         cout << "Error: A 1-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      else if (_generator==2) {
-         cout << "Error: A 2-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      else if (_generator==3) {
-         cout << "Error: A 3-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      *_ofl << "In rita>mesh>point>: Mesh already generated. Needs retyping command to confirm.";
+      _rita->msg("mesh>point>:","Mesh already generated. Needs retyping command to confirm.");
       _generator = 10;
    }
    _points[_point.n] = _point;
-   *_ofh << "  point  label=" << _point.n << "  x=" << _point.x << "  y=" << _point.y
+   *_rita->ofh << "  point  label=" << _point.n << "  x=" << _point.x << "  y=" << _point.y
          << "  z=" << _point.z << "  size=" << _point.h << endl;
 #ifndef USE_GMSH
    _theDomain->insertVertex(_point.x,_point.y,_point.z,_point.h,0);
@@ -1437,19 +1366,7 @@ void mesh::setCurve()
                            "            points defining the extremities of the arc and n3 is the point defining\n"
                            "            the center of the circular arc.";
    if (_generator>0 && _generator<=3) {
-      if (_generator==1) {
-         cout << "Error: A 1-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      else if (_generator==2) {
-         cout << "Error: A 2-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      else if (_generator==3) {
-         cout << "Error: A 3-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      *_ofl << "In rita>mesh>line>: Mesh already generated. Needs retyping command to confirm.";
+      _rita->msg("mesh>line>","Mesh already generated. Needs retyping command to confirm.");
       _generator = 0;
       return;
    }
@@ -1458,14 +1375,12 @@ void mesh::setCurve()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
-      cout << "Error: No argument for command.\n\n" << H << endl;
-      *_ofl << "In rita>mesh>curve>: No argument for command." << endl;
+      _rita->msg("mesh>curve>","No argument for command.",H);
       _ret = 1;
       return;
    }
    if (nb_args<1) {
-      cout << "Error: No argument for command." << endl;
-      *_ofl << "In rita>mesh>curve>: No argument for command." << endl;
+      _rita->msg("mesh>curve>","No argument for command.");
       _ret = 1;
       return;
    }
@@ -1487,8 +1402,7 @@ void mesh::setCurve()
 
          case 5:
             if (nb!=2) {
-               cout << "Error: Illegal number of arguments for a line" << endl;
-               *_ofl << "In rita>mesh>curve>: Illegal number of arguments for a line" << endl;
+               _rita->msg("mesh>curve>","Illegal number of arguments for a line");
                _ret = 1;
                return;
             }
@@ -1499,8 +1413,7 @@ void mesh::setCurve()
 
          case 6:
             if (nb!=3) {
-               cout << "Error: Illegal number of arguments for a circle" << endl;
-               *_ofl << "In rita>mesh>curve>: Illegal number of arguments for a circle" << endl;
+               _rita->msg("mesh>curve>","Illegal number of arguments for a circle");
                _ret = 1;
                return;
             }
@@ -1515,8 +1428,7 @@ void mesh::setCurve()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << _kw[n] << endl;
-            *_ofl << "In rita>mesh>curve>: Unknown argument: " << _kw[n] << endl;
+            _rita->msg("mesh>curve>","Unknown argument: "+_kw[n]);
             _ret = 1;
 	    return;
       }
@@ -1524,19 +1436,17 @@ void mesh::setCurve()
 
    if (del_ok) {
       if (!n_ok) {
-         cout << "Error: Curve label must be given to be deleted." << endl;
-         *_ofl << "In rita>mesh>curve>: No curve label given." << endl;
+         _rita->msg("mesh>curve>","No curve label given.");
          _ret = 1;
          return;
       }
       _curve.erase(nn);
-      *_ofh << "  curve  label="<< nn << "  delete" << endl;
+      *_rita->ofh << "  curve  label="<< nn << "  delete" << endl;
       _ret = 0;
       return;
    }
    if (nn<=0) {
-      cout << "Label must be positive." << endl;
-      *_ofl << "In rita>mesh>curve>: Label must be positive." << endl;
+      _rita->msg("mesh>curve>","Label must be positive.");
       _ret = 1;
       return;
    }
@@ -1546,29 +1456,25 @@ void mesh::setCurve()
          cout << "Assumed curve label: " << nn << endl;
    }
    if (!line_ok && !circle_ok) {
-      cout << "Error: A line or a circle must be defined." << endl;
-      *_ofl << "In rita>mesh>curve>: A line or a circle must be defined." << endl;
+      _rita->msg("mesh>curve>","A line or a circle must be defined.");
       _ret = 1;
       return;
    }
    if (line_ok && circle_ok) {
-      cout << "Error: Curve cannot be defined as a line and a circle simultaneously." << endl;
-      *_ofl << "In rita>mesh>curve>: Curve cannot be defined as a line and a circle simultaneously." << endl;
+      _rita->msg("mesh>curve>","Curve cannot be defined as a line and a circle simultaneously.");
       _ret = 1;
       return;
    }
    _curve[nn].nb = nn;
-   *_ofh << "  curve label=" << nn;
+   *_rita->ofh << "  curve label=" << nn;
    if (line_ok) {
       if (_points.find(n1)==_points.end()) {
-         cout << "Error: Undefined point: " << n1 << endl;
-         *_ofl << "In rita>mesh>curve>: Undefined end point: " << n1 << endl;
+         _rita->msg("mesh>curve>","Undefined end point: "+to_string(n1));
          _ret = 1;
          return;
       }
       if (_points.find(n2)==_points.end()) {
-         cout << "Error: Undefined point: " << n2 << endl;
-         *_ofl << "In rita>mesh>curve>: Undefined end point: " << n2 << endl;
+         _rita->msg("mesh>curve>","Undefined end point: "+to_string(n2));
          _ret = 1;
          return;
       }
@@ -1576,24 +1482,21 @@ void mesh::setCurve()
       _curve[nn].l.push_back(n1); _curve[nn].nb++;
       _curve[nn].l.push_back(n2); _curve[nn].nb++;
       _curve[nn].type = 1;
-      *_ofh << "  line=" << n1 << "," << n2 << endl;
+      *_rita->ofh << "  line=" << n1 << "," << n2 << endl;
    }
    if (circle_ok) {
       if (_points.find(n1)==_points.end()) {
-         cout << "Error: Undefined point: " << n1 << endl;
-         *_ofl << "In rita>mesh>curve>: Undefined point: " << n1 << endl;
+         _rita->msg("mesh>curve>","Undefined point: "+to_string(n1));
          _ret = 1;
          return;
       }
       if (_points.find(n2)==_points.end()) {
-         cout << "Error: Undefined point: " << n2 << endl;
-         *_ofl << "In rita>mesh>curve>: Undefined point: " << n2 << endl;
+         _rita->msg("mesh>curve>","Undefined point: "+to_string(n2));
          _ret = 1;
          return;
       }
       if (_points.find(n3)==_points.end()) {
-         cout << "Error: Undefined point: " << n3 << endl;
-         *_ofl << "In rita>mesh>curve>: Undefined point: " << n3 << endl;
+         _rita->msg("mesh>curve>","Undefined point: "+to_string(n3));
          _ret = 1;
          return;
       }
@@ -1603,7 +1506,7 @@ void mesh::setCurve()
       _curve[nn].l.push_back(n3);
       _curve[nn].nb = 3;
       _curve[nn].type = 2;
-      *_ofh << "  circle=" << n1 << "," << n2 << "," << n3 << endl;
+      *_rita->ofh << "  circle=" << n1 << "," << n2 << "," << n3 << endl;
    }
 #ifndef USE_GMSH
    _theDomain->insertLine(_curve[nn].l[0],_curve[nn].l[1],0);
@@ -1623,19 +1526,7 @@ void mesh::setContour()
                            "c1, c2, ...: Labels of curves defining the contour";
    _ret = 0;
    if (_generator>0 && _generator<=3) {
-      if (_generator==1) {
-         cout << "Error: A 1-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      else if (_generator==2) {
-         cout << "Error: A 2-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      else if (_generator==3) {
-         cout << "Error: A 3-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      *_ofl << "In rita>mesh>contour>: Mesh already generated.";
+      _rita->msg("mesh>contour>","Mesh already generated.");
       _generator = 0;
       return;
    }
@@ -1644,14 +1535,12 @@ void mesh::setContour()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
-      cout << "Error: No argument for command.\n\n" << H << endl;
-      *_ofl << "In rita>mesh>contour>: No argument for command." << endl;
+      _rita->msg("mesh>contour>","No argument for command.",H);
       _ret = 1;
       return;
    }
    if (nb_args<1) {
-      cout << "Error: No argument for command." << endl;
-      *_ofl << "In rita>mesh>contour>: No argument for command." << endl;
+      _rita->msg("mesh>contour>","No argument for command.");
       _ret = 1;
       return;
    }
@@ -1688,52 +1577,46 @@ void mesh::setContour()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << _kw[n] << endl;
-            *_ofl << "In rita>mesh>contour>: Unknown argument: " << _kw[n] << endl;
+            _rita->msg("mesh>contour>","Unknown argument: "+_kw[n]);
             _ret = 1;
 	    return;
       }
    }
    if (!n_ok) {
-      cout << "Error: Missing contour label." << endl;
-      cout << "In rita>mesh>contour>: Missing contour label." << endl;
+      _rita->msg("mesh>contour>","Missing contour label.");
       _ret = 1;
       return;
    }
    if (n_ok>1) {
-      cout << "Error: Contour label cannot be given more than once." << endl;
-      cout << "In rita>mesh>contour>: Contour label cannot be given more than once." << endl;
+      _rita->msg("mesh>contour>","Contour label cannot be given more than once.");
       _ret = 1;
       return;
    }
    if (del_ok) {
       if (del_ok>1) {
-         cout << "Error: Keyword delete cannot be given more than once." << endl;
-         cout << "In rita>mesh>contour>: Keyword delete cannot be given more than once." << endl;
+         _rita->msg("mesh>contour>","Keyword delete cannot be given more than once.");
          _ret = 1;
          return;
       }
       _Ccontour.erase(nn);
       _Scontour.erase(nn);
-      *_ofh << "  contour  label="<< nn << "  delete" << endl;
+      *_rita->ofh << "  contour  label="<< nn << "  delete" << endl;
       _ret = 0;
       return;
    }
    if (nn==0) {
       cout << "Contour label cannot be zero." << endl;
-      *_ofl << "In rita>mesh>contour>: Contour label cannot be zero." << endl;
+      _rita->msg("mesh>contour>","Contour label cannot be zero.");
       _ret = 1;
       return;
    }
    if (!curves_ok && !surfaces_ok) {
-      cout << "Contour must be defined either by curves or surfaces." << endl;
-      *_ofl << "In rita>mesh>contour>: Contour must be defined either by curves or surfaces." << endl;
+      _rita->msg("mesh>contour>","Contour must be defined either by curves or surfaces.");
       _ret = 1;
       return;
    }
    if (curves_ok && surfaces_ok) {
-      cout << "Contour cannot be defined by curves or surfaces simultaneously." << endl;
-      *_ofl << "In rita>mesh>contour>: Contour cannot be defined by curves or surfaces simultaneously." << endl;
+      _rita->msg("mesh>contour>","Contour cannot be defined by curves or surfaces simultaneously.");
       _ret = 1;
       return;
    }
@@ -1742,8 +1625,7 @@ void mesh::setContour()
       s = -1, nn = -nn;
    if (curves_ok) {
       if (curves_ok>1) {
-         cout << "Error: A curve contour has already been defined." << endl;
-         *_ofl << "In rita>mesh>contour>: A curve contour already defined." << endl;
+         _rita->msg("mesh>contour>","A curve contour already defined.");
          _ret = 1;
          return;
       }
@@ -1751,8 +1633,7 @@ void mesh::setContour()
       for (int i=0; i<nb; ++i) {
          int l = curv[i];
          if (_curve.find(l)==_curve.end()) {
-            cout << "Error: Undefined curve: " << l << endl;
-            *_ofl << "In rita>mesh>contour>: Undefined curve: " << l << endl;
+            _rita->msg("mesh>contour>","Undefined curve: "+to_string(l));
             _ret = 1;
             return;
          }
@@ -1765,28 +1646,24 @@ void mesh::setContour()
       if (s==-1)
          n2 = _curve[_Ccontour[nn].l[_Ccontour[nn].nb-1]].l[0];
       if (n1!=n2) {
-         cout << "Error: Non closed contour." << endl;
-         *_ofl << "In rita>mesh>contour>: Non closed contour." << endl;
+         _rita->msg("mesh>contour>:","Non closed contour.");
          _ret = 1;
          return;
       }	 
-      *_ofh << "  contour  label=" << nn << "  curves=";
+      *_rita->ofh << "  contour  label=" << nn << "  curves=";
       for (int i=0; i<nb-1; ++i)
-         *_ofh << curv[i] << ",";
-      *_ofh << curv[nb-1] << endl;
+         *_rita->ofh << curv[i] << ",";
+      *_rita->ofh << curv[nb-1] << endl;
       _nb_Ccontour = _Ccontour.size();
    }
    if (surfaces_ok) {
-      if (surfaces_ok>1) {
-         cout << "Error: A surface contour has already been defined." << endl;
-         *_ofl << "In rita>mesh>contour>: A surface contour already defined." << endl;
-      }
+      if (surfaces_ok>1)
+         _rita->msg("mesh>contour>","A surface contour already defined.");
       _Scontour[nn].nb = 0;
       for (int i=0; i<nb; ++i) {
          int l = surf[i];
          if (_surface.find(l)==_surface.end()) {
-            cout << "Error: Undefined surface: " << l << endl;
-            *_ofl << "In rita>mesh>contour>: Undefined surface: " << l << endl;
+            _rita->msg("mesh>contour>","Undefined surface: "+to_string(l));
             _ret = 1;
             return;
          }
@@ -1799,15 +1676,14 @@ void mesh::setContour()
       if (s==-1)
          n2 = _surface[_Scontour[nn].l[_Scontour[nn].nb-1]].l[0];
       if (n1 != n2) {
-         cout << "Error: Non closed contour." << endl;
-         *_ofl << "In rita>mesh>contour>: Non closed contour." << endl;
+         _rita->msg("mesh>contour>","Non closed contour.");
          _ret = 1;
          return;
       }
-      *_ofh << "  contour  label=" << nn << "  surfaces=";
+      *_rita->ofh << "  contour  label=" << nn << "  surfaces=";
       for (int i=0; i<nb-1; ++i)
-         *_ofh << surf[i] << ",";
-      *_ofh << curv[nb-1] << endl;
+         *_rita->ofh << surf[i] << ",";
+      *_rita->ofh << curv[nb-1] << endl;
       _nb_Scontour = _Scontour.size();
    }
    _ret = 0;
@@ -1826,19 +1702,7 @@ void mesh::setSurface()
                            "c1, c2, ...: Labels of contours defining the surface.";
    _ret = 0;
    if (_generator>0 && _generator<=3) {
-      if (_generator==1) {
-         cout << "Error: A 1-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      else if (_generator==2) {
-         cout << "Error: A 2-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      else if (_generator==3) {
-         cout << "Error: A 3-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      *_ofl << "In rita>mesh>surface>: Mesh already generated. Needs retyping command to confirm.";
+      _rita->msg("mesh>surface>","Mesh already generated. Needs retyping command to confirm.");
       _generator = 0;
       return;
    }
@@ -1846,15 +1710,8 @@ void mesh::setSurface()
    const vector<string> kw {"help","?","set","label","n","contours","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
-   if (nb_args==0) {
-      cout << "Error: No argument for command.\n\n" << H << endl;
-      *_ofl << "In rita>mesh>surface>: No argument for command." << endl;
-      _ret = 1;
-      return;
-   }
    if (nb_args<1) {
-      cout << "Error: No argument for command." << endl;
-      *_ofl << "In rita>mesh>surface>: No argument for command." << endl;
+      _rita->msg("mesh>surface>","No argument for command.",H);
       _ret = 1;
       return;
    }
@@ -1885,21 +1742,19 @@ void mesh::setSurface()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << _kw[n] << endl;
-            *_ofl << "In rita>mesh>surface>: Unknown argument: " << _kw[n] << endl;
+            _rita->msg("mesh>surface>","Unknown argument: "+_kw[n]);
             _ret = 1;
 	    return;
       }
    }
    if (del_ok) {
       if (!n_ok) {
-         cout << "Error: Surface label must be given to be deleted." << endl;
-         *_ofl << "In rita>mesh>surface>: No surface label given." << endl;
+         _rita->msg("mesh>surface>","No surface label given.");
          _ret = 1;
          return;
       }
       _surface.erase(nn);
-      *_ofh << "  surface  label="<< nn << "  delete" << endl;
+      *_rita->ofh << "  surface  label="<< nn << "  delete" << endl;
       _ret = 0;
       return;
    }
@@ -1909,14 +1764,12 @@ void mesh::setSurface()
          cout << "Assumed surface label: " << nn << endl;
    }
    if (nn==0) {
-      cout << "Error: Label 0 is forbidden." << endl;
-      *_ofl << "In rita>mesh>surface>: Label 0 is forbidden" << endl;
+      _rita->msg("mesh>surface>","Label 0 is forbidden");
       _ret = 1;
       return;
    }
    if (!cont_ok) {
-      cout << "Surface contours must be given." << endl;
-      *_ofl << "In rita>mesh>surface>: Surface contours must be given." << endl;
+      _rita->msg("mesh>surface>","Surface contours must be given.");
       _ret = 1;
       return;
    }
@@ -1924,17 +1777,16 @@ void mesh::setSurface()
    for (int i=0; i<nb; ++i) {
       int c = cont[i];
       if (_Ccontour.find(c)==_Ccontour.end()) {
-         cout << "Error: Undefined curve contour: " << n << endl;
-         *_ofl << "In rita>mesh>surface>: Undefined curve contour: " << c << endl;
+         _rita->msg("mesh>surface>","Undefined curve contour: "+to_string(n));
          _ret = 1;
          return;
       }
       _surface[nn].l.push_back(c); _surface[nn].nb++;
    }
-   *_ofh << "  surface  label=" << nn << "  contours=";
+   *_rita->ofh << "  surface  label=" << nn << "  contours=";
    for (int i=0; i<nb-1; ++i)
-      *_ofh << cont[i] << ",";
-   *_ofh << cont[nb-1] << endl;
+      *_rita->ofh << cont[i] << ",";
+   *_rita->ofh << cont[nb-1] << endl;
    _nb_surface = _surface.size();
    _ret = 0;
    return;
@@ -1946,8 +1798,7 @@ void mesh::setVolume()
    _ret = 0;
    _generator = 10;
    _nb_volume = 0;
-   cout << "Volume generation not implemented yet !" << endl;
-   *_ofl << "In rita>mesh>volume>: Volume generation not implemented yet." << endl;
+   _rita->msg("mesh>volume>","Volume generation not implemented yet.");
 }
 
 
@@ -1955,25 +1806,13 @@ void mesh::setSubDomain()
 {
    _ret = 0;
    if (_generator>0 && _generator<=3) {
-      if (_generator==1) {
-         cout << "Error: A 1-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      else if (_generator==2) {
-         cout << "Error: A 2-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      else if (_generator==3) {
-         cout << "Error: A 3-D mesh has already been generated.\n"
-                 "       Retype command to delete older mesh and generate new one" << endl;
-      }
-      *_ofl << "In rita>mesh>vertex>: Mesh already generated. Needs retyping command to confirm.";
+      _rita->msg("mesh>vertex>","Mesh already generated. Needs retyping command to confirm.");
       _generator = 0;
       return;
    }
    _generator = 10;
    int ret=0;
-   *_ofh << "   subdomain " << endl;   
+   *_rita->ofh << "   subdomain " << endl;   
    _sd.ln = 1, _sd.orientation = 1, _sd.code = 1;
    if (_verb) {
       cout << "Default line in subdomain: 1\n";
@@ -2008,37 +1847,36 @@ void mesh::setSubDomain()
             if (_verb>1)
                cout << "Setting line ..." << endl;
             if (_cmd->setNbArg(1,"Give label of a line in subdomain.")) {
-               *_ofl << "In rita>mesh>subdomain>line>: Missing label of vertex in subdomain." << endl;
+               _rita->msg("mesh>subdomain>line>","Missing label of vertex in subdomain.","",1);
                break;
             }
             ret = _cmd->get(_sd.ln);
             if (!ret)
-               *_ofh << "    line " << _sd.ln << endl;
+               *_rita->ofh << "    line " << _sd.ln << endl;
             break;
 
          case 4:
             if (_verb>1)
                cout << "Setting orientation ..." << endl;
             if (_cmd->setNbArg(1,"Give orientation of subdomain (1/-1).")) {
-               *_ofl << "In rita>mesh>subdomain>orientation>: Missing orientation." << endl;
+               _rita->msg("mesh>subdomain>orientation>","Missing orientation.","",1);
                break;
-
             }
             ret = _cmd->get(_sd.orientation);
             if (!ret)
-               *_ofh << "    orientation " << _sd.orientation << endl;   
+               *_rita->ofh << "    orientation " << _sd.orientation << endl;   
             break;
 
          case 5:
             if (_verb>1)
                cout << "Setting code ..." << endl;
             if (_cmd->setNbArg(1,"Give code to associate to subdomain")) {
-              *_ofl << "In rita>mesh>subdomain>code>: Missing code to associate to subdomain." << endl;
+               _rita->msg("mesh>subdomain>code>","Missing code to associate to subdomain.","",1);
                break;
             }
             ret = _cmd->get(_sd.code);
             if (!ret)
-               *_ofh << "    code " << _sd.code << endl;   
+               *_rita->ofh << "    code " << _sd.code << endl;   
             break;
 
          case 6:
@@ -2052,7 +1890,7 @@ void mesh::setSubDomain()
             cout << "Line " << _sd.ln << ", Orientation " << _sd.orientation
                  << ", Code " << _sd.code << endl;
             cout << "Total number of subdomains: " << _nb_sub_domain << endl;
-            *_ofh << "    save" << endl;
+            *_rita->ofh << "    save" << endl;
             _saved = true;
             return;
 
@@ -2061,12 +1899,9 @@ void mesh::setSubDomain()
             if (_verb>1)
                cout << "Getting back to mesh menu ..." << endl;
             _cmd->setNbArg(0);
-            if (!_saved) {
-               cout << "Warning: Subdomain not saved. You can type again subdomain "
-                    << "and save generated subdomain." << endl;
-               *_ofl << "In rita>mesh>subdomain>: Subdomain not saved." << endl;
-            }
-            *_ofh << "    end" << endl;
+            if (!_saved)
+               _rita->msg("mesh>subdomain>","Subdomain not saved.","Type again 'subdomain' and save generated one");
+            *_rita->ofh << "    end" << endl;
             _ret = 0;
             return;
 
@@ -2085,10 +1920,9 @@ void mesh::setSubDomain()
             break;
 
          default:
-            cout << "Unknown Command " << _cmd->token() << endl;
-            cout << "Available commands: lines, save, end, <" << endl;
-            cout << "Global commands:    help, ?, set, quit, exit" << endl;
-            *_ofl << "In rita>mesh>subdomain>: Unknown command " << _cmd->token() << endl;
+            _rita->msg("mesh>subdomain>","Unknown command "+_cmd->token(),
+                       "Available commands: lines, save, end, <\n"
+                       "Global commands:    help, ?, set, quit, exit");
             break;
        }
    }
@@ -2189,16 +2023,13 @@ void mesh::Generate()
    _ret = 0;
    if (_generator>0 && _generator<=3) {
       if (_generator==1) {
-         cout << "A 1-D mesh has already been generated." << endl;
-         *_ofl << "In rita>mesh>generate>: 1-D mesh already generated" << endl;
+         _rita->msg("mesh>generate>","A 1-D mesh has already been generated.");
       }
       else if (_generator==2) {
-         cout << "A 2-D mesh has already been generated." << endl;
-         *_ofl << "In rita>mesh>generate>: 2-D mesh already generated" << endl;
+         _rita->msg("mesh>generate>","A 2-D mesh has already been generated.");
       }
       else if (_generator==3) {
-         cout << "A 3-D mesh has already been generated." << endl;
-         *_ofl << "In rita>mesh>generate>: 3-D mesh already generated" << endl;
+         _rita->msg("mesh>generate>","A 3-D mesh has already been generated.");
       }
       return;
    }
@@ -2255,7 +2086,7 @@ void mesh::Generate()
    _generated = true;
    _generator = 4;
 #endif
-   *_ofh << "  generate" << endl;
+   *_rita->ofh << "  generate" << endl;
    _data->mesh_name.push_back("M"+to_string(_data->theMesh.size()));
    _data->theMesh.push_back(_theMesh);
    _ret = 0;
@@ -2267,13 +2098,13 @@ void mesh::setNbDOF()
 {
    int n = 0;
    if (_cmd->setNbArg(1,"Give number of degrees of freedom per node.")) {
-      *_ofl << "In rita>mesh>nbdof>: Missing number of degrees of freedom." << endl;
+      _rita->msg("mesh>nbdof>","Missing number of degrees of freedom.","",1);
       _ret = 1;
       return;
    }
    _ret = _cmd->get(n);
    if (!_ret) {
-      *_ofh << "    nbdof " << n << endl;
+      *_rita->ofh << "    nbdof " << n << endl;
       _nb_dof = n;
    }
 }
@@ -2282,8 +2113,7 @@ void mesh::setNbDOF()
 void mesh::Plot()
 {
    if (_theMesh==nullptr) {
-      cout << "No mesh saved." << endl;
-      *_ofl << "In rita>mesh>plot>: No mesh to plot." << endl;
+      _rita->msg("mesh>plot>","No mesh to plot.");
       return;
    }
    _cmd->setNbArg(0);
@@ -2291,8 +2121,7 @@ void mesh::Plot()
    _theMesh->save(file);
    string com = "gmsh " + file;
    if (system(com.c_str())) {
-      cout << "Error in system command." << endl;
-      *_ofl << "In rita>mesh>plot>: Error in system command." << endl;
+      _rita->msg("mesh>plot>","Unrecognizable system command.");
       _ret = 1;
       return;
    }
@@ -2330,22 +2159,19 @@ void mesh::Read()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << _kw[n] << endl;
-            *_ofl << "In rita>mesh>read>: Unknown argument: " << _kw[n] << endl;
+            _rita->msg("mesh>read>","Unknown argument: "+_kw[n]);
             _ret = 1;
             return;
       }
    }
    if (nb_args>0) {
       if (mesh_ok+geo_ok+gmsh_ok==0) {
-         cout << "Error: One input file must be provided." << endl;
-         *_ofl << "In rita>mesh>read>: One input file must be provided." << endl;
+         _rita->msg("mesh>read>","No input file provided.");
          _ret = 1;
          return;
       }
       if (mesh_ok+geo_ok+gmsh_ok>1) {
-         cout << "Error: Only one input file must be provided." << endl;
-         *_ofl << "In rita>mesh>read>: Only one input file must be provided." << endl;
+         _rita->msg("mesh>read>","Only one input file must be provided.");
          _ret = 1;
          return;
       }
@@ -2353,45 +2179,40 @@ void mesh::Read()
       if (ip.is_open())
          ip.close();
       else {
-         cout << "Error: Unable to open file: " << file << endl;
-         *_ofl << "In rita>mesh>read>: Unable to open file: " << file << endl;
+         _rita->msg("mesh>read>","Unable to open file: "+file);
          _ret = 1;
          return;
       }
-      *_ofh << "  read";
+      *_rita->ofh << "  read";
       if (mesh_ok) {
          if (file.substr(file.find_last_of(".")+1)!="m") {
-            cout << "Error: File extension must be \".m\"" << endl;
-            *_ofl << "In rita>mesh>read>: File extension must be \".m\"";
+            _rita->msg("mesh>read>","File extension must be \".m\"");
             _ret = 1;
             return;
          }
          _theMesh = new OFELI::Mesh(file);
          if (_theMesh->getNbNodes()==0) {
-            cout << "Error: Empty mesh." << endl;
-            *_ofl << "In rita>mesh>read>: Empty mesh";
+            _rita->msg("mesh>read>","Empty mesh");
             _ret = 1;
             return;
          }
          _mesh_file = file;
          _nb_dof = _theMesh->getNbDOF() / _theMesh->getNbNodes();
-         *_ofh << "  mesh=" << file;
+         *_rita->ofh << "  mesh=" << file;
          _data->mesh_name.push_back("M"+to_string(_data->theMesh.size()));
          _data->theMesh.push_back(_theMesh);
          _generated = true;
       }
       else if (geo_ok) {
          if (file.substr(file.find_last_of(".")+1)!="geo") {
-            cout << "Error: File extension must be \".geo\"" << endl;
-            *_ofl << "In rita>mesh>read>: File extension must be \".geo\"";
+            _rita->msg("mesh>read>","File extension must be \".geo\"");
             _ret = 1;
             return;
          }
          msh_file = file.substr(0,file.rfind(".")) + "msh";
          Cmd = "gmsh -2 " + file + " -o " + msh_file;
          if (system(Cmd.c_str())) {
-            cout << "Error in system command." << endl;
-            *_ofl << "In rita>mesh>read>: Error in system command.";
+            _rita->msg("mesh>read>:","Unrecognizable system command.");
             _ret = 1;
             return;
          }
@@ -2400,12 +2221,11 @@ void mesh::Read()
          _data->mesh_name.push_back("M"+to_string(_data->theMesh.size()));
          _data->theMesh.push_back(_theMesh);
          _generated = true;
-         *_ofh << "  geo=" << file;
+         *_rita->ofh << "  geo=" << file;
       }
       else if (gmsh_ok) {
          if (file.substr(file.find_last_of(".")+1)!="msh") {
-            cout << "Error: File extension must be \".msh\"" << endl;
-            *_ofl << "In rita>mesh>read>: File extension must be \".msh\"";
+            _rita->msg("mesh>read>","File extension must be \".msh\"");
             _ret = 1;
             return;
          }
@@ -2414,9 +2234,9 @@ void mesh::Read()
          _theMesh->get(file,GMSH);
          _data->mesh_name.push_back("M"+to_string(_data->theMesh.size()));
          _data->theMesh.push_back(_theMesh);
-         *_ofh << "  gmsh=" << file;
+         *_rita->ofh << "  gmsh=" << file;
       }
-      *_ofh << endl;
+      *_rita->ofh << endl;
    }
    else {
       _cmd->setNbArg(0);
@@ -2442,7 +2262,7 @@ void mesh::Read()
 
             case 3:
                if (_cmd->setNbArg(1,"Give OFELI mesh file name.")) {
-                  *_ofl << "In rita>mesh>read>mesh>: Missing Mesh file name." << endl;
+                  _rita->msg("mesh>read>mesh>","Missing Mesh file name.","",1);
                   break;
                }
                ret = _cmd->get(file);
@@ -2450,10 +2270,9 @@ void mesh::Read()
                if (ip.is_open()) {
                   ip.close();
                   _theMesh = new OFELI::Mesh(file);
-                  *_ofh << "  read mesh " << file << endl;
+                  *_rita->ofh << "  read mesh " << file << endl;
                   if (_theMesh->getNbNodes()==0) {
-                     cout << "Error: Empty mesh." << endl;
-                     *_ofl << "In rita>mesh>read>mesh>: Empty mesh";
+                     _rita->msg("mesh>read>mesh>","Empty mesh");
                      _ret = 1;
                      return;
                   }
@@ -2464,8 +2283,7 @@ void mesh::Read()
                   _ret = 90;
                }
                else {
-                  cout << "Unable to open file: " << file << endl;
-                  *_ofl << "In rita>mesh>read>mesh>: Unable to open file: " << file << endl;
+                  _rita->msg("mesh>read>mesh>","Unable to open file: "+file);
                   _generated = false;
                   _ret = 0;
                }
@@ -2473,28 +2291,26 @@ void mesh::Read()
 
             case 4:
                if (_cmd->setNbArg(1,"Give geo gmsh file name.")) {
-                  *_ofl << "In rita>mesh>read>geo>: Missing geo file name." << endl;
+                  _rita->msg("mesh>read>geo>","Missing geo file name.","",1);
                   break;
                }
                ret = _cmd->get(file);
                if (!ret) {
                   if (file.substr(file.find_last_of(".")+1)!=".geo") {
-                     cout << "Error: File extension must be \".geo\"" << endl;
-                     *_ofl << "In rita>mesh>read>geo>: File extension must be \".geo\"";
+                     _rita->msg("mesh>read>geo>","File extension must be \".geo\"");
                      _ret = 1;
                      break;
                   }
                   msh_file = file.substr(0,file.rfind(".")) + "msh";
                   Cmd = "gmsh -2 " + file + " -o " + msh_file;
                   if (system(Cmd.c_str())) {
-                     cout << "Error in system command." << endl;
-                     *_ofl << "In rita>mesh>read>geo>: Error in system command.";
+                     _rita->msg("mesh>read>geo>","Unrecognizable system command.");
                      _ret = 1;
                      break;
                   }
                   _theMesh = new OFELI::Mesh;
                   _theMesh->get(msh_file,GMSH);
-                  *_ofh << "  read geo " << file << endl;
+                  *_rita->ofh << "  read geo " << file << endl;
                   _data->mesh_name.push_back("M"+to_string(_data->theMesh.size()));
                   _data->theMesh.push_back(_theMesh);
                   _geo = true;
@@ -2505,14 +2321,13 @@ void mesh::Read()
 
             case 5:
                if (_cmd->setNbArg(1,"Give gmsh file name where to save mesh.")) {
-                  *_ofl << "In rita>mesh>read>gmsh>: Missing gmsh file name." << endl;
+                  _rita->msg("mesh>read>gmsh>","Missing gmsh file name.","",1);
                   break;
                }
                ret = _cmd->get(file);
                if (!ret) {
                   if (file.substr(file.find_last_of(".")+1)!=".msh") {
-                     cout << "Error: File extension must be \".msh\"" << endl;
-                     *_ofl << "In rita>mesh>read>gmsh>: File extension must be \".msh\"";
+                     _rita->msg("mesh>read>gmsh>","File extension must be \".msh\"");
                      _ret = 1;
                      break;
                   }
@@ -2520,7 +2335,7 @@ void mesh::Read()
                   _theMesh->get(file,GMSH);
                   _data->mesh_name.push_back("M"+to_string(_data->theMesh.size()));
                   _data->theMesh.push_back(_theMesh);
-                  *_ofh << "  read gmsh " << file << endl;
+                  *_rita->ofh << "  read gmsh " << file << endl;
 	       }
                _generated = true;
                _ret = 90;
@@ -2546,10 +2361,9 @@ void mesh::Read()
                break;
 
             default:
-               cout << "Unknown Command " << _cmd->token() << endl;
-               cout << "Available commands: mesh, geo, gmsh" << endl;
-               cout << "Global commands: help, ?, set, quit, exit" << endl;
-               *_ofl << "In rita>mesh>read>: Unknown command " << _cmd->token() << endl;
+               _rita->msg("mesh>read>","Unknown command "+_cmd->token(),
+                          "Available commands: mesh, geo, gmsh\n"
+                          "Global commands:    help, ?, set, quit, exit");
                break;
          }
       }
@@ -2625,59 +2439,56 @@ void mesh::Save()
             break;
 
          default:
-            cout << "Error: Unknown argument." << endl;
-            *_ofl << "In rita>mesh>save>: Unknown argument." << endl;
+            _rita->msg("mesh>save>","Unknown argument.");
             _ret = 1;
 	    break;
       }
    }
    if (domain_ok+geo_ok+mesh_ok+gmsh_ok+vtk_ok+gnuplot_ok+matlab_ok+tecplot_ok==0) {
-      cout << "Error: Nothing to save." << endl;
-      cout << "In rita>mesh>save>: Nothing to save." << endl;
+      _rita->msg("mesh>save>","Nothing to save.");
       _ret = 1;
       return;
    }
    if (mesh_ok+gmsh_ok+vtk_ok+gnuplot_ok+matlab_ok+tecplot_ok>0 && !_generated) {
-      cout << "Error: No generated mesh to be saved." << endl;
-      *_ofl << "In rita>mesh>save>: No generated mesh to be saved" << endl;
+      _rita->msg("mesh>save>","No generated mesh to be saved");
       _ret = 1;
       return;
    }
-   *_ofh << "  save";
+   *_rita->ofh << "  save";
    if (domain_ok) {
       saveDomain(domain_f);
-      *_ofh << "  domain=" << domain_f;
+      *_rita->ofh << "  domain=" << domain_f;
    }
    if (geo_ok) {
       saveGeo(geo_f);
-      *_ofh << "  geo=" << geo_f;
+      *_rita->ofh << "  geo=" << geo_f;
    }
    if (mesh_ok) {
       _mesh_file = mesh_f;
       _theMesh->put(mesh_f);
-      *_ofh << "  mesh=" << mesh_f;
+      *_rita->ofh << "  mesh=" << mesh_f;
    }
    if (gmsh_ok) {
       saveMesh(gmsh_f,*_theMesh,GMSH);
-      *_ofh << "  gmsh=" << gmsh_f;
+      *_rita->ofh << "  gmsh=" << gmsh_f;
    }
    if (vtk_ok) {
       saveMesh(vtk_f,*_theMesh,VTK);
-      *_ofh << "  vtk=" << vtk_f;
+      *_rita->ofh << "  vtk=" << vtk_f;
    }
    if (gnuplot_ok) {
       saveMesh(gnuplot_f,*_theMesh,GNUPLOT);
-      *_ofh << "  gnuplot=" << gnuplot_f;
+      *_rita->ofh << "  gnuplot=" << gnuplot_f;
    }
    if (matlab_ok) {
       saveMesh(matlab_f,*_theMesh,MATLAB);
-      *_ofh << "  matlab=" << matlab_f;
+      *_rita->ofh << "  matlab=" << matlab_f;
    }
    if (tecplot_ok) {
       saveMesh(tecplot_f,*_theMesh,TECPLOT);
-      *_ofh << "  tecplot=" << tecplot_f;
+      *_rita->ofh << "  tecplot=" << tecplot_f;
    }
-   *_ofh << endl;
+   *_rita->ofh << endl;
    return;
 }
 
@@ -2686,7 +2497,7 @@ void mesh::Save()
 {
    int ret=0;
    string file;
-   *_ofh << "  save" << endl;
+   *_rita->ofh << "  save" << endl;
    while (1) {
       if (_cmd->readline("rita>mesh>save> ")<0)
          continue;
@@ -2720,7 +2531,7 @@ void mesh::Save()
                ret = _cmd->get(file);
             if (!ret)
                saveDomain(file);
-            *_ofh << "    domain " << file << endl;
+            *_rita->ofh << "    domain " << file << endl;
             _ret = 0;
 #endif
             return;
@@ -2730,7 +2541,7 @@ void mesh::Save()
             if (_cmd->getNbArgs()==1)
                ret = _cmd->get(file);
             if (!ret)
-               *_ofh << "    geo " << file << endl;
+               *_rita->ofh << "    geo " << file << endl;
             saveGeo(file);
             _ret = 0;
             return;
@@ -2746,7 +2557,7 @@ void mesh::Save()
             }
             _theMesh->put(_mesh_file);
             if (!ret)
-               *_ofh << "    mesh " << _mesh_file << endl;
+               *_rita->ofh << "    mesh " << _mesh_file << endl;
             if (_verb)
                cout << "Mesh saved in file: " << _mesh_file << endl;
             _ret = 90;
@@ -2763,7 +2574,7 @@ void mesh::Save()
             }
             saveMesh(file,*_theMesh,VTK);
             if (!ret)
-               *_ofh << "    gmsh " << file << endl;
+               *_rita->ofh << "    gmsh " << file << endl;
             if (_verb)
                cout << "Mesh saved in file: " << file << endl;
             _ret = 90;
@@ -2781,7 +2592,7 @@ void mesh::Save()
                ret = _cmd->get(file);
             saveMesh(file,*_theMesh,VTK);
             if (!ret)
-               *_ofh << "    vtk " << file << endl;
+               *_rita->ofh << "    vtk " << file << endl;
             _ret = 0;
             return;
 
@@ -2797,7 +2608,7 @@ void mesh::Save()
                ret = _cmd->get(file);
             saveMesh(file,*_theMesh,GNUPLOT);
             if (!ret)
-               *_ofh << "    gnuplot " << file << endl;
+               *_rita->ofh << "    gnuplot " << file << endl;
             _ret = 0;
             return;
 
@@ -2813,7 +2624,7 @@ void mesh::Save()
                ret = _cmd->get(file);
             saveMesh(file,*_theMesh,MATLAB);
             if (!ret)
-               *_ofh << "    matlab " << file << endl;
+               *_rita->ofh << "    matlab " << file << endl;
             _ret = 0;
             return;
 
@@ -2829,7 +2640,7 @@ void mesh::Save()
                ret = _cmd->get(file);
             saveMesh(file,*_theMesh,TECPLOT);
             if (!ret)
-               *_ofh << "    tecplot " << file << endl;
+               *_rita->ofh << "    tecplot " << file << endl;
             _ret = 0;
             return;
 
@@ -2840,7 +2651,7 @@ void mesh::Save()
                cout << "Warning: Nothing saved." << endl;
                *_ofl << "In rita>mesh>save>: Nothing saved." << endl;
             }
-            *_ofh << "    end" << endl;
+            *_rita->ofh << "    end" << endl;
             _ret = 0;
             return;
 
@@ -2910,7 +2721,7 @@ void mesh::Clear()
    _surface.clear();
    _volume.clear();
    _subdomains.clear();
-   *_ofh << "  clear" << endl;
+   *_rita->ofh << "  clear" << endl;
    if (_verb)
       cout << "Mesh cleared." << endl;
 }

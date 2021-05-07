@@ -48,7 +48,6 @@ stationary::stationary(rita *r)
    _pde_eq = _rita->PDE;
    _alg_eq.resize(_nb_eq);
    _alg_eq = _rita->ALGEBRAIC;
-   _ofh = _rita->_ofh;
 }
 
 

@@ -124,8 +124,7 @@ int data::addFunction(const string&         name,
    if (nm!="") {
       int k = checkFct(name);
       if (k>=0) {
-         cout << "Error: Function " << nm << " exists already." << endl;
-         *_ofl << "In rita>data>: Function " << nm << " exists already." << endl;
+         _rita->msg("rita>data>","Function "+nm+" exists already.");
          return 1;
       }
    }
@@ -133,8 +132,7 @@ int data::addFunction(const string&         name,
       nm = "F-" + to_string(_nb_fcts+1);
    _theFct = new OFELI::Fct(nm,def,var);
    if (_theFct->check()) {
-      cout << _theFct->getErrorMessage() << endl;
-      *_ofl << "In rita>data>: " << _theFct->getErrorMessage() <<endl;
+      _rita->msg("data>",_theFct->getErrorMessage());
       delete _theFct;
       return 1;
    }
@@ -199,8 +197,7 @@ int data::addField(string   name,
    }
    else if (wm) {
       if (_rita->_theMesh==nullptr) {
-         cout << "Error: No mesh data available." << endl;
-         *_ofl << "In rita>data>: No mesh data available." << endl;
+         _rita->msg("data>","No mesh data available.");
          _ret = -1;
          return _ret;
       }
@@ -208,8 +205,7 @@ int data::addField(string   name,
    if (s==NODES) {
       _theMesh = _rita->_theMesh;
       if (_theMesh->getNbNodes()==0) {
-         cout << "Error: Mesh has no nodes." << endl;
-         *_ofl << "In rita>data>: Mesh has no nodes" << endl;
+         _rita->msg("data>","Mesh has no nodes");
          _ret = 1;
          return _ret;
       }
@@ -218,8 +214,7 @@ int data::addField(string   name,
    else if (s==ELEMENTS) {
       _theMesh = _rita->_theMesh;
       if (_theMesh->getNbElements()==0) {
-         cout << "Error: Mesh has no elements." << endl;
-         *_ofl << "In rita>data>: Mesh has no elements" << endl;
+         _rita->msg("data>","Mesh has no elements.");
          _ret = 1;
          return _ret;
       }
@@ -228,8 +223,7 @@ int data::addField(string   name,
    else if (s==SIDES) {
       _theMesh = _rita->_theMesh;
       if (_theMesh->getNbSides()==0) {
-         cout << "Error: Mesh has no sides." << endl;
-         *_ofl << "In rita>data>: Mesh has no sides" << endl;
+         _rita->msg("data>","Mesh has no sides");
          _ret = 1;
          return _ret;
       }
@@ -238,8 +232,7 @@ int data::addField(string   name,
    else if (s==EDGES) {
       _theMesh = _rita->_theMesh;
       if (_theMesh->getNbEdges()==0) {
-         cout << "Error: Mesh has no edges." << endl;
-         *_ofl << "In rita>data>: Mesh has no edges" << endl;
+         _rita->msg("data>","Mesh has no edges");
          _ret = 1;
          return _ret;
       }
@@ -265,7 +258,7 @@ int data::addField(string   name,
 
 int data::run()
 {
-   *_ofh << "data" << endl;
+   *_rita->ofh << "data" << endl;
    while (1) {
       _cmd->readline("rita>data> ");
       if (_nb < 0)
@@ -331,7 +324,7 @@ int data::run()
          case 13:
             _ret = 0;
             ok = true;
-            *_ofh << "  end" << endl;
+            *_rita->ofh << "  end" << endl;
             return _ret;
 
          case 14:
@@ -347,10 +340,9 @@ int data::run()
             return 1;
 
          default:
-            cout << "Unknown Command: " << _cmd->token() << endl;
-            cout << "Available commands: grid, mesh, field, tabulation, function, vector, matrix, summary" << endl;
-            cout << "Global commands:    help, ?, set, <, end, quit, exit" << endl;
-            *_ofl << "In rita>data>: Unknown Command " << _cmd->token() << endl;
+            _rita->msg("data>","Unknown Command "+_cmd->token(),
+                       "Available commands: grid, mesh, field, tabulation, function, vector, matrix, summary\n"
+                       "Global commands:    help, ?, set, <, end, quit, exit");
             break;
        }
    }
@@ -391,9 +383,7 @@ int data::setGrid()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args<=0) {
-      cout << "Error in command." << endl;
-      cout << "Available arguments: name, min, max, ne." << endl;
-      *_ofl << "In rita>data>grid>: Error in command." << endl;
+      _rita->msg("data>grid>","Error in command.");
       return 1;
    }
    for (int i=0; i<nb_args; ++i) {
@@ -406,8 +396,7 @@ int data::setGrid()
 
          case 1:
             if (nb==0 || nb>3) {
-               cout << "Error: Illegal number of arguments" << endl;
-               *_ofl << "In rita>data>grid>: Illegal number of arguments" << endl;
+               _rita->msg("data>grid>","Illegal number of arguments");
                return 1;
             }
             dim = d1 = nb;
@@ -420,8 +409,7 @@ int data::setGrid()
 
          case 2:
             if (nb==0 || nb>3) {
-               cout << "Error: Illegal number of arguments for a line" << endl;
-               *_ofl << "In rita>data>grid>: Illegal number of arguments" << endl;
+               _rita->msg("data>grid>","Illegal number of arguments");
                return 1;
             }
             dim = d2 = nb;
@@ -434,8 +422,7 @@ int data::setGrid()
 
          case 3:
             if (nb==0 || nb>3) {
-               cout << "Error: Illegal number of arguments for a line" << endl;
-               *_ofl << "In rita>data>grid>: Illegal number of arguments" << endl;
+               _rita->msg("data>grid>","Illegal number of arguments");
                return 1;
             }
             dim = d3 = nb;
@@ -447,42 +434,38 @@ int data::setGrid()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << kw[n] << endl;
-            *_ofl << "In rita>data>grid>: Unknown argument: " << kw[n] << endl;
+            _rita->msg("data>grid>","Unknown argument: "+kw[n]);
             return 1;
       }
    }
    if ((d1!=d2 || d1!=d3 || d2!=d3) && d1>=0 && d2>=0 && d3>=0) {
-      cout << "Error: Dimensions do not match." << endl;
-      *_ofl << "In rita>data>grid>: Dimensions do not match." << endl;
+      _rita->msg("data>grid>","Dimensions do not match.");
       return 1;
    }
    if (xmin>=xmax || ymin>=ymax || zmin>=zmax) {
-      cout << "Error: Domain definition is incorrect." << endl;
-      *_ofl << "In rita>data>grid>: Domain definition is incorrect." << endl;
+      _rita->msg("data>grid>","Domain definition is incorrect.");
       return 1;
    }
    if (nx<1 || ny<1 || nz<1) {
-      cout << "Error: Number of subdivisions is incorrect." << endl;
-      *_ofl << "In rita>data>grid>: Number of subdivisions is incorrect." << endl;
+      _rita->msg("data>grid>","Number of subdivisions is incorrect.");
       return 1;
    }
-   *_ofh << "  grid  name=" << name;
+   *_rita->ofh << "  grid  name=" << name;
    if (dim==1) {
       _theGrid = new OFELI::Grid(xmin,xmax,nx);
-      *_ofh << "  min=" << xmin << "  max=" << xmax << "  ne=" << nx;
+      *_rita->ofh << "  min=" << xmin << "  max=" << xmax << "  ne=" << nx;
    }
    else if (dim==2) {
       _theGrid = new OFELI::Grid(xmin,xmax,ymin,ymax,nx,ny);
-      *_ofh << "  min=" << xmin << "," << ymin << "  max=" << xmax << "," << ymax
-            << "  ne=" << nx << "," << ny;
+      *_rita->ofh << "  min=" << xmin << "," << ymin << "  max=" << xmax << "," << ymax
+                 << "  ne=" << nx << "," << ny;
    }
    else if (dim==3) {
       _theGrid = new OFELI::Grid(xmin,xmax,ymin,ymax,zmin,zmax,nx,ny,nz);
-      *_ofh << "  min=" << xmin << "," << ymin << "," << zmin << "  max=" << xmax
-            << "," << ymax << "," << zmax << "  ne=" << nx << "," << ny << "," << nz;
+      *_rita->ofh << "  min=" << xmin << "," << ymin << "," << zmin << "  max=" << xmax
+                 << "," << ymax << "," << zmax << "  ne=" << nx << "," << ny << "," << nz;
    }
-   *_ofh << endl;
+   *_rita->ofh << endl;
    _theGrid_alloc = 1;
    theGrid.push_back(_theGrid);
    grid_name.push_back(name);
@@ -499,9 +482,7 @@ int data::setVector()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args<=0) {
-      cout << "Error in command." << endl;
-      cout << "Available arguments: name, size, define, set." << endl;
-      *_ofl << "In rita>data>vector>: Error in command." << endl;
+      _rita->msg("data>vector>","Error in command.","Available arguments: name, size, define, set.");
       return 1;
    }
    for (int i=0; i<nb_args; ++i) {
@@ -523,13 +504,12 @@ int data::setVector()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << kw[n] << endl;
-            *_ofl << "In rita>data>vector>: Unknown argument: " << kw[n] << endl;
+            _rita->msg("data>vector>","Unknown argument: "+kw[n]);
             return 1;
       }
    }
    if (nb_args>0) {
-      *_ofh << endl;
+      *_rita->ofh << endl;
    }
    theVector.push_back(_theVector);
    vector_name.push_back(name);
@@ -567,9 +547,8 @@ int data::setField()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args<=0) {
-      cout << "Error in command." << endl;
-      cout << "Available arguments: name, size, mesh, grid, nbdof, type, uniform." << endl;
-      *_ofl << "In rita>data>field>: Error in command." << endl;
+      _rita->msg("data>field>","Error in command.",
+                 "Available arguments: name, size, mesh, grid, nbdof, type, uniform.");
       return 1;
    }
    for (int i=0; i<nb_args; ++i) {
@@ -602,8 +581,7 @@ int data::setField()
             type = _cmd->string_token();
             if (type!="size" && type!="nodes" && type!="elements" &&
                 type!="sides" && type!="edges") {
-               cout << "Error: Unknown type: " << type << endl;
-               *_ofl << "In rita>data>field>: Unknown type: " << type << endl;
+               _rita->msg("data>field>","Unknown type: "+type);
                return 0;
             }
             break;
@@ -616,9 +594,8 @@ int data::setField()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << kw[n] << endl;
-            *_ofl << "In rita>data>field>: Unknown argument: " << kw[n] << endl;
-	    return 1;
+            _rita->msg("data>field>","Unknown argument: "+kw[n]);
+            return 1;
       }
    }
    if (nb_args>0) {
@@ -631,18 +608,16 @@ int data::setField()
                cout << "New field: " << name << ", Nb. of DOF: " << _nb_dof << endl;
             cout << "Total number of fields: " << _nb_fields << endl;
          }
-         *_ofh << "  field  name=" << name;
+         *_rita->ofh << "  field  name=" << name;
          if (_size)
-            *_ofh << " size=" << _size;
-         *_ofh << " type=" << type << "  nbdof=" << _nb_dof;
-         *_ofh << " min=" << umin << " max=" << umax;
+            *_rita->ofh << " size=" << _size;
+         *_rita->ofh << " type=" << type << "  nbdof=" << _nb_dof << " min=" << umin << " max=" << umax;
          nb_dof[_ifield] = _nb_dof;
       /*      if (uniform==1) {
-         cout << "Error: minimal and maximal values must be given for field." << endl;
-         *_ofl << "In rita>data>field>: minimal and maximal values must be given for field." << endl;
+         _rita->msg("data>field>","Minimal and maximal values must be given for field.");
 	 return 1;
 	 }*/
-         *_ofh << endl;
+         *_rita->ofh << endl;
       }
    }
    return 0;
@@ -661,8 +636,7 @@ int data::setFunction()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args<0) {
-      cout << "Error in command." << endl;
-      *_ofl << "In rita>data>function>: Error in command." << endl;
+      _rita->msg("data>function>:","Error in command.");
       return 1;
    }
    for (int i=0; i<nb_args; ++i) {
@@ -691,36 +665,30 @@ int data::setFunction()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << _cmd->Arg() << endl;
-            *_ofl << "In rita>data>function>: Unknown argument: " << _cmd->Arg() << endl;
+            _rita->msg("data>function>","Unknown argument: "+_cmd->Arg());
             return 1;
       }
       if (!name_ok) {
-         cout << "Error: Missing function name." << endl;
-         *_ofl << "In rita>data>function>: Missing function name." << endl;
+         _rita->msg("data>function>","Missing function name.");
          return 1;
       }
    }
    if (nb_args==0) {
-      cout << "Error: No command argument given." << endl;
-      *_ofl << "In rita>data>function>: No command argument given." << endl;
+      _rita->msg("data>function>","No command argument given.");
       return 1;
    }
    else {
       if (!var_ok) {
-         cout << "Error: No variable defined." << endl;
-         *_ofl << "In rita>data>function>: No variable defined." << endl;
+         _rita->msg("data>function>","No variable defined.");
          return 1;
       }
       if (!def_ok) {
-         cout << "Error: No function definition given." << endl;
-         *_ofl << "In rita>data>function>: No function definition given." << endl;
+         _rita->msg("data>function>","No function definition given.");
          return 1;
       }
       for (const auto& v: theFct) {
          if (v->name==name) {
-            cout << "Error: Function " << name << " exists already." << endl;
-            *_ofl << "In rita>data>function>: Function " << name << " exists already." << endl;
+            _rita->msg("data>function>","Function "+name+" exists already.");
             ret = 1;
          }
       }
@@ -735,10 +703,10 @@ int data::setFunction()
          }
          addFunction(name,def,var);
          if (name_ok)
-            *_ofh << "  function  name=" << name;
+            *_rita->ofh << "  function  name=" << name;
          for (const auto& v: var)
-            *_ofh << " var=" << v;
-         *_ofh << "  def=" << def << endl;
+            *_rita->ofh << " var=" << v;
+         *_rita->ofh << "  def=" << def << endl;
       }
    }
    return 0;
@@ -748,20 +716,19 @@ int data::setFunction()
 int data::setNbDOF()
 {
    if (_cmd->setNbArg(1,"Give number of degrees of freedom.")) {
-      cout << "Error: Missing value of nbdof." << endl;
-      *_ofl << "In rita>data>>nbdof>: Missing value of nbdof." << endl;
+      _rita->msg("data>>nbdof>","Missing value of nbdof.");
       return 1;
    }
    _ret = _cmd->get(_nb_dof);
    if (!_ret)
-      *_ofh << "  nbdof " << _nb_dof;
+      *_rita->ofh << "  nbdof " << _nb_dof;
    return _ret;
 }
 
 /*
 void data::Clear()
 {
-   *_ofh << "  clear" << endl;
+   *_rita->ofh << "  clear" << endl;
    _nb_fields = 0;
    Field[0] = "u";
    FieldName["u"] = 0;
@@ -802,8 +769,7 @@ int data::setTab()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args<0) {
-      cout << "Error in command." << endl;
-      *_ofl << "In rita>data>tabulation>: Error in command." << endl;
+      _rita->msg("data>tabulation>","Error in command.");
       return 1;
    }
    for (int i=0; i<nb_args; ++i) {
@@ -855,44 +821,34 @@ int data::setTab()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << kw[n] << endl;
-            *_ofl << "In rita>data>tabulation>: Unknown argument: " << kw[n] << endl;
+            _rita->msg("data>tabulation>","Unknown argument: "+kw[n]);
             return 1;
       }
    }
    if (!file_ok && grid_ok<111) {
-      cout << "Error: No grid data given given." << endl;
-      *_ofl << "In rita>data>tabulation>: No grid data given." << endl;
+      _rita->msg("data>tabulation>","No grid data given.");
       return 1;
    }
    if (!field_ok && !file_ok) {
-      cout << "Error: No associated field given." << endl;
-      *_ofl << "In rita>data>tabulation>: No associated field given." << endl;
-      return 1;
-   }
-   if (!field_ok && !file_ok) {
-      cout << "Error: No associated field given." << endl;
-      *_ofl << "In rita>data>tabulation>: No associated field given." << endl;
+      _rita->msg("data>tabulation>","No associated field given.");
       return 1;
    }
    if (!file_ok && (dim1!=dim2 || dim1!=dim3 || dim2!=dim3)) {
-      cout << "Error: Incompatible space dimensions as given by grid data." << endl;
-      *_ofl << "In rita>data>tabulation>: Incompatible space dimensions as given by grid data." << endl;
+      _rita->msg("data>tabulation>","Incompatible space dimensions as given by grid data.");
       return 1;
    }
-   *_ofh << "  tabulation  name=" << name;
+   *_rita->ofh << "  tabulation  name=" << name;
    if (file_ok) {
       ifstream ip(file);
       if (ip.is_open())
          ip.close();
       else {
-         cout << "Error: Unable to open file: " << file << endl;
-         *_ofl << "In rita>data>tabulation>: Unable to open file: " << file << endl;
+         _rita->msg("data>tabulation>","Unable to open file: "+file);
          return 1;
       }
       _theTab = new OFELI::Tabulation(file);
       _theTab_alloc = 1;
-      *_ofh << "  file=" << file;
+      *_rita->ofh << "  file=" << file;
    }
    else {
       if (dim1==1)
@@ -905,7 +861,7 @@ int data::setTab()
    tab_name.push_back(name);
    theTab.push_back(_theTab);
    _nb_tabs++;
-   *_ofh << endl;
+   *_rita->ofh << endl;
    return 0;
 }
 

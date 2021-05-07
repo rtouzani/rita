@@ -64,15 +64,13 @@ int solve::run()
 {
    _nb_eq = _rita->getNbEq();
    if ((_rita->_analysis_type==STEADY_STATE||_rita->_analysis_type==TRANSIENT) && _nb_eq==0) {
-      cout << "Error: No equation defined." << endl;
-      *_ofl << "In rita>solve>: No equation defined." << endl;
+      _rita->msg("solve>","No equation defined.");
       _ret = 1;
       return _ret;
    }
    _nb_fields = _data->getNbFields();
    if (_nb_fields==0) {
-      cout << "Error: No unknown field defined." << endl;
-      *_ofl << "In rita>solve>: No field defined." << endl;
+      _rita->msg("solve>","No field defined.");
       _ret = 1;
       return _ret;
    }
@@ -88,26 +86,16 @@ int solve::run()
          _rita->ODE[e]->analytic.resize(_rita->ODE[e]->size);
       else if ((_rita->_eq_type)[e]==PDE_EQ) {
          if (_rita->PDE[e]->log.fail()) {
-            if (_rita->PDE[e]->log.pde) {
-               cout << "Error: No PDE defined for equation " << e+1 << ". Solution procedure aborted" << endl;
-               *_ofl << "In rita>solve>: No PDE defined for equation " << e+1 << ". Solution procedure aborted" << endl;
-            }
-            else if (_rita->PDE[e]->log.field) {
-               cout << "Error: Field definition incorrect for equation " << e+1 << ". Solution procedure aborted" << endl;
-               *_ofl << "In rita>solve>: Field definition incorrect for equation " << e+1 << ". Solution procedure aborted" << endl;
-            }
-            else if (_rita->PDE[e]->log.spd) {
-               cout << "Error: No space discretization method available for PDE " << e+1 << ". Solution procedure aborted" << endl;
-               *_ofl << "In rita>solve>: No space discretization method available for PDE " << e+1 << ". Solution procedure aborted" << endl;
-            }
-            else if (_rita->PDE[e]->log.ls) {
-               cout << "Error: No defined linear solver for PDE " << e+1 << ". Solution procedure aborted" << endl;
-               *_ofl << "In rita>solve>: No defined linear solver for PDE " << e+1 << ". Solution procedure aborted" << endl;
-            }
-            else if (_rita->PDE[e]->log.nl) {
-               cout << "Error: No defined nonlinear solver for PDE " << e+1 << ". Solution procedure aborted" << endl;
-               *_ofl << "In rita>solve>: No defined nonlinear solver for PDE " << e+1 << ". Solution procedure aborted" << endl;
-            }
+            if (_rita->PDE[e]->log.pde)
+               _rita->msg("solve>","No PDE defined for equation "+to_string(e+1)+". Solution procedure aborted.");
+            else if (_rita->PDE[e]->log.field)
+               _rita->msg("solve>","Field definition incorrect for equation "+to_string(e+1)+". Solution procedure aborted.");
+            else if (_rita->PDE[e]->log.spd)
+               _rita->msg("solve>","No space discretization method available for PDE "+to_string(e+1)+". Solution procedure aborted.");
+            else if (_rita->PDE[e]->log.ls)
+               _rita->msg("solve>","No defined linear solver for PDE "+to_string(e+1)+". Solution procedure aborted.");
+            else if (_rita->PDE[e]->log.nl)
+               _rita->msg("solve>","No defined nonlinear solver for PDE "+to_string(e+1)+". Solution procedure aborted.");
             if (_verb>1)
                cout << "Getting back to higher level ..." << endl;
             _ret = 0;
@@ -152,25 +140,25 @@ int solve::run()
             if (_rita->_analysis_type==STEADY_STATE) {
                if (_verb)
                   cout << "Running stationary solver ..." << endl;
-               *_ofh << "  run" << endl;
+               *_rita->ofh << "  run" << endl;
                _ret = run_steady();
             }
             else if (_rita->_analysis_type==TRANSIENT) {
                if (_verb)
                   cout << "Running transient solver ..." << endl;
-               *_ofh << "  run" << endl;
+               *_rita->ofh << "  run" << endl;
                _ret = run_transient();
             }
             else if (_rita->_analysis_type==OPTIMIZATION) {
                if (_verb)
                   cout << "Running optimization problem solver ..." << endl;
-               *_ofh << "  run" << endl;
+               *_rita->ofh << "  run" << endl;
                _ret = run_optim();
             }
             else if (_rita->_analysis_type==EIGEN) {
                if (_verb)
                   cout << "Running eigen problem solver ..." << endl;
-               *_ofh << "  run" << endl;
+               *_rita->ofh << "  run" << endl;
                _ret = run_eigen();
             }
             else
@@ -182,7 +170,7 @@ int solve::run()
             break;
 
          case 5:
-            *_ofh << "  display " << endl;
+            *_rita->ofh << "  display " << endl;
             display();
             break;
 
@@ -193,7 +181,7 @@ int solve::run()
          case 7:
             if (_verb)
                cout << "Setting analytical solution ..." << endl;
-            *_ofh << "  analytic" << endl;
+            *_rita->ofh << "  analytic" << endl;
             setAnalytic();
             _set_analytic = true;
             break;
@@ -206,21 +194,21 @@ int solve::run()
                _ret = _cmd->get(eq);
             if (nb>2)
                _ret = _cmd->get(i);
-            *_ofh << "  error  " << eq << "  " << i << endl;
+            *_rita->ofh << "  error  " << eq << "  " << i << endl;
             get_error(eq,i);
             break;
 
          case 9:
             if (_verb)
                cout << "Setting post calculations ..." << endl;
-            *_ofh << "  post" << endl;
+            *_rita->ofh << "  post" << endl;
             break;
 
          case 10:
          case 11:
             if (_verb>1)
                cout << "Getting back to higher level ..." << endl;
-            *_ofh << "  end" << endl;
+            *_rita->ofh << "  end" << endl;
             _ret = 0;
             return _ret;
 
@@ -237,10 +225,9 @@ int solve::run()
             break;
 
          default:
-            cout << "Unknown Command: " << _cmd->token() << endl;
-            cout << "Available commands for this mode:" << endl;
-            cout << "help, ?, run, save, display, plot, analytic, error, post, end, <, exit" << endl;
-            *_ofl << "In rita>solve>: Unknown command: " << _cmd->token() << endl;
+            _rita->msg("solve>","Unknown command: "+_cmd->token(),
+                       "Available commands for this mode:\n"
+                       "help, ?, run, save, display, plot, analytic, error, post, end, <, exit");
             break;
       }
    }
@@ -291,9 +278,8 @@ int solve::run_transient()
 int solve::run_eigen()
 {
   //   return _rita->PDE[0].Eq->run();
-   cout << "Eigenproblem solver not implemented so far." << endl;
-   *_ofl << "In rita>solve>run>: Eigenproblem solver not implemented." << endl;
-  return 0;
+   _rita->msg("solve>run>","Eigenproblem solver not implemented.");
+   return 0;
 }
 
 
@@ -301,8 +287,7 @@ int solve::run_optim()
 {
    _optim = _rita->_optim;
    if (_optim->log) {
-      cout << "Error: Optimization problem undefined or improperly defined." << endl;
-      *_ofl << "In rita>solve>run_optim>: Optimization problem undefined or improperly defined." << endl;
+      _rita->msg("solve>run_optim>","Optimization problem undefined or improperly defined.");
       return 1;
    }
    int size=_optim->size;
@@ -400,28 +385,24 @@ void solve::save()
             break;
 
          default:
-	    cout << "Error: Unknown argument: " << kw[n] << endl;
-            *_ofl << "In rita>solve>save>: Unknown argument: " << kw[n] << endl;
-	    return;
+            _rita->msg("solve>save>","Unknown argument: "+kw[n]);
+            return;
       }
    }
    if (nb_args>0) {
       if (_data->getNbFields()==0) {
-         cout << "Error: No field to save." << endl;
-         *_ofl << "In rita>solve>: No field to save." << endl;
+         _rita->msg("solve>","No field to save.");
          _ret = 1;
          return;
       }
       if (!field_ok) {
-         cout << "Error: No field name given." << endl;
-         *_ofl << "In rita>solve>: No field name given." << endl;
+         _rita->msg("solve>:","No field name given.");
          _ret = 1;
          return;
       }
       k = _data->checkField(fd);
       if (k<0) {
-         cout << "Error: Unknown field: " << fd << endl;
-         *_ofl << "In rita>solve>: Unknown field: " << fd << endl;
+         _rita->msg("solve>:","Unknown field: "+fd);
          _ret = 1;
          return;
       }
@@ -439,27 +420,25 @@ void solve::save()
       }
       eq = _data->FieldEquation[k];
       if ((_rita->_eq_type)[eq]!=PDE_EQ && fformat != "gnuplot") {
-         cout << "Only Gnuplot format is available for this type of equation." << endl;
-         *_ofl << "In rita>solve>save>: Illegal format for this type of equation." << endl;
+         _rita->msg("solve>save>","Only Gnuplot format is available for this type of equation.");
          _ret = 1;
          return;
       }
       if (!_ret)
          _fformat[k] = _ff[fformat];
       else {
-         cout << "Error: Unknown file format: " << fformat << endl;
-         *_ofl << "In rita>solve>save>: Unknown file format: " << fformat << endl;
+         _rita->msg("solve>save>","Unknown file format: "+fformat);
          _ret = 1;
          return;
       }
       _save_file[k] = file;
-      *_ofh << "  save  field=" << fd << "  file=" << file << "  format=" << fformat
+      *_rita->ofh << "  save  field=" << fd << "  file=" << file << "  format=" << fformat
             << "  frequency=" << freq;
       if (_phase) {
          _phase_file[k] = phase_f;
-         *_ofh << "  phase=" << phase_f;
+         *_rita->ofh << "  phase=" << phase_f;
       }
-      *_ofh << endl;
+      *_rita->ofh << endl;
    }
    _ret = 0;
    return;
@@ -494,16 +473,14 @@ void solve::setAnalytic()
             break;
 
          default:
-            cout << "Error: Unknown argument: " << kw[n] << endl;
-            *_ofl << "In rita>solve>analytic>: Unknown argument: " << kw[n] << endl;
+            _rita->msg("solve>analytic>","Unknown argument: "+kw[n]);
             _ret = 1;
-	    return;
+            return;
       }
    }
    if (nb_args>0) {
       if (!exp_ok) {
-         cout << "Error: No expression of analytical solution provided." << endl;
-         *_ofl << "In rita>solve>analytic>: No expression of analytical solution provided." << endl;
+         _rita->msg("solve>analytic>","No expression of analytical solution provided.");
          _ret = 1;
          return;
       }
@@ -513,7 +490,7 @@ void solve::setAnalytic()
          _rita->ODE[eq-1]->analytic[comp-1] = exp;
       else if ((_rita->_eq_type)[eq-1]==PDE_EQ)
          _rita->PDE[eq-1]->analytic[comp-1] = exp;
-      *_ofh << "analytic equation=" << eq << " component=" << comp << " expression=" << exp << endl;
+      *_rita->ofh << "analytic equation=" << eq << " component=" << comp << " expression=" << exp << endl;
    }
    _ret = 0;
    return;
@@ -548,8 +525,7 @@ void solve::display()
       }
       else if (_data->FieldType[f]==OPT) {
          if (!_optim->solved) {
-            cout << "Error: Optimization problem was not properly solved." << endl;
-            *_ofl << "In rita>solve>display>: Optimization problem ot properly solved." << endl;
+            _rita->msg("solve>display>","Optimization problem ot properly solved.");
             _ret = 1;
             return;
          }
@@ -581,13 +557,11 @@ void solve::get_error(int eq, int i)
    double err2=0., errI=0.;
    vector<double> y;
    if (!_set_analytic) {
-      cout << "Error: No analytical solution given." << endl;
-      *_ofl << "In rita>solve>get_error>: No analytical solution given" << endl;
+      _rita->msg("solve>error>","No analytical solution given.");
       return;
    }
    if (!_solved) {
-      cout << "Error: Problem has not been solved yet." << endl;
-      *_ofl << "In rita>solve>get_error>: Problem has not been solved yet" << endl;
+      _rita->msg("solve>error>","Problem has not been solved yet.");
       return;
    }
 
@@ -617,7 +591,7 @@ void solve::get_error(int eq, int i)
          for (int j=0; j<_rita->ODE[eq-1]->size; ++j) {
             _var[j+1] = _rita->ODE[eq-1]->fn+to_string(j+1);
             y[j+1] = _rita->ODE[eq-1]->y[j];
-	 }
+         }
          _theFct.set(_rita->ODE[eq-1]->analytic[i],_var);
          double u=_rita->ODE[eq-1]->y[i], v=_theFct(y);
          errI += (u-v)*(u-v);
@@ -643,10 +617,8 @@ void solve::get_error(int eq, int i)
    }
 
 // Case of an Optimization problem
-   else if ((_rita->_eq_type)[eq-1]==OPT) {
-      cout << "This functionality is not available for optimization problems." << endl;
-      *_ofl << "Error: Error computation is not available for optimization problems." << endl;
-   }
+   else if ((_rita->_eq_type)[eq-1]==OPT)
+      _rita->msg("solve>error>","Error computation is not available for optimization problems.");
 }
 
 } /* namespace RITA */

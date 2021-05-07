@@ -75,21 +75,18 @@ int integration::run()
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
-      cout << "Error: No argument for command." << H << endl;
-      *_ofl << "In rita>integration>: No argument for command." << endl;
+      _rita->msg("integration>","No argument for command."+H);
       return 1;
    }
    if (nb_args<1) {
-      cout << "Error: No argument for command." << endl;
-      *_ofl << "In rita>integration>: No argument for command." << endl;
+      _rita->msg("integration>","No argument for command.");
       return 1;
    }
    for (int k=0; k<nb_args; ++k) {
 
       int n = _cmd->getArgs(nb);
       if (nb<1 && n!=11) {
-         cout << "Error: Insufficient number of arguments." << endl;
-         *_ofl << "In rita>integration>: Insufficient number of arguments." << endl;
+         _rita->msg("integration>","Insufficient number of arguments.");
          return 1;
       }
       switch (n) {
@@ -122,54 +119,48 @@ int integration::run()
 
          case 8:
             form = _cmd->string_token(0);
-	    if (nb>1)
+            if (nb>1)
                ng = _cmd->int_token(1);
             break;
 
          default:
-            cout << "Error: Unknown argument: " << _cmd->Arg() << endl;
-            *_ofl << "In rita>integration>: Unknown argument: " << _cmd->Arg() << endl;
-	    return 1;
+            _rita->msg("integration>","Unknown argument: "+_cmd->Arg());
+            return 1;
       }
    }
 
    if (nb_args>0) {
       if (count_fct && count_field) {
-         cout << "Error: Function already defined in data module." << endl;
-         *_ofl << "In rita>integration>: Function already defined in data module." << endl;
+         _rita->msg("integration>","Function already defined in data module.");
          return 1;
       }
       if (count_fct && count_def) {
-         cout << "Error: Function already defined." << endl;
-         *_ofl << "In rita>integration>: Function already defined." << endl;
+         _rita->msg("integration>","Function already defined.");
          return 1;
       }
       if (count_fct>1 || count_def>1) {
-         cout << "Error: Too many functions defined." << endl;
-         *_ofl << "In rita>integration>: Too many functions defined." << endl;
+         _rita->msg("integration>","Too many functions defined.");
          return 1;
       }
       if (count_def && !count_field) {
-         cout << "Error: Missing a variable name." << endl;
-         *_ofl << "In rita>integration>: Missing a variable name." << endl;
+         _rita->msg("integration>","Missing a variable name.");
          return 1;
       }
-      *_ofh << "integration";
+      *_rita->ofh << "integration";
       if (dim==1)
-         *_ofh << " interval=" << xmin << "," << xmax << " ne=" << nx;
+         *_rita->ofh << " interval=" << xmin << "," << xmax << " ne=" << nx;
       if (count_fct) {
          ind = theData->checkFct(fct);
          if (ind==-1) {
-            cout << "Error: Non defined function " << fct << endl;
-            *_ofl << "In rita>integration>: Non defined function " << fct << endl;
+            _rita->msg("integration>","Non defined function "+fct);
             return 1;
          }
          IFct = theData->theFct[ind];
-         *_ofh << " function=" << fct;
+         *_rita->ofh << " function=" << fct;
       }
       else {
          ifield = theData->addField(var_name,GIVEN_SIZE,dim);
-         *_ofh << " var=" << var_name << " definition=" << def;
+         *_rita->ofh << " var=" << var_name << " definition=" << def;
          if (dim==1)
             var.push_back(var_name);
          else {
@@ -181,10 +172,10 @@ int integration::run()
          IFct = theData->theFct[theData->getNbFcts()-1];
       }
       nim = Nint[form];
-      *_ofh << " formula=" << form;
+      *_rita->ofh << " formula=" << form;
       if (nim==GAUSS_LEGENDRE || nim==GAUSS_LOBATTO)
-         *_ofh << "," << ng;
-      *_ofh << endl;
+         *_rita->ofh << "," << ng;
+      *_rita->ofh << endl;
    }
    return 0;
 }
@@ -235,8 +226,7 @@ int integration::go()
          res += ((*IFct)(x1)+4*(*IFct)(x12)+(*IFct)(x2))*dx/6.0;
       else if (nim==GAUSS_LEGENDRE) {
          if (ng<1 || ng>5) {
-            cout << "Error: For Gauss-Legendre formula, number of points must be between 1 and 6." << endl;
-            *_ofl << "In rita>integration>: For Gauss-Legendre formula, number of points must be between 1 and 6." << endl;
+            _rita->msg("integration>","For Gauss-Legendre formula, number of points must be between 1 and 6.");
             return 1;
          }
          for (int i=0; i<ng; ++i) {
@@ -246,8 +236,7 @@ int integration::go()
       }
       else if (nim==GAUSS_LOBATTO) {
          if (ng<3 || ng>5) {
-            cout << "Error: For Gauss-Lobatto formula, number of points must be between 3 and 5." << endl;
-            *_ofl << "In rita>integration>: For Gauss-Lobatto formula, number of points must be between 3 and 5." << endl;
+            _rita->msg("integration>","For Gauss-Lobatto formula, number of points must be between 3 and 5.");
             return 1;
          }
          for (int i=0; i<ng; ++i) {

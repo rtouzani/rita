@@ -62,7 +62,6 @@ class solve
     int getNbEq() const { return _nb_eq; }
     void set(cmd* com) { _cmd = com; }
     void set(OFELI::Mesh *ms);
-    void set(std::ofstream* ofl, std::ofstream* ofh) { _ofh = ofh; _ofl = ofl; }
     void setSave(int s) { _save_results = s; }
     int run();
     int ret() const { return _ret; }
@@ -76,7 +75,6 @@ class solve
     vector<string> _analytic_exp, _var;
     vector<int> _fformat, _isave;
     vector<string> _save_file, _phase_file;
-    std::ofstream *_ofh, *_ofl;
     OFELI::Mesh *_theMesh;
     OFELI::Fct _theFct;
     configure *_configure;

@@ -30,8 +30,8 @@
 
 namespace RITA {
 
-configure::configure(cmd *command)
-          : _verb(1), _save_results(1), _his_file(".rita.his"), _log_file(".rita.log"),
+configure::configure(rita *r, cmd *command)
+          : _rita(r), _verb(1), _save_results(1), _his_file(".rita.his"), _log_file(".rita.log"),
             _cmd(command)
 {
    init();
@@ -114,9 +114,8 @@ int configure::read()
             break;
 
          default:
-            cout << "Unknown Setting: " << com.token() << endl;
-            cout << "Available settings: verbosity, save-results, history, log" << endl;
-            _ofl << "In rita>set>: Unknown setting: " << com.token() << endl;
+            _rita->msg("set>:","Unknown setting: "+com.token(),
+                       "Available settings: verbosity, save-results, history, log");
             return 1;
       }
    }
@@ -134,8 +133,7 @@ int configure::run()
    if (nb_args < 0)
       return 1;
    for (int i=0; i<nb_args; ++i) {
-      int n = _cmd->getArg();
-      switch (n) {
+      switch (_cmd->getArg()) {
 
          case 0:
             _verb = _cmd->int_token();
@@ -160,9 +158,8 @@ int configure::run()
             break;
 
          default:
-            cout << "Unknown Setting: " << _cmd->token() << endl;
-            cout << "Available settings: verbosity, save-results, history, log" << endl;
-            _ofl << "In rita>set>: Unknown setting: " << _cmd->token() << endl;
+            _rita->msg("set>","Unknown setting: "+_cmd->token(),
+                       "Available settings: verbosity, save-results, history, log");
             return 1;
        }
    }
@@ -170,19 +167,17 @@ int configure::run()
       _ofh << "set";
       if (verb_ok) {
          if (_verb<0 || _verb>10) {
-            cout << "Error: Illegal value of verbosity: " << _verb << endl;
-            _ofl << "In rita>set>: Illegal value of verbosity: " << _verb << endl;
+            _rita->msg("set>","Illegal value of verbosity: "+to_string(_verb));
             return 1;
          }
          _ofh << " verbosity=" << _verb;
       }
       if (save_ok) {
          if (_save_results<0) {
-            cout << "Error: Illegal value of save: " << _save_results << endl;
-            _ofl << "In rita>set>: Illegal value of save: " << _save_results << endl;
+            _rita->msg("set>","Illegal value of save: "+to_string(_save_results));
             return 1;
          }
-	 _ofh << " save-results=" << _save_results;
+         _ofh << " save-results=" << _save_results;
       }
       if (hist_ok) {
          _ofh.close();

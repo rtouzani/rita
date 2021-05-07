@@ -48,15 +48,13 @@ void rita::runPDE()
    if (_analysis_type==NONE)
       _analysis_type = STEADY_STATE;
    if (_theMesh==nullptr) {
-      cout << "Error: No valid mesh created." << endl;
-      *_ofl << "In rita>pde>: No mesh created";
+      msg("pde>","No mesh created");
       _pde->log.mesh = true;
       _ret = 1;
       return;
    }
    else if (_theMesh->getNbNodes()==0) {
-      cout << "Error: Empty mesh." << endl;
-      *_ofl << "In rita>pde>: Empty mesh";
+      msg("pde>","Empty mesh");
       _pde->log.mesh = true;
       _ret = 1;
       return;
@@ -94,18 +92,17 @@ void rita::runPDE()
 
          case 3:
             if (nb_fields==_pde->nb_fields) {
-               cout << "Number of fields is larger than PDE requires it." << endl;
-               *_ofl << "In rita>pde>field>: Too many fields for PDE." << endl;
+               msg("pde>field>","Too many fields for PDE.");
                break;
             }
             if (_cmd->setNbArg(1,"Give name of an associated field.")) {
-               *_ofl << "In rita>pde>field>: Missing name of an associated field." << endl;
+               msg("pde>field>","Missing name of an associated field.","",1);
                break;
             }
             if (!_cmd->get(str)) {
                field_ok = true, nb_fields++;
                field_name.push_back(str);
-               *_ofh << "  field " << str << endl;
+               *ofh << "  field " << str << endl;
             }
             break;
 
@@ -133,7 +130,7 @@ void rita::runPDE()
 
          case 11:
             if (_cmd->setNbArg(1,"Give space discretization method.")) {
-               *_ofl << "In rita>pde>space>: Missing space discretization method." << endl;
+               msg("pde>space>","Missing space discretization method.","",1);
                break;
             }
             _ret = setSpaceDiscretization(str);
@@ -145,20 +142,18 @@ void rita::runPDE()
 
          case 12:
             if (_cmd->setNbArg(1,"Linear solver and optional preconditioner to be supplied.",1)) {
-               *_ofl << "In rita>pde>ls>: Missing linear solver data." << endl;
+               msg("pde>ls>","Missing linear solver data.","",1);
                break;
             }
             nb = _cmd->getNbArgs();
-            if (nb==0) {
-               cout << "Missing linear system solver." << endl;
-               *_ofl << "In rita>pde>ls>: Missing linear solver data." << endl;
-            }
+            if (nb==0)
+               msg("pde>ls>","Missing linear solver data.");
             _ret = _cmd->get(str);
             str1 = "ident";
             if (nb>1)
                _ret += _cmd->get(str1);
             if (!_ret) {
-               *_ofh << "  ls " << str << " " << str1 << endl;
+               *ofh << "  ls " << str << " " << str1 << endl;
                if (!set_ls(str,str1)) {
                   _pde->ls = Ls[str];
                   _pde->prec = Prec[str1];
@@ -170,12 +165,12 @@ void rita::runPDE()
 
          case 13:
             if (_cmd->setNbArg(1,"Nonlinear solver to be supplied.",1)) {
-               *_ofl << "In rita>pde>nls>: Missing nonlinear solver data." << endl;
+               msg("pde>nls>","Missing nonlinear solver data.","",1);
                break;
             }
             _ret = _cmd->get(str);
             if (!_ret) {
-               *_ofh << "  nls " << str << endl;
+               *ofh << "  nls " << str << endl;
                _ret = set_nls(str);
                if (!_ret)
                   _pde->nls = str;
@@ -186,25 +181,23 @@ void rita::runPDE()
 
          case 14:
             cout << "PDE removed from model." << endl;
-            *_ofh << "  clear" << endl;
+            *ofh << "  clear" << endl;
             _ret = 10;
             return;
 
          case 15:
          case 16:
             _cmd->setNbArg(0);
-	    if (!_ret) {
+            if (!_ret) {
                if (!field_ok) {
-                  cout << "Error: No field(s) defined for PDE." << endl;
-                  *_ofl << "In rita>pde>end>: No field(s) defined for PDE." << endl;
+                  msg("pde>end>","No field(s) defined for PDE.");
                   break;
                }
                if (nb_fields!=_pde->nb_fields) {
-                  cout << "Error: PDE requires exactly " << _pde->nb_fields << " field(s)." << endl;
-                  *_ofl << "In rita>pde>end>: Incorrect number of fields for defined PDE." << endl;
+                  msg("pde>end>","Incorrect number of fields for defined PDE.");
                   break;
                }
-	       for (int i=0; i<nb_fields; ++i) {
+               for (int i=0; i<nb_fields; ++i) {
                   _ifield = _data->addField(field_name[i],NODES,0,_pde->nb_dof[i]);
                   _data->FieldEquation[_ifield] = _nb_eq;
                   _data->FieldType[_ifield] = PDE_EQ;
@@ -223,14 +216,12 @@ void rita::runPDE()
                   cout << _pde->fn[nb_fields-1] << endl;
                   cout << "   PDE space discretization: " << _pde->spD << endl;
                   cout << "   PDE linear solver: " << rLs[_pde->ls] << endl;
-	       }
+               }
                _ret = 0;
-	    }
-	    else {
-               cout << "Error: No PDE created." << endl;
-               *_ofl << "In rita>pde>end>: No PDE data created." << endl;
-	    }
-            *_ofh << "  end" << endl;
+            }
+            else
+               msg("pde>end>","No PDE data created.");
+            *ofh << "  end" << endl;
             _nb_pde++;
             _ret = 0;
             return;
@@ -254,10 +245,9 @@ void rita::runPDE()
             break;
 
          default:
-            cout << "Unknown Command: " << _cmd->token() << endl;
-            cout << "Available commands: field, coef, in, bc, bf, sf, space, ls, nls, clear, end, <" << endl;
-            cout << "Global commands:    help, ?, set, quit, exit" << endl;
-            *_ofl << "In rita>pde>: Unknown Command " << _cmd->token() << endl;
+            msg("pde>","Unknown Command "+_cmd->token(),
+                "Available commands: field, coef, in, bc, bf, sf, space, ls, nls, clear, end, <\n"
+                "Global commands:    help, ?, set, quit, exit");
             break;
       }
    }

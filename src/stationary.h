@@ -54,7 +54,6 @@ class stationary
     vector<string> *_save_file;
     std::vector<equa *> _pde_eq;
     std::vector<odae *> _alg_eq;
-    std::ofstream *_ofh;
 };
 
 } /* namespace RITA */

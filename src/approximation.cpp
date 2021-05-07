@@ -46,7 +46,7 @@ int approximation::run()
 {
    _rita->_analysis_type = APPROXIMATION;
    string file="";
-   int nb=0, nl=0, nb_tab=0;
+   int nb=0, nb_tab=0;
    int file_count=0, lagrange_count=0, bspline_count=0, fitting_count=0, bezier_count=0;
    int nurbs_count=0, approx_count=0;
    const vector<string> _kw = {"help","?","set","file","lagrange","fitting","bspline","bezier","nurbs"
@@ -54,8 +54,7 @@ int approximation::run()
    _cmd->set(_kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args<1) {
-      cout << "Error: No argument for command." << endl;
-      *_ofl << "In rita>approximation>: No argument for command." << endl;
+      _rita->msg("approximation>","No argument for command.");
       return 1;
    }
    for (int k=0; k<nb_args; ++k) {
@@ -70,56 +69,60 @@ int approximation::run()
             break;
 
          case 4:
-            nl = _cmd->int_token(0);
+            _lagrange_degree = _cmd->int_token(0);
             lagrange_count++, approx_count++;
+            _method = LAGRANGE;
             break;
 
          case 5:
             approx_count++;
+            _method = PIECEWISE_LAGRANGE;
             break;
 
          case 6:
             approx_count++;
+            _method = HERMITE;
             break;
 
          case 7:
             fitting_count++, approx_count++;
+            _method = FITTING;
             break;
 
          case 8:
             bspline_count++, approx_count++;
+            _method = BSPLINE;
             break;
 
          case 9:
             bezier_count++, approx_count++;
+            _method = BEZIER;
             break;
 
          case 10:
             nurbs_count++, approx_count++;
+            _method = NURBS;
             break;
 
          default:
-            cout << "Error: Unknown argument: " << _cmd->Arg() << endl;
-            *_ofl << "In rita>approximation>: Unknown argument: " << _cmd->Arg() << endl;
+            _rita->msg("approximation>","Unknown argument: "+_cmd->Arg());
             return 1;
       }
    }
 
    if (nb_args>0) {
       if (file_count==0) {
-         cout << "Error: No data file given." << endl;
-         *_ofl << "In rita>approximation>: No data file given." << endl;
+         _rita->msg("rita>approximation>:","No data file given.");
          return 1;
       }
-      *_ofh << "approximation";
-      tab.setFile(file);
-      *_ofh << " file=" << file;
+      *_rita->ofh << "approximation";
+      _tab.setFile(file);
+      *_rita->ofh << " file=" << file;
       if (lagrange_count++) {
-         *_ofh << "lagrange=" << nl;
+         *_rita->ofh << "lagrange=" << _lagrange_degree;
       }
       if (approx_count>1) {
-         cout << "Error: More than one approximation method given." << endl;
-         *_ofl << "In rita>approximation>: More than one approximation method given." << endl;
+         _rita->msg("rita>approximation>","More than one approximation method given.");
          return 1;
       }
    }
@@ -218,9 +221,10 @@ int approximation::run()
 
 int approximation::go()
 {
-   switch (method) {
+   switch (_method) {
 
       case LAGRANGE:
+            lagrange();
          break;
 
       case PIECEWISE_LAGRANGE:
@@ -242,6 +246,14 @@ int approximation::go()
          break;
    }
    return 0;
+}
+
+
+void approximation::lagrange()
+{
+// Lagrange Basis
+   
+// Lagrange polynomial
 }
 
 } /* namespace RITA */

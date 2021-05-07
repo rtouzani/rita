@@ -38,6 +38,7 @@ string H0 = "rita is an interactive application to solve modelling problems invo
              "partial differential equations by the OFELI library.\n";
 string H1 =  "rita is an interactive application to solve modelling problems involving\n"
              "partial differential equations by the OFELI library.\n"
+             "rita is able to solve also basic numerical analysis problems.\n"
              "Solving a problem by rita consists in running various modes in order to achieve\n"
              "various steps of the solution procedure.\n\n"
              "rita can be either run interactively or using a script file. This latter option can be chosen\n"

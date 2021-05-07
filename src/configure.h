@@ -38,6 +38,7 @@ using std::ifstream;
 using std::ofstream;
 
 #include "cmd.h"
+#include "rita.h"
 
 namespace RITA {
 
@@ -48,7 +49,7 @@ class configure
 
  public:
 
-    configure(cmd *command);
+    configure(rita *r, cmd *command);
     ~configure();
     int run();
     void setVerbose(int verb) { _verb = verb; }
@@ -74,6 +75,7 @@ class configure
        return buf;
     }
 
+    rita *_rita;
     int _verb, _ret, _key, _save_results;
     string _HOME, _his_file, _log_file;
     ofstream _ofh, _ofl, _ocf;

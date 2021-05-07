@@ -63,7 +63,8 @@ int main(int argc, char *argv[])
    cout << "     Last update " << (now->tm_year+1900) << '-' << (now->tm_mon+1)
         << '-' <<  now->tm_mday << "\n";
    cout << "     Copyright (C) 2021, Rachid Touzani\n\n";
-   cout << "Type \"help\" or \"license\" for more information.\n" << endl;
+   cout << "Type \"help\" or \"license\" for more information." << endl;
+   cout << "rita web site:   http://ofeli.org/rita\n" << endl;
    int ret = 0;
 
    try {
@@ -129,23 +130,17 @@ rita::rita()
        _analysis_type(NONE)
 {
    _cmd = new cmd;
-   _configure = new configure(_cmd);
+   _configure = new configure(this,_cmd);
    _mesh = new mesh(this,_cmd,_configure);
    _data = new data(this,_cmd,_configure);
    _help = new help;
    _solve = new solve(this,_cmd,_configure);
-   _ofl = _configure->getOStreamLog();
-   _ofh = _configure->getOStreamHistory();
-   _mesh->set(_ofl,_ofh);
-   _data->set(_ofl,_ofh);
-   _solve->set(_ofl,_ofh);
+   ofl = _configure->getOStreamLog();
+   ofh = _configure->getOStreamHistory();
    _solve->setSave(_configure->getSaveResults());
    _optim = new optim(this,_cmd,_configure);
-   _optim->set(_ofl,_ofh);
    _integration = new integration(this,_cmd,_configure);
-   _integration->set(_ofl,_ofh);
    _approx = new approximation(this,_cmd,_configure);
-   _approx->set(_ofl,_ofh);
    _init_time = 0.;
    _final_time = 1.;
    _time_step = 0.1;
@@ -191,7 +186,7 @@ int rita::run()
          if (_verb>1)
             cout << "Terminating rita!" << endl;
          if (!_exit_ok) {
-            *_ofh << "exit" << endl;
+            *ofh << "exit" << endl;
             _exit_ok = true;
          }
          break;
@@ -203,17 +198,16 @@ int rita::run()
       if (_key<-1)
          continue;
       else if (_key==-1) {
-         cout << "Unknown Command." << endl;
-         cout << "Available commands: license, load, unload, data, mesh, stationary, transient\n";
-         cout << "                    eigen, optim, approximation, integration, algebraic, ode, pde\n";
-         cout << "                    summary, solve, clear" << endl;
-         cout << "Global commands:    help, ?, set, quit, exit" << endl;
-         *_ofl << "In rita>: Unknown command: " << _cmd->token() << endl;
+         msg("","Unknown command: "+_cmd->token(),
+             "Available commands: license, load, unload, data, mesh, stationary, transient\n"
+             "                    eigen, optim, approximation, integration, algebraic, ode, pde\n"
+             "                    summary, solve, clear\n"
+             "Global commands:    help, ?, set, quit, exit");
          continue;
       }
       else if (_key>19) {
          if (!_exit_ok) {
-            *_ofh << "exit" << endl;
+            *ofh << "exit" << endl;
             _exit_ok = true;
             if (_key==23)
                _ret = 200;
@@ -236,7 +230,7 @@ int rita::run()
    if (_verb>1)
       cout << "Terminating rita!" << endl;
    if (!_exit_ok) {
-      *_ofh << "exit" << endl;
+      *ofh << "exit" << endl;
       _exit_ok = true;
    }
    exit(0);
@@ -279,7 +273,7 @@ void rita::Load()
 {
    if (_script_file.size()==0) {
       if (_cmd->setNbArg(1,"Give input script file.")) {
-         *_ofl << "In rita>load>: Missing script file to load." << endl;
+         msg("load>","Missing script file to load.","",1);
          return;
       }
       _cmd->get(_script_file);
@@ -290,8 +284,7 @@ void rita::Load()
    if (_in->is_open())
       _cmd->setIFStream(_in);
    else {
-      cout << "Unable to open file: " << _script_file << endl;
-      *_ofl << "Unable to open file: " << _script_file << endl;
+      msg("load>","Unable to open file: "+_script_file);
       if (_opt)
          _ret = 1;
       else
@@ -336,7 +329,7 @@ void rita::setMesh()
    if (_verb>1)
       cout << "Entering mode 'mesh' ..." << endl;
    _cmd->setNbArg(0);
-   *_ofh << _kw[_key] << endl;
+   *ofh << _kw[_key] << endl;
    _mesh->set(_cmd);
    _mesh->setVerbose(_verb);
    _theMesh = new OFELI::Mesh;
@@ -380,14 +373,12 @@ void rita::setTransient()
    _cmd->set(kw);
    _nb_args = _cmd->getNbArgs();
    if (_nb_args==0) {
-      cout << "Error: No argument for command." << H << endl;
-      *_ofl << "In rita>transient>: No argument for command." << endl;
+      msg("transient>","No argument for command.",H);
       _ret = 1;
       return;
    }
    if (_nb_args<1) {
-      cout << "Error: No valid argument for command." << endl;
-      *_ofl << "In rita>transient>: No valid argument for command." << endl;
+      msg("transient>","No valid argument for command.");
       _ret = 1;
    }
    for (int k=0; k<_nb_args; ++k) {
@@ -419,8 +410,7 @@ void rita::setTransient()
             break;
 
          default:
-	    cout << "Error: Unknown argument: " << _cmd->Arg() << endl;
-            *_ofl << "In rita>transient>: Unknown argument: " << _cmd->Arg() << endl;
+            msg("transient>","Unknown argument: "+_cmd->Arg());
             _ret = 1;
             return;
       }
@@ -434,12 +424,11 @@ void rita::setTransient()
       if (ts<0)
          _time_step = -_time_step, _adapted_time_step = 1;
       if (find(kw_scheme.begin(),kw_scheme.end(),_scheme)==kw_scheme.end()) {
-         cout << "Error: The scheme " << _scheme << " is unknown or unimplemented." << endl;
-         *_ofl << "In rita>transient>: The scheme " << _scheme << " is unknown or unimplemented." << endl;
+         msg("transient>","The scheme "+_scheme+" is unknown or unimplemented.");
          _ret = 1;
          return;
       }
-      *_ofh << "transient  initial-time=" << _init_time << "  final-time=" << _final_time
+      *ofh << "transient  initial-time=" << _init_time << "  final-time=" << _final_time
             << "  time-step=" << _time_step << "  adapted=" << _adapted_time_step
             << "  scheme=" << _scheme << endl;
    }
@@ -453,7 +442,7 @@ void rita::setTransient()
          cout << "   Time integration scheme: " << _scheme << endl;
       }
       _cmd->setNbArg(0);
-      *_ofh << "transient" << endl;
+      *ofh << "transient" << endl;
       while (1) {
          int nb = _cmd->readline("rita>transient> ");
          if (nb<0)
@@ -478,54 +467,53 @@ void rita::setTransient()
 
             case 3:
                if (_cmd->setNbArg(1,"Initial time to be given.")) {
-                  *_ofl << "In rita>transient>initial-time>: "
-                        << "Missing initial time value." << endl;
+                  msg("transient>initial-time>","Missing initial time value.","",1);
                   break;
                }
                ret = _cmd->get(it);
                if (!ret)
-                  *_ofh << "  initial-time " << it << endl;
+                  *ofh << "  initial-time " << it << endl;
                break;
 
             case 4:
                if (_cmd->setNbArg(1,"Final time to be given.")) {
-                  *_ofl << "In rita>transient>final-time>: Missing final time value." << endl;
+                  msg("transient>final-time>","Missing final time value.","",1);
                   break;
                }
                ret = _cmd->get(ft);
                if (!ret)
-                  *_ofh << "  final-time " << ft << endl;
+                  *ofh << "  final-time " << ft << endl;
                break;
 
             case 5:
                if (_cmd->setNbArg(1,"Time step to be given.")) {
-                  *_ofl << "In rita>transient>time-step>: Missing time step value." << endl;
+                  msg("transient>time-step>","Missing time step value.","",1);
                   break;
                }
                ret = _cmd->get(ts);
                if (!ret)
-                  *_ofh << "  time-step " << ts << endl;
+                  *ofh << "  time-step " << ts << endl;
                break;
 
             case 6:
                if (_cmd->setNbArg(1,"Time integration scheme.")) {
-                  *_ofl << "In rita>transient>scheme>: Missing time integration scheme." << endl;
+                  msg("transient>scheme>","Missing time integration scheme.","",1);
                   break;
                }
                ret = _cmd->get(kw_scheme,_scheme);
                if (ret<0) {
-                  cout << "Unknown time integration scheme." << endl;
-                  cout << "Available values: forward-euler, backward-euler, crank-nicolson\n";
-                  cout << "                  heun, newmark, leap-frog, AB2, RK4, RK3-TVD, BDF2, builtin" << endl;
-                  *_ofl << "In rita>transient>scheme>: Unknown time integration scheme." << endl;
+                  msg("transient>scheme>","Unknown time integration scheme.",
+                      "Unknown time integration scheme.\n"
+                      "Available values: forward-euler, backward-euler, crank-nicolson\n"
+                      "                  heun, newmark, leap-frog, AB2, RK4, RK3-TVD, BDF2, builtin");
                   break;
                }
-               *_ofh << "  scheme " << _scheme << endl;
+               *ofh << "  scheme " << _scheme << endl;
                break;
 
             case 7:
             case 8:
-               *_ofh << "  end" << endl;
+               *ofh << "  end" << endl;
                _analysis_type = TRANSIENT;
                _time_step = ts;
                _init_time = it;
@@ -551,10 +539,9 @@ void rita::setTransient()
                return;
 
             default:
-               cout << "Unknown Command: " << _cmd->token() << endl;
-               cout << "Available commands: initial-time, final-time, time-step, scheme, end, <" << endl;
-               cout << "Global commands:    help, ?, set, quit, exit" << endl;
-               *_ofl << "In rita>transient>: Unknown command " << _cmd->token() << endl;
+               msg("transient>","Unknown command "+_cmd->token(),
+                   "Available commands: initial-time, final-time, time-step, scheme, end, <\n"
+                   "Global commands:    help, ?, set, quit, exit");
                break;
          }
       }
@@ -627,29 +614,27 @@ void rita::setPDE()
    int ret=0;
    _nb_fields = _data->getNbFields();
    if (_cmd->setNbArg(1,"Give PDE name.")) {
-      *_ofl << "In rita>pde>: Missing pde name." << endl;
+      msg("pde>","Missing pde name.","",1);
       _ret = 1;
       return;
    }
    if (_ieq==1) {
-      cout << "Only one equation is allowed in current release of rita." << endl;
-      *_ofl << "In rita>pde>: Only one equation is allowed." << endl;
+      msg("pde>","Only one equation is allowed.");
       return;
    }
-   const vector<string> kw = {"help","?","set","laplace","heat","wave","transport","linear-elasticity",
-                              "truss","beam","incompressible-navier-stokes","clear","end","<","quit","exit","EXIT"};
+   const vector<string> kw {"help","?","set","laplace","heat","wave","transport","linear-elasticity",
+                            "truss","beam","incompressible-navier-stokes","clear","end","<","quit","exit","EXIT"};
    ret = _cmd->get(kw,pde_name);
    if (ret<0) {
-      cout << "Unknown pde name. Available pde's are:\n";
-      cout << "laplace, heat, wave, transport, linear-elasticity" << endl;
-      *_ofl << "In rita>pde>: Unknown pde " << pde_name << endl;
+      msg("pde>","Unknown pde "+pde_name,
+          "Unknown pde name. Available pde's are:\n"
+          "laplace, heat, wave, transport, linear-elasticity");
       _ret = 1;
       return;
    }
    _pde = new equa(this);
-   _pde->set(_cmd,_ofl,_ofh);
    _pde->set(pde_name,_theMesh);
-   *_ofh << "pde " << pde_name << endl;
+   *ofh << "pde " << pde_name << endl;
    runPDE();
    if (_ret && _pde!=nullptr) {
       delete _pde; 
@@ -690,8 +675,7 @@ int rita::set_nls(string nls)
 {
    auto it = NLs.find(nls);
    if (it==NLs.end()) {
-      cout << "Error: Unknown nonlinear iterative solver: " << nls << endl;
-      *_ofl << "In rita>equation>pde>nls>: Unknown nonlinear iterative solver: " << nls << endl;
+      msg("equation>pde>nls>","Unknown nonlinear iterative solver: "+nls);
       return 1;
    }
    return 0;
@@ -703,14 +687,12 @@ int rita::set_ls(string ls,
 {
    auto it1 = Ls.find(ls);
    if (it1==Ls.end()) {
-      cout << "Error: Unknown linear solver: " << ls << endl;
-      *_ofl << "In rita>equation>pde>ls>: Unknown linear solver: " << ls << endl;
+      msg("equation>pde>ls>","Unknown linear solver: "+ls);
       return 1;
    }
    auto it2 = Prec.find(prec);
    if (it2==Prec.end()) {
-      cout << "Error: Unknown linear preconditioner: " << prec << endl;
-      *_ofl << "In rita>equation>pde>ls>: Unknown linear preconditioner: " << prec << endl;
+      msg("equation>pde>ls>","Unknown linear preconditioner: "+prec);
       return 1;
    }
    return 0;
@@ -721,23 +703,22 @@ int rita::setSpaceDiscretization(string& sp)
 {
    _ret = 0;
    if (_cmd->setNbArg(1,"Missing space discretization method.")) {
-      *_ofl << "In rita>equation>pde>space>: Missing space discretization method." << endl;
+      msg("equation>pde>space>","Missing space discretization method.","",1);
       return 1;
    }
    const static vector<string> kw = {"fd","feP1","feP2","feQ1","fv"};
    _ret = _cmd->get(kw,sp);
    if (_ret<0) {
-      cout << "Unknown space discretization method.\n";
-      cout << "Available Commands\n";
-      cout << "fd:   Finite Differences\n";
-      cout << "feP1: Finite elements, P1\n";
-      cout << "feP2: Finite elements, P2\n";
-      cout << "feQ1: Finite elements, Q1\n";
-      cout << "fv:   Finite volumes" << endl;
-      *_ofl << "In rita>equation>pde>space>: Unknown space discretization method." << endl;
+      msg("equation>pde>space>","Unknown space discretization method.",
+          "Available Commands\n"
+          "fd:   Finite Differences\n"
+          "feP1: Finite elements, P1\n"
+          "feP2: Finite elements, P2\n"
+          "feQ1: Finite elements, Q1\n"
+          "fv:   Finite volumes");
       return 1;
    }
-   *_ofh << "  space " << sp << endl;
+   *ofh << "  space " << sp << endl;
    return 0;
 }
 
@@ -746,10 +727,8 @@ void rita::setSummary()
 {
    cout << "\nSUMMARY:" << endl;
    cout << "---------------------------------------------------------------" << endl;
-   if (meshOK==false) {
-      cout << "No mesh defined." << endl;
-      *_ofl << "In rita>summary>: No mesh defined." << endl;
-   }
+   if (meshOK==false)
+      msg("summary>","No mesh defined.");
    else {
       cout << "MESH DATA" << endl;
       cout << "Number of nodes:    " << _theMesh->getNbNodes() << endl;
@@ -798,7 +777,7 @@ void rita::setSolve()
    if (_verb>1)
       cout << "Entering mode 'solve' ..." << endl;
    _cmd->setNbArg(0);
-   *_ofh << _kw[_key] << endl;
+   *ofh << _kw[_key] << endl;
    _solve->setVerbose(_verb);
    _solve->set(_theMesh);
    _ret = _solve->run();
@@ -808,6 +787,17 @@ void rita::setSolve()
       return;
    if (_verb>1)
       cout << "Leaving mode 'solve' ..." << endl;
+}
+
+
+void rita::msg(const string& loc, const string& m1, const string& m2, int c)
+{
+   if (c==0) {
+   cout << "Error: " << m1 << endl;
+   if (m2!="")
+      cout << m2 << endl;
+   }
+   *ofl << "In rita>" + loc + ": " << m1 << endl;
 }
 
 

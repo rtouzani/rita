@@ -1,8 +1,8 @@
 # rita Script file to solve a 2-D elasticity problem
 # Space discretization: Q1 finite elements
 #
-# Generate mesh of a rectangle
-# We generate a uniform 40x20 mesh using native tools
+# Mesh of a rectangle
+# Here the mesh is already given in file
 mesh
   read mesh=ex4.m
   end

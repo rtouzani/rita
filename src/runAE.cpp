@@ -88,85 +88,72 @@ int rita::runAE()
             break;
 
          default:
-	    cout << "Error: Unknown argument: " << _cmd->Arg() << endl;
-            *_ofl << "In rita>algebraic>: Unknown argument: " << _cmd->Arg() << endl;
-	    return 1;
+            msg("algebraic>:","Unknown argument: "+_cmd->Arg());
+            return 1;
       }
    }
 
    if (_nb_args>0) {
       if (size<=0) {
-         cout << "Error: Illegal size value." << endl;
-         *_ofl << "In rita>algebraic>: Illegal size value." << endl;
+         msg("algebraic>","Illegal size value.");
          return 1;
       }
       if (count_fct && count_field) {
-         cout << "Error: Function already defined in data module." << endl;
-         *_ofl << "In rita>algebraic>: Function already defined in data module." << endl;
+         msg("algebraic>","Function already defined in data module.");
          return 1;
       }
       if (count_field>1) {
-         cout << "Error: Only one variable must be defined for an algebraic system." << endl;
-         *_ofl << "In rita>algebraic>: Only one variable must be defined for an algebraic system." << endl;
+         msg("algebraic>","Only one variable must be defined for an algebraic system.");
          return 1;
       }
       if (count_fct && count_def) {
-         cout << "Error: Function already defined." << endl;
-         *_ofl << "In rita>algebraic>: Function already defined." << endl;
+         msg("algebraic>","Function already defined.");
          return 1;
       }
       if (count_fct>size || count_def>size) {
-         cout << "Error: Number of function names is larger than system size." << endl;
-         *_ofl << "In rita>algebraic>: Number of function names is larger than system size." << endl;
+         msg("algebraic>","Number of function names is larger than system size.");
          return 1;
       }
       if (!field_ok) {
-         cout << "Error: Missing a variable name." << endl;
-         *_ofl << "In rita>algebraic>: Missing a variable name." << endl;
+         msg("algebraic>","Missing a variable name.");
          return 1;
       }
       if (count_init>size) {
-         cout << "Error: Number of initial guesses is larger than system size." << endl;
-         *_ofl << "In rita>algebraic>: Number of initial guesses is larger than system size." << endl;
+         msg("algebraic>","Number of initial guesses is larger than system size.");
          return 1;
       }
       if (count_fct>0 && count_def<size-1) {
-         cout << "Error: Number of function definitions is larger than system size." << endl;
-         *_ofl << "In rita>algebraic>: Number of function definitions is larger than system size." << endl;
+         msg("algebraic>","Number of function definitions is larger than system size.");
          return 1;
       }
       if (count_init<size) {
          for (int i=count_init; i<size; ++i)
             init.push_back(0.);
       }
-      *_ofh << "algebraic";
+      *ofh << "algebraic";
       _ae->theFct.resize(size);
       if (count_fct) {
          _ae->isFct = true;
          if (count_fct<=size-1) {
-            cout << "Error: Number of function names is lower than system size." << endl;
-            *_ofl << "In rita>algebraic>: Number of function names is lower than system size." << endl;
+            msg("algebraic>","Number of function names is lower than system size.");
             return 1;
          }
          for (int k=0; k<size; ++k) {
             ind = _data->checkFct(name[k]);
             if (ind==-1) {
-               cout << "Error: Non defined function " << name[k] << endl;
-               *_ofl << "In rita>algebraic>: Non defined function " << name[k] << endl;
+               msg("algebraic>","Non defined function "+name[k]);
                return 1;
             }
             if (_ae->theFct[k].set(name[k],_data->theFct[ind]->expr,_data->theFct[ind]->var,1)) {
-               cout << "Error in function evaluation: " << _ae->theFct[k].getErrorMessage() << endl;
-               *_ofl << "In rita>algebraic>: Error in function evaluation: "
-                     << _ae->theFct[k].getErrorMessage() << endl;
+               msg("algebraic>","Error in function evaluation: "+_ae->theFct[k].getErrorMessage());
                return 1;
             }
-            *_ofh << " function=" << name[k];
+            *ofh << " function=" << name[k];
          }
       }
       else {
          _ae->isFct = false;
-         *_ofh << " var=" << var_name;
+         *ofh << " var=" << var_name;
          var.resize(size);
          var[0] = var_name;
          if (size>1) {
@@ -180,7 +167,7 @@ int rita::runAE()
          }
          _ae->ind_fct = ind;
          for (int j=0; j<size; ++j)
-            *_ofh << " definition=" << def[j];
+            *ofh << " definition=" << def[j];
       }
       _ae->size = size;
       _ae->J.setSize(size,size);
@@ -192,17 +179,17 @@ int rita::runAE()
       _ae->field = _ifield;
       _data->FieldType[_ifield] = ALGEBRAIC_EQ;
       for (const auto& v: init) {
-         *_ofh << " init=" << v;
+         *ofh << " init=" << v;
          _ae->y.push_back(v);
       }
       _ae->nls = NLs[nls];
       _ae->isFct = false;
-      *_ofh << " nls=" << nls << endl;
+      *ofh << " nls=" << nls << endl;
       _nb_ae++;
    }
 
    else {
-      *_ofh << "algebraic " << endl;
+      *ofh << "algebraic " << endl;
       count_fct = count_init = count_field = count_def = count_J = 0;
       while (1) {
          if (_cmd->readline("rita>algebraic> ")<0)
@@ -231,27 +218,25 @@ int rita::runAE()
 
             case 3:
                if (_cmd->setNbArg(1,"Size of algebraic system to be given.")) {
-                  *_ofl << "In rita>algebraic>size>: Missing system size." << endl;
+                  msg("algebraic>size>","Missing system size.","",1);
                   break;
                }
                if (!_cmd->get(size))
-                  *_ofh << "  size " << size << endl;
+                  *ofh << "  size " << size << endl;
                _ret = 0;
                break;
 
             case 4:
                if (count_def) {
-                  cout << "Error: Function already defined." << endl;
-                  *_ofl << "In rita>algebraic>function>: Function already defined." << endl;
+                  msg("algebraic>function>","Function already defined.");
                   break;
                }
                if (count_fct==size) {
-                  cout << "Error: Number of functions is larger than system size." << endl;
-                  *_ofl << "In rita>algebraic>function>: Number of functions is larger than system size." << endl;
+                  msg("algebraic>function>","Number of functions is larger than system size.");
                   return 1;
                }
                if (_cmd->setNbArg(1,"Name of function to be given.")) {
-                  *_ofl << "In rita>algebraic>function>: Missing function name." << endl;
+                  msg("algebraic>function>","Missing function name.");
                   break;
                }
                str = _cmd->string_token();
@@ -260,19 +245,16 @@ int rita::runAE()
                      ind = i;
 	       }
                if (ind==-1) {
-                  cout << "Error: Non defined function " << str << endl;
-                  *_ofl << "In rita>algebraic>function>: Non defined function " << str << endl;
+                  msg("algebraic>function>","Non defined function "+str);
                   ret = 1;
                   break;
                }
                if (!ret) {
-                  *_ofh << "  function " << str << endl;
+                  *ofh << "  function " << str << endl;
                   name[count_fct++] = str;
                   field_ok = true;
                   if (_ae->theFct[count_fct].set(str,_data->theFct[ind]->expr,_data->theFct[ind]->var,1)) {
-                     cout << "Error in function evaluation: " << _ae->theFct[count_fct].getErrorMessage() << endl;
-                     *_ofl << "In rita>algebraic>function>: Error in function evaluation: "
-                           << _ae->theFct[count_fct].getErrorMessage() << endl;
+                     msg("algebraic>function>","Error in function evaluation: "+_ae->theFct[count_fct].getErrorMessage());
                      return 1;
                   }
                }
@@ -281,50 +263,44 @@ int rita::runAE()
 
             case 5:
                if (count_fct>0) {
-                  cout << "Error: Function already defined by its name." << endl;
-                  *_ofl << "In rita>algebraic>definition>: Function already defined by its name." << endl;
+                  msg("algebraic>definition>","Function already defined by its name.");
                   break;
                }
                if (count_def==size) {
-                  cout << "Error: Too many functions defining algebraic system." << endl;
-                  *_ofl << "In rita>algebraic>definition>: Too many functions defining system." << endl;
+                  msg("algebraic>definition>","Too many functions defining system.");
                   break;
                }
                if (_cmd->setNbArg(1,"Function F to define equation F(x)=0 to be given.")) {
-                  cout << "Error: Missing function expression." << endl;
-                  *_ofl << "In rita>algebraic>definition>: Missing function expression." << endl;
+                  msg("algebraic>definition>","Missing function expression.","",1);
                   break;
                }
                if (_cmd->get(str)) {
-                  cout << "Error in equation definition." << endl;
-                  *_ofl << "In rita>algebraic>definition>: Error in equation definition." << endl;
+                  msg("algebraic>definition>","Error in equation definition.");
                   break;
                }
                else {
                   def.push_back(str);
                   count_def++;
-                  *_ofh << "  definition " << str << endl;
+                  *ofh << "  definition " << str << endl;
                }
                _ret = 0;
                break;
 
             case 6:
                if (count_J==size) {
-                  cout << "Error: Too many jacobian definitions." << endl;
-                  *_ofl << "In rita>algebraic>jacobian>: Too many functions defining jacobian." << endl;
+                  msg("algebraic>jacobian>","Too many functions defining jacobian.");
                   break;
                }
                if (_cmd->setNbArg(size,"Partial derivatives of function defining equation to be given.")) {
-                  cout << "Error: Missing partial derivatives of function defining equation." << endl;
-                  *_ofl << "In rita>algebraic>jacobian>: Missing partial derivatives of function defining equation." << endl;
+                  msg("algebraic>jacobian>","Missing partial derivatives of function defining equation.","",1);
                   break;
                }
                for (int i=1; i<=size; ++i)
                   ret = _cmd->get(J(count_J+1,i));
                if (ret==0) {
-                  *_ofh << "  jacobian " << endl;
+                  *ofh << "  jacobian " << endl;
                   for (int i=1; i<=size; ++i)
-                     *_ofh << J(count_J+1,i) << "  ";
+                     *ofh << J(count_J+1,i) << "  ";
                   count_J++;
                }
                _ret = 0;
@@ -332,8 +308,7 @@ int rita::runAE()
 
             case 7:
                if (_cmd->setNbArg(size,"Initial guesses to be given.")) {
-                  cout << "Error: Missing initial guesses." << endl;
-                  *_ofl << "In rita>algebraic>initial>: Missing initial guesses." << endl;
+                  msg("algebraic>initial>","Missing initial guesses.","",1);
                   break;
                }
                ret = 0;
@@ -342,14 +317,13 @@ int rita::runAE()
                for (int i=0; i<size; ++i)
                   ret += _cmd->get(init[i]);
                if (!ret) {
-                  *_ofh << "  initial  ";
+                  *ofh << "  initial  ";
                   for (const auto& v: init)
-                     *_ofh << v << "  ";
-                  *_ofh << endl;
+                     *ofh << v << "  ";
+                  *ofh << endl;
                }
                else {
-                  cout << "Error in initial guess data." << endl;
-                  *_ofl << "In rita>algebraic>initial>: Error in initial guess data." << endl;
+                  msg("algebraic>initial>","Error in initial guess data.");
                   break;
                }
                _ret = 0;
@@ -358,18 +332,15 @@ int rita::runAE()
             case 8:
             case 9:
                if (_ae->log) {
-                  cout << "Error: Equation must be defined first." << endl;
-                  *_ofl << "In rita>algebraic>variable>: Equation must be defined first." << endl;
+                  msg("algebraic>variable>","Equation must be defined first.");
                   break;
                }
                if (_cmd->setNbArg(1,"Give name of associated field.")) {
-                  cout << "Error: Missing name of associated variable." << endl;
-                  *_ofl << "In rita>algebraic>variable>: Missing name of associated variable." << endl;
+                  msg("algebraic>variable>","Missing name of associated variable.","",1);
                   break;
                }
                if (_cmd->get(var_name)) {
-                  cout << "Unknown variable or field " << var_name << endl;
-                  *_ofl << "In rita>algebraic>variable>: Unknown variable or field " << var_name << endl;
+                  msg("algebraic>variable>","Unknown variable or field "+var_name);
                   break;
                }
                else {
@@ -380,30 +351,28 @@ int rita::runAE()
                      cout << var_name + to_string(size) << endl;
                   }
                   count_field++, field_ok = true;
-                  *_ofh << "  variable " << var_name << endl;
+                  *ofh << "  variable " << var_name << endl;
                }
                break;
 
             case 10:
                if (_ae->log) {
-                  cout << "Please define algebraic equation first." << endl;
-                  *_ofl << "In rita>algebraic>nls>: equation must be set first." << endl;
+                  msg("algebraic>nls>","equation must be set first.");
                   break;
                }
                if (_cmd->setNbArg(1,"Nonlinear solver to be supplied.",1)) {
-                  cout << "Error: Missing nonlinear solver data." << endl;
-                  *_ofl << "In rita>algebraic>nls>: Missing nonlinear solver data." << endl;
+                  msg("algebraic>nls>","Missing nonlinear solver data.","",1);
                   break;
                }
                ret = _cmd->get(nls);
                if (!ret)
-                  *_ofh << "  nls " << nls << endl;
+                  *ofh << "  nls " << nls << endl;
                _ret = 0;
                break;
 
             case 11:
                cout << "Summary of algebraic system:\n";
-               *_ofh << "      summary" << endl;
+               *ofh << "      summary" << endl;
                for (int e=0; e<_nb_eq; ++e) {
                   if (_eq_type[e]==ALGEBRAIC_EQ) {
                      odae *ae = ALGEBRAIC[e];
@@ -417,7 +386,7 @@ int rita::runAE()
                            for (int i=0; i<size; ++i)
                               cout << "Equation: " << i+1 << ", defined by function: " << _ae->theFct[i].name << endl;
                         }
-		     }
+                     }
                      else {
                         if (size==1) {
                            cout << "Equation defined by: " << ae->theFct[0].expr << endl;
@@ -431,18 +400,17 @@ int rita::runAE()
                         }
                      }
                   }
-	       }
+               }
                _ret = 0;
                break;
 
             case 12:
                if (_ae->log) {
                   cout << "Algebraic equation has been removed from model." << endl;
-                  *_ofh << "  clear" << endl;
+                  *ofh << "  clear" << endl;
                }
                else {
-                  cout << "No equation to remove." << endl;
-                  *_ofl << "In rita>algebraic>clear>: No equation to remove." << endl;
+                  msg("algebraic>clear>","No equation to remove.");
                   break;
                }
                _ret = 10;
@@ -450,15 +418,13 @@ int rita::runAE()
 
             case 13:
                if (_cmd->setNbArg(1,"Size of algebraic system to be given.")) {
-                  cout << "Error: Missing system size." << endl;
-                  *_ofl << "In rita>algebraic>remove>: Missing system size." << endl;
+                  msg("algebraic>remove>","Missing system size.","",1);
                   break;
                }
                if (!_cmd->get(n))
-                  *_ofh << "  remove " << n << endl;
+                  *ofh << "  remove " << n << endl;
                if (n<=0 || n>_nb_eq) {
-                  cout << "Error: Illegal equation label." << endl;
-                  *_ofl << "In rita>algebraic>remove>: Illegal equation label: " << n << endl;
+                  msg("algebraic>remove>","Illegal equation label: "+to_string(n));
                   break;
                }
                for (int e=0; e<_nb_eq; ++e) {
@@ -468,11 +434,10 @@ int rita::runAE()
                         _ifield--;
                      }
                   }
-		  else {
-                     cout << "Error: Equation is not algebraic one." << endl;
-                     *_ofl << "In rita>algebraic>remove>: Equation is not algebraic one." << endl;
+                  else {
+                     msg("algebraic>remove>","Equation is not algebraic one.");
                      break;
-		  }
+                  }
                }
                _ret = 10;
                return _ret;
@@ -481,33 +446,28 @@ int rita::runAE()
             case 15:
                _cmd->setNbArg(0);
                if (!field_ok) {
-                  cout << "Error: Missing a variable name." << endl;
-                  *_ofl << "In rita>algebraic>end>: Missing a variable name." << endl;
+                  msg("algebraic>end>","Missing a variable name.");
                   return 1;
                }
                if ((count_fct>0 && count_fct<size) || (count_fct==0 && count_def<size)) {
-                  cout << "Error: Insufficient number of functions defining system." << endl;
-                  *_ofl << "In rita>algebraic>end>: Insufficient number of functions defining system." << endl;
-                  *_ofh << "  end" << endl;
+                  msg("algebraic>end>","Insufficient number of functions defining system.");
+                  *ofh << "  end" << endl;
                   break;
                }
                if (!field_ok) {
-                  cout << "Error: No variable defined for algebraic system." << endl;
-                  *_ofl << "In rita>algebraic>end>: No variable defined for algebraic system." << endl;
-                  *_ofh << "  end" << endl;
+                  msg("algebraic>end>","No variable defined for algebraic system.");
+                  *ofh << "  end" << endl;
                   break;
                }
                if (count_fct && count_field) {
-                  cout << "Error: Function already defined in data module." << endl;
-                  *_ofl << "In rita>algebraic>end>: Function already defined in data module." << endl;
+                  msg("algebraic>end>","Function already defined in data module.");
                   return 1;
                }
                if (count_field>1) {
-                  cout << "Error: Only one variable must be defined for an algebraic system." << endl;
-                  *_ofl << "In rita>algebraic>end>: Only one variable must be defined for an algebraic system." << endl;
+                  msg("algebraic>end>","Only one variable must be defined for an algebraic system.");
                   return 1;
                }
-               *_ofh << "  end" << endl;
+               *ofh << "  end" << endl;
                var.clear();
                if (size==1)
                   var.push_back(var_name);
@@ -534,18 +494,11 @@ int rita::runAE()
                   _ae->y[j] = init[j];
                   if (!count_fct) {
                      if (_ae->theFct[j].set(def[j],var,1)) {
-                        cout << "Error in function evaluation: " << _ae->theFct[j].getErrorMessage() << endl;
-                        *_ofl << "In rita>algebraic>end>: Error in function evaluation: "
-                              << _ae->theFct[j].getErrorMessage() << endl;
+                        msg("algebraic>end>","Error in function evaluation: "+_ae->theFct[j].getErrorMessage());
                         break;
                      }
-		     /*                     if (_ae->theFct[j].check()) {
-                        cout << "Error: Failed to collect variables in expression." << endl;
-                        *_ofl << "In rita>algebraic>end>: Failed to collect variables in expression." << endl;
-                        break;
-			}*/
                   }
-	       }
+               }
                if (count_J==size) {
                   for (int i=1; i<=size; ++i)
                      for (int j=1; j<=size; ++j)
@@ -579,11 +532,10 @@ int rita::runAE()
                break;
 
             default:
-               cout << "Unknown Command: " << _cmd->token() << endl;
-               cout << "Available commands: size, function, definition, jacobian, init," << endl;
-               cout << "                    variable, nls, summary, clear, remove, end, <" << endl;
-               cout << "Global commands:    help, ?, set, quit, exit" << endl;
-               *_ofl << "In rita>algebraic>: Unknown Command " << _cmd->token() << endl;
+               msg("algebraic>","Unknown Command "+_cmd->token(),
+                   "Available commands: size, function, definition, jacobian, init,\n"
+                   "                    variable, nls, summary, clear, remove, end, <\n"
+                   "Global commands:    help, ?, set, quit, exit");
                break;
          }
       }

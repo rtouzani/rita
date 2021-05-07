@@ -61,7 +61,6 @@ class approximation
     approximation(rita* r, cmd* command, configure* config);
     ~approximation();
     int set();
-    void set(std::ofstream* ofl, std::ofstream* ofh) { _ofl = ofl; _ofh = ofh; }
     int run();
     int go();
 
@@ -70,11 +69,11 @@ class approximation
     rita *_rita;
     configure *_configure;
     cmd *_cmd;
-    std::ofstream *_ofh, *_ofl;
-    ApproxType method;
+    ApproxType _method;
     FitType ft;
-    int nl, nf, nn, nb;
-    OFELI::Tabulation tab;
+    int _lagrange_degree, _hermite_degree;
+    OFELI::Tabulation _tab;
+    void lagrange();
     const vector<string> _kw = {"help","?","set","file","lagrange","fitting","bspline","bezier","nurbs"
                                 "end","<","quit","exit","EXIT"};
     map<ApproxType,string> rApp = {{LAGRANGE,"lagrange"},

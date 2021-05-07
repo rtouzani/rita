@@ -55,7 +55,6 @@ class mesh
     void set(cmd* command) { _cmd = command; }
     void set(OFELI::Mesh* ms) { _theMesh = ms; }
     OFELI::Mesh* get() const { return _theMesh; }
-    void set(std::ofstream* ofl, std::ofstream* ofh) { _ofl = ofl; _ofh = ofh; }
     OFELI::Mesh* getMesh() const { return _theMesh; }
     void set(configure* config) { _configure = config; }
 
@@ -75,7 +74,6 @@ class mesh
    typedef void (mesh::* MeshData_Ptr)();
    static MeshData_Ptr MESH_DATA[20];
    std::vector<string> _kw;
-   std::ofstream *_ofh, *_ofl;
    int _nb_Ccontour, _nb_Scontour, _nb_Vcontour;
    int _nb_sub_domain, _nb_point, _nb_curve, _nb_surface, _nb_volume;
    Point _point;
