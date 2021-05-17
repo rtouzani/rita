@@ -45,7 +45,6 @@ class optim
     ~optim();
     int set();
     int run();
-    void set(std::ofstream* ofl, std::ofstream* ofh) { _ofl = ofl; _ofh = ofh; }
     OFELI::OptSolver::OptMethod Alg;
     int size, nb_eqc, nb_lec, nb_gec, ifield, igrad, ihess, iincons, ieqcons;
     OFELI::Fct *J_Fct;
@@ -62,7 +61,6 @@ class optim
     int _ret, _verb;
     string _fn, _alg;
     bool _log;
-    std::ofstream *_ofh, *_ofl;
     configure *_configure;
     cmd *_cmd;
 

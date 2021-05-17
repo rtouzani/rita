@@ -112,19 +112,18 @@ int approximation::run()
 
    if (nb_args>0) {
       if (file_count==0) {
-         _rita->msg("rita>approximation>:","No data file given.");
+         _rita->msg("rita>approximation>","No data file given.");
          return 1;
-      }
-      *_rita->ofh << "approximation";
-      _tab.setFile(file);
-      *_rita->ofh << " file=" << file;
-      if (lagrange_count++) {
-         *_rita->ofh << "lagrange=" << _lagrange_degree;
       }
       if (approx_count>1) {
          _rita->msg("rita>approximation>","More than one approximation method given.");
          return 1;
       }
+      *_rita->ofh << "approximation";
+      _tab.setFile(file);
+      *_rita->ofh << " file=" << file;
+      if (lagrange_count++)
+         *_rita->ofh << " lagrange=" << _lagrange_degree;
    }
    /*   else {
       *_ofh << "approximation " << endl;
@@ -252,7 +251,8 @@ int approximation::go()
 void approximation::lagrange()
 {
 // Lagrange Basis
-   
+   string p="";
+      
 // Lagrange polynomial
 }
 

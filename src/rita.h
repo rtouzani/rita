@@ -96,13 +96,13 @@ struct odae {
 };
 
 enum type {
-   NONE,
-   STEADY_STATE,
-   TRANSIENT,
-   EIGEN,
-   OPTIMIZATION,
-   APPROXIMATION,
-   INTEGRATION
+   NONE            = 0,
+   APPROXIMATION   = 1,
+   INTEGRATION     = 2,
+   STEADY_STATE    = 3,
+   TRANSIENT       = 4,
+   EIGEN           = 5,
+   OPTIMIZATION    = 6,
 };
 
 enum objective_type {

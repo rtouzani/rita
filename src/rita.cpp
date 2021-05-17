@@ -366,10 +366,10 @@ void rita::setTransient()
                            "   Formula, 2nd Order), builtin (Any scheme built in the chosen PDE). The default value for this\n"
                            "   argument is backward-euler\n"
                            "adapted: Toggle meaning that adaptive time stepping is chosen.\n";
-   const vector<string> kw_scheme = {"forward-euler","backward-euler","crank-nicolson","heun","newmark",
-                                     "leap-frog","AB2","RK4","RK3-TVD","BDF2","builtin"};
-   const vector<string> kw = {"help","?","set","initial$-time","final$-time","time$-step","adapted",
-                              "scheme","end","<","quit","exit","EXIT"};
+   static const vector<string> kw_scheme {"forward-euler","backward-euler","crank-nicolson","heun","newmark",
+                                          "leap-frog","AB2","RK4","RK3-TVD","BDF2","builtin"};
+   static const vector<string> kw {"help","?","set","initial$-time","final$-time","time$-step","adapted",
+                                   "scheme","end","<","quit","exit","EXIT"};
    _cmd->set(kw);
    _nb_args = _cmd->getNbArgs();
    if (_nb_args==0) {
@@ -706,7 +706,7 @@ int rita::setSpaceDiscretization(string& sp)
       msg("equation>pde>space>","Missing space discretization method.","",1);
       return 1;
    }
-   const static vector<string> kw = {"fd","feP1","feP2","feQ1","fv"};
+   static const vector<string> kw {"fd","feP1","feP2","feQ1","fv"};
    _ret = _cmd->get(kw,sp);
    if (_ret<0) {
       msg("equation>pde>space>","Unknown space discretization method.",

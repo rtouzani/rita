@@ -5,7 +5,7 @@
 #
 ode
   size 3
-# The variable is named y, so that actual unknowns here are y1, y2, y3
+# The variable is named y, so actual unknowns here are y1, y2, y3
   variable y
   definition 10*(y2-y1)
   definition "y1*(27-y3) - y2"

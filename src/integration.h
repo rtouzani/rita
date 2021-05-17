@@ -57,7 +57,6 @@ class integration
     int set();
     int run();
     int go();
-    void set(std::ofstream* ofh) { _ofh = ofh; }
     integration_formula nim;
     vector<string> var;
     double xmin, xmax, ymin, ymax, zmin, zmax, res;

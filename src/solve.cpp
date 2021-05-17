@@ -70,7 +70,7 @@ int solve::run()
    }
    _nb_fields = _data->getNbFields();
    if (_nb_fields==0) {
-      _rita->msg("solve>","No field defined.");
+      _rita->msg("solve>","No field defined or no problem to solve.");
       _ret = 1;
       return _ret;
    }
