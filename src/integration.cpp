@@ -68,8 +68,8 @@ int integration::run()
                            "ne: Number of subdivisions of the interval\n"
                            "m: Numerical integration formula. To choose among the values: left-rectangle,\n"
                            "   right-rectangle, mid-point, trapezoidal, simpson, gauss-legendre, gauss-lobatto.\n"
-	                   "   For the Gauss formulae, the number of points can be specified by typing \n"
- 	                   "   gauss-legendre,2 for instance.";
+	                        "   For the Gauss formulae, the number of points can be specified by typing \n"
+ 	                        "   gauss-legendre,2 for instance.";
    static const vector<string> kw {"help","?","set","func$tion","def$inition","var$iable","field","interval",
                                    "ne","form$ula","end","<","quit","exit"};
    _cmd->set(kw);

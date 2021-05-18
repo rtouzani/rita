@@ -43,6 +43,7 @@ void rita::runPDE()
    bool field_ok = false;
    vector<string> field_name;
    string str = "", str1 = "";
+   _pde->set(_cmd);
    _pde->log.field = true;
    _ret = 0;
    if (_analysis_type==NONE)
@@ -62,8 +63,8 @@ void rita::runPDE()
    _pde->ls = OFELI::CG_SOLVER;
    _pde->prec = OFELI::DILU_PREC;
    _pde->spD = "feP1";
-   const vector<string> kw {"help","?","set","field","coef","in$it","bc","bf","source","sf","traction",
-                            "space","ls","nls","clear","end","<","quit","exit","EXIT"};
+   const static vector<string> kw {"help","?","set","field","coef","in$it","bc","bf","source","sf",
+                                   "traction","space","ls","nls","clear","end","<","quit","exit","EXIT"};
 
    while (1) {
       if ((nb_args=_cmd->readline("rita>pde> "))<0)

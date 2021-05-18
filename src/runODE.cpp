@@ -47,8 +47,9 @@ int rita::runODE()
    _ode->isSet = false;
    _analysis_type = TRANSIENT;
    string str="", var_name="y", scheme="forward-euler";
-   const vector<string> kw {"help","?","set","size","func$tion","def$inition","field","var$iable","init$ial",
-                            "final$-time","time-step","scheme","summary","clear","end","<","quit","exit","EXIT"};
+   const static vector<string> kw {"help","?","set","size","func$tion","def$inition","field","var$iable",
+                                   "init$ial","final$-time","time-step","scheme","summary","clear","end",
+                                   "<","quit","exit","EXIT"};
    _cmd->set(kw);
    for (int k=0; k<_nb_args; ++k) {
 

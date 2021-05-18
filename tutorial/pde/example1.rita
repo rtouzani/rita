@@ -16,7 +16,7 @@ mesh
 # We enter module 'pde'
 pde laplace
   field u
-  bc  code=1  val=0.
+  bc code=1 val=0.
   source value=pi*pi*sin(pi*x)
   space feP1
   end

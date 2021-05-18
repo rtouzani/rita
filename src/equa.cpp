@@ -293,7 +293,7 @@ int equa::setBC()
    string file="rita-bc.dat", save="rita-bc.out", val="";
    bool code_ok=false, val_ok=false, file_ok=false, save_ok=false;
    int code=0;
-   vector<string> kw {"code","val$ue","file","save"};
+   const static vector<string> kw {"code","val$ue","file","save"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
@@ -371,7 +371,7 @@ int equa::setSF()
    _ret = 0;
    string val="", file="rita-sf.dat", save="rita-sf.out";
    bool code_ok=false, val_ok=false, file_ok=false, save_ok=false;
-   vector<string> kw {"code","val$ue","file","save"};
+   const static vector<string> kw {"code","val$ue","file","save"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
@@ -444,7 +444,7 @@ int equa::setBF()
    _ret = 0;
    bool val_ok=false, file_ok=false, save_ok=false;
    string file="rita-source.dat", save;
-   vector<string> kw {"val$ue","file","save"};
+   const static vector<string> kw {"val$ue","file","save"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args==0) {
@@ -499,7 +499,7 @@ int equa::setBF()
 
 void equa::setNodeBC(int code, string exp, double t, Vect<double>& v)
 {
-   const vector<string> var {"x","y","z","t"};
+   const static vector<string> var {"x","y","z","t"};
    _theFct.set(exp,var);
    for (size_t n=1; n<=_theMesh->getNbNodes(); ++n) {
       Node *nd = (*_theMesh)[n];
