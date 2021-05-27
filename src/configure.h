@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __CONFIGURE_H
-#define __CONFIGURE_H
+#pragma once
 
 #include <vector>
 #include <string>
@@ -80,10 +79,8 @@ class configure
     string _HOME, _his_file, _log_file;
     ofstream _ofh, _ofl, _ocf;
     ifstream _icf;
-    const vector<string> _kw = {"verbo$sity","save$-results","history$-file","log$-file"};
+    const vector<string> _kw {"verb$osity","save$-results","history$-file","log$-file","end"};
     cmd *_cmd;
 };
 
 } /* namespace RITA */
-
-#endif

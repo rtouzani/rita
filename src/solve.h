@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __SOLVE_H
-#define __SOLVE_H
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -104,5 +103,3 @@ class solve
 };
 
 } /* namespace RITA */
-
-#endif

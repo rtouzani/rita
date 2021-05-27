@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __EQUAT_H
-#define __EQUAT_H
+#pragma once
 
 #include <string>
 #include <fstream>
@@ -147,5 +146,3 @@ class equa
 };
 
 } /* namespace RITA */
-
-#endif

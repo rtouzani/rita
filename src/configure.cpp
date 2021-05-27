@@ -40,19 +40,20 @@ configure::configure(rita *r, cmd *command)
 
 configure::~configure()
 {
+   _ocf.open((_HOME+"/.rita").c_str());
    save();
 }
 
 
 void configure::save()
 {
-   _ocf.open((_HOME+"/.rita").c_str());
    _ocf << "# rita configuration file" << endl;
    _ocf << "# " << currentDateTime() << "\n#\n";
    _ocf << "verbosity " << _verb << endl;
    _ocf << "save-results " << _save_results << endl;
    _ocf << "history-file " << _his_file << endl;
    _ocf << "log-file " << _log_file << endl;
+   _ocf << "end" << endl;
    _ocf.close();
 }
 
@@ -67,14 +68,9 @@ void configure::init()
    }
    else {
       read();
-      _icf.close();
       _ocf.open((_HOME+"/.rita.backup").c_str());
    }
-   _ocf << "# rita configuration file" << endl;
-   _ocf << "# " << currentDateTime() << "\n#\n";
-   _ocf << "verbosity " << _verb << endl;
-   _ocf << "save-results " << _save_results << endl;
-   _ocf.close();
+   save();
    _ofl.open(_log_file);
    _ofl << "# rita Log file" << endl;
    _ofl << "# " << currentDateTime() << "\n#\n";
@@ -87,35 +83,35 @@ void configure::init()
 int configure::read()
 {
    cmd com(_icf);
-   com.readline();
-   com.set(_kw);
-   int nb_args = com.getNbArgs();
-   if (nb_args < 0)
-      return 1;
-
-   for (int i=0; i<nb_args; ++i) {
-      int n = com.getArg();
-      switch (n) {
+   while (1) {
+      if (com.readline()<0)
+         continue;
+      int key = com.getKW(_kw);
+      switch (key) {
 
          case 0:
-            _verb = com.int_token();
+            com.get(_verb);
             break;
 
          case 1:
-            _save_results = com.int_token();
+            com.get(_save_results);
             break;
 
          case 2:
-            _his_file = com.string_token();
+            com.get(_his_file);
             break;
 
          case 3:
-            _log_file = com.string_token();
+            com.get(_log_file);
             break;
+
+         case 4:
+            _icf.close();
+            return 0;
 
          default:
             _rita->msg("set>:","Unknown setting: "+com.token(),
-                       "Available settings: verbosity, save-results, history, log");
+                       "Available settings: verbosity, save-results, history, log, end");
             return 1;
       }
    }

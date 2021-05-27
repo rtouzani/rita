@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __TRANSIENT_H
-#define __TRANSIENT_H
+#pragma once
 
 #include "mesh/Mesh.h"
 #include "solvers/LinearSolver.h"
@@ -75,5 +74,3 @@ class transient
 };
 
 } /* namespace RITA */
-
-#endif

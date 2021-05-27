@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __HELP_H
-#define __HELP_H
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -96,5 +95,3 @@ class help
 };
 
 } /* namespace RITA */
-
-#endif

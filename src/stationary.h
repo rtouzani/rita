@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __STATIONARY_H
-#define __STATIONARY_H
+#pragma once
 
 #include <map>
 #include "OFELI.h"
@@ -57,5 +56,3 @@ class stationary
 };
 
 } /* namespace RITA */
-
-#endif

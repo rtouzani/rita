@@ -133,21 +133,12 @@ int cmd::split()
    int k=0;
    vector<string> w;
    bool q = false;
-   //cout << "BEFORE"<<endl;
-   //for (int i=0; i<_word.size(); ++i)
-   //cout <<i<<": "<< _word[i] << endl;
    w.push_back("");
    for (size_t i=0; i<_word.size(); ++i) {
       for (size_t j=0; j<_word[i].length(); ++j) {
          char z = _word[i][j];
-         if (z=='\"') {
-	   //            if (q)
-	      //	       k++, w.push_back("");
-	   //	       k++;
-	    //            if (!q)
-	    //               w[k] = "";
+         if (z=='\"')
             q = !q;
-         }
          else
             w[k] += z;
       }
@@ -157,9 +148,6 @@ int cmd::split()
          w[k] += " ";
    }
    w.pop_back();
-   //cout << "AFTER"<<endl;
-   //for (int i=0; i<w.size(); ++i)
-   //cout << i<<": "<<w[i] << endl;
    _word = w;
    _nb_args = _word.size() - 1;
    return 0;

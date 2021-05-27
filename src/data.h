@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __DATA_H
-#define __DATA_H
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -110,7 +109,7 @@ class data
     rita *_rita;
     int _size, _ifield, _imesh, _igrid, _ifct, _itab;
     int _nb_fields, _default_field, _nb_fcts, _nb_meshes, _nb_tabs, _nb_grids, _nb_vectors, _nb_matrices; 
-    int _nb_args, _verb, _key, _ret, _nb_dof, _nb, _sr;
+    int _nb_args, _verb, _ret, _nb_dof, _nb, _sr;
     configure *_configure;
     cmd *_cmd;
     int _theMesh_alloc, _theTab_alloc, _theGrid_alloc, _theFct_alloc, _theVector_alloc, _theMatrix_alloc, _u_alloc;
@@ -137,13 +136,6 @@ class data
     //    void Clear();
     void Summary();
     vector<double> _xv;
-
-    vector<string> _kw_data = {"help","?","set","grid","mesh","field","tab$ulation","func$tion",
-                               "vect$or","matr$ix","clear","summary","end","<","quit","exit","EXIT"};
-    vector<string> _kw_fct = {"help","?","set","name","var","exp","clear","end","<","quit","exit","EXIT"};
-    vector<string> _kw_field = {"help","?","set","name","size","type","clear","end","<","quit","exit","EXIT"};
 };
 
 } /* namespace RITA */
-
-#endif

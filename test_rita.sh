@@ -7,68 +7,60 @@ echo "==============================================="
 echo "Testing rita Tutorial ..."
 echo "==============================================="
 
-cd tutorial/ae
+DIR="/usr/local"
+DD=$DIR/share/rita
+RITA=$DIR/bin/rita
 
 echo "-----------------------------------------------"
 echo "Test solution of algebraic equations (y/n) ? \c"
 read ans
 if test "$ans" = "y" ; then
-
-../../src/rita example1.rita
-../../src/rita example2.rita
-../../src/rita example3.rita
+   $RITA ${DD}/tutorial/ae/example1.rita
+   $RITA ${DD}/tutorial/ae/example2.rita
+   $RITA ${DD}/tutorial/ae/example3.rita
 fi
 
 echo "-----------------------------------------------------------"
 echo "Test solution of ordinary differential equations (y/n) ? \c"
 read ans
 if test "$ans" = "y" ; then
-cd ../ode
-../../src/rita example1.rita
-../../src/rita example2.rita
+   $RITA ${DD}/tutorial/ode/example1.rita
+   $RITA ${DD}/tutorial/ode/example2.rita
 fi
 
 echo "----------------------------------------------------------"
 echo "Test solution of partial differential equations (y/n) ? \c"
 read ans
 if test "$ans" = "y" ; then
-cd ../pde
-../../src/rita example1.rita
-../../src/rita example2.rita
-../../src/rita example3.rita
-../../src/rita example4.rita
-../../src/rita example5.rita
+   $RITA ${DD}/tutorial/pde/example1.rita
+   $RITA ${DD}/tutorial/pde/example2.rita
+   $RITA ${DD}/tutorial/pde/example3.rita
+   $RITA ${DD}/tutorial/pde/example4.rita
+   $RITA ${DD}/tutorial/pde/example5.rita
 fi
 
 echo "-------------------------------------------------"
 echo "Test solution of optimization problems (y/n) ? \c"
 read ans
 if test "$ans" = "y" ; then
-cd ../optim
-../../src/rita example1.rita
-../../src/rita example2.rita
-../../src/rita example3.rita
-../../src/rita example4.rita
+   $RITA ${DD}/tutorial/optim/example1.rita
+   $RITA ${DD}/tutorial/optim/example2.rita
+   $RITA ${DD}/tutorial/optim/example3.rita
+   $RITA ${DD}/tutorial/optim/example4.rita
 fi
 
 echo "-------------------------------------"
 echo "Test numerical integration (y/n) ? \c"
 read ans
 if test "$ans" = "y" ; then
-cd ../integration
-../../src/rita example1.rita
-../../src/rita example2.rita
+   $RITA ${DD}/tutorial/integration/example1.rita
+   $RITA ${DD}/tutorial/integration/example2.rita
 fi
 
 echo "-----------------------------------"
-echo "Remove all created files (y/n) ? \c"
-read ans
-if test "$ans" = "y" ; then
 echo "Cleaning ..."
-cd ..
-make clean
-fi
+rm -f *.vtk *.pos *.sol *.msh *.geo rita-1d.m example3.m example5.m example1.dat ex2*
+rm -f .rita.his .rita.log
 
-cd ../..
 echo "========================================================="
 echo "rita Testing complete"

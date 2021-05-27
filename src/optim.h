@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __OPTIM_H
-#define __OPTIM_H
+#pragma once
 
 #include "solvers/OptSolver.h"
 #include "rita.h"
@@ -72,5 +71,3 @@ class optim
 };
 
 } /* namespace RITA */
-
-#endif

@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __APPROXIMATION_H
-#define __APPROXIMATION_H
+#pragma once
 
 #include "OFELI.h"
 #include "io/Tabulation.h"
@@ -84,5 +83,3 @@ class approximation
 };
 
 } /* namespace RITA */
-
-#endif

@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __INTEGRATION_H
-#define __INTEGRATION_H
+#pragma once
 
 #include "rita.h"
 #include "cmd.h"
@@ -80,5 +79,3 @@ class integration
  };
 
 } /* namespace RITA */
-
-#endif

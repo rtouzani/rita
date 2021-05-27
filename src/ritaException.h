@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __RITA_EXCEPTION_H
-#define __RITA_EXCEPTION_H
+#pragma once
 
 #include <stdexcept>
 
@@ -57,4 +56,3 @@ class ritaException : public std::runtime_error
       std::cout << "Unexpected error: " << endl;             \
       return 1;                                              \
    }
-#endif

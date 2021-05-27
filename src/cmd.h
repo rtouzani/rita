@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __CMD_H
-#define __CMD_H
+#pragma once
 
 #define USE_CTRL_D
 
@@ -132,5 +131,3 @@ class cmd {
 } /* namespace RITA */
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
-
-#endif

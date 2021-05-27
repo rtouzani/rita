@@ -26,8 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __RITA_H
-#define __RITA_H
+#pragma once
 
 #include <stdlib.h>
 #include <math.h>
@@ -254,5 +253,3 @@ class rita
 };
 
 } /* namespace RITA */
-
-#endif

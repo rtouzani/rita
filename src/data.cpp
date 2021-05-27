@@ -40,8 +40,8 @@ using std::pair;
 namespace RITA {
 
 data::data(rita*      r,
-	   cmd*       command,
-	   configure* config)
+           cmd*       command,
+           configure* config)
      : _rita(r), _size(0), _ifield(0), _imesh(0), _igrid(0), _ifct(0), _itab(0),
        _nb_fields(0), _default_field(0), _nb_fcts(0), _nb_meshes(0), _nb_tabs(0), _nb_grids(0),
        _verb(1), _configure(config), _cmd(command),
@@ -51,7 +51,7 @@ data::data(rita*      r,
        _theVector(nullptr), _theMatrix(nullptr)
 {
    _u = nullptr;
-   _ret = 0; _key = 0;
+   _ret = 0;
    _nb_grids = _nb_tabs = _nb_meshes = _nb_fcts = iifct = _nb_vectors = _nb_matrices = 0;
    ok = false;
 }
@@ -258,12 +258,15 @@ int data::addField(string   name,
 
 int data::run()
 {
+   int key = 0;
+   static const vector<string> kw {"help","?","set","grid","mesh","field","tab$ulation","func$tion",
+                                   "vect$or","matr$ix","clear","summary","end","<","quit","exit","EXIT"};
    *_rita->ofh << "data" << endl;
    while (1) {
       _cmd->readline("rita>data> ");
       if (_nb < 0)
          continue;
-      switch (_key=_cmd->getKW(_kw_data)) {
+      switch (key=_cmd->getKW(kw)) {
 
          case 0:
          case 1:
@@ -379,7 +382,7 @@ int data::setGrid()
    double xmin=0., xmax=1., ymin=0., ymax=1., zmin=0., zmax=1.;
    int nb=0, d1=-1, d2=-1, d3=-1, dim=0, nx=10, ny=10, nz=10;
    string name="G-"+to_string(_nb_grids+1);
-   vector<string> kw {"name","min","max","ne"};
+   static const vector<string> kw {"name","min","max","ne"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args<=0) {
@@ -478,7 +481,7 @@ int data::setVector()
 {
    int size=0, nb=0;
    string name="vect-"+to_string(_nb_vectors+1);
-   vector<string> kw = {"name","size","def$ine","set"};
+   static const vector<string> kw {"name","size","def$ine","set"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args<=0) {
@@ -521,7 +524,7 @@ int data::setVector()
 int data::setMatrix()
 {
    string name="mat-"+to_string(_nb_matrices+1);
-   vector<string> kw = {"name","storage","size","def$ine","set"};
+   static const vector<string> kw {"name","storage","size","def$ine","set"};
    theMatrix.push_back(_theMatrix);
    matrix_name.push_back(name);
    _nb_matrices++;
@@ -534,10 +537,10 @@ int data::setField()
    int nb=0;
    double umin=0., umax=0.;
    string name="u", type="size", arg=" ", mn="";
-   vector<string> kw = {"name","size","mesh","grid","nbdof","type","uniform"};
-   vector<string> types = {"size","nodes","elements","sides","edges"};
-   map<string,dataSize> tt = {{"size",GIVEN_SIZE}, {"nodes",NODES}, {"elements",ELEMENTS},
-                              {"sides",SIDES}, {"edges",EDGES}};
+   static const vector<string> kw {"name","size","mesh","grid","nbdof","type","uniform"};
+   static const vector<string> types {"size","nodes","elements","sides","edges"};
+   map<string,dataSize> tt {{"size",GIVEN_SIZE}, {"nodes",NODES}, {"elements",ELEMENTS},
+                            {"sides",SIDES}, {"edges",EDGES}};
    if (_rita->_theMesh!=nullptr)
       _theMesh = _rita->_theMesh;
    if (_default_field==1) {
@@ -631,7 +634,7 @@ int data::setFunction()
    string vv="", def="", name="f";
    int nb=1, ret=0;
    vector<string> var;
-   vector<string> kw {"name","var","field","nb","def","definition"};
+   static const vector<string> kw {"name","var","field","nb","def","definition"};
 
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
@@ -765,7 +768,7 @@ int data::setTab()
    string name = "T" + to_string(theTab.size()+1);
    double xmin=0., xmax=1., ymin=0., ymax=1., zmin=0., zmax=1.;
    int nb=0, nx=10, ny=10, nz=10, grid_ok=0, file_ok=0, field_ok=0;
-   vector<string> kw = {"name","file","min","max","ne","field"};
+   static const vector<string> kw {"name","file","min","max","ne","field"};
    _cmd->set(kw);
    int nb_args = _cmd->getNbArgs();
    if (nb_args<0) {

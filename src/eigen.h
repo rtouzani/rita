@@ -26,9 +26,7 @@
 
   ==============================================================================*/
 
-#ifndef __EIGEN_H
-#define __EIGEN_H
-
+#pragma once
 
 namespace RITA {
  
